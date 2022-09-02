@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>Open Data and 21st Century Regulation | Civic Innovations</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=4048'
+					+ '&is_singular=1';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145209";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Open Data and 21st Century&nbsp;Regulation Comments Feed" href="feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s2.wp.com/_static/??-eJyNkt1uwyAMhV9ohLbK2qtpz8KPxdwagjA04+1H0TZl6ZrtBnGwP/tgkHMUZgoZQpa+iEjFYWA5RzN5wR4J6koNhvlJ/o4lIJXBijhxXqktjPACLM+QozIX0dVd+leuK01qSK5FEsjrfhx2w0HqgmSlpqkX0EmlKjlXgu9CGAwVe+vD0oNFBQS+G1mISKpCEgROmTp4DH/jLbbUP6DH5rvTxZ1VnUoWLqFd2f53iaQyBscP8MW0b3Nr5z6qe/Mb2IzWQXvVlvK5Fxnet5H+b7SOCZhFWz0WL/Jb69Uf+NW/7I/Hw24cn0+n8weNnvWZ?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s2.wp.com/_static/??-eJxti8sKgCAQAH8oW6KXHaJvMTE1Vldapd+PDh2iTsPADJxJaIrZxAyhiITF+siQiLPYUPkD2KnDR/uw1swV/F9M2isUSJbe8pmyM8EwuA4s0qrwDpYwN0PfymmUstsvZXo34g==?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack_related-posts-js-extra'>
+var related_posts_js_options = {"post_heading":"h4"};
+</script>
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","shortlink":"https:\/\/wp.me\/p26R0e-13i","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/2015/12/22/open-data-and-21st-century-regulation/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s2.wp.com/_static/??-eJyFjdEKwjAMRX/IrIpjxQfxW+aWlZQ2rUmL7u+tMEH24lO4OSe55plhSlyQi/FqYrpTQKiKMrq2A+IldV4P5seLFXKojliNYBgLzpCTll3aX7XvEgpkSa/1y4inUGfUD/SPirJuo4vEfyWI5KQVbvItXk/D2dpj31+sfwPadVA2'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1662027824h&cssminify=yes' type='text/css' media='all' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='https://wp.me/p26R0e-13i' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Fcivic.io%2F2015%2F12%2F22%2Fopen-data-and-21st-century-regulation%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Fcivic.io%2F2015%2F12%2F22%2Fopen-data-and-21st-century-regulation%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Open Data and 21st Century Regulation" />
+<meta property="og:url" content="https://civic.io/2015/12/22/open-data-and-21st-century-regulation/" />
+<meta property="og:description" content="In early December, Airbnb made headlines by releasing some data on how people are using the company’s platform in New York City. In doing so, the company has provided an object lesson in the critic…" />
+<meta property="article:published_time" content="2015-12-22T14:25:52+00:00" />
+<meta property="article:modified_time" content="2016-05-12T00:33:28+00:00" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+<meta name="twitter:text:title" content="Open Data and 21st Century&nbsp;Regulation" />
+<meta name="twitter:card" content="summary" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="In early December, Airbnb made headlines by releasing some data on how people are using the company’s platform in New York City. In doing so, the company has provided an object lesson in the critical role that data plays (and will continue to play) in government regulation of private companies in the 21st century, and&hellip;" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="post-template-default single single-post postid-4048 single-format-standard customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/2015/12/22/open-data-and-21st-century-regulation/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+							
+<article id="post-4048" class="post-4048 post type-post status-publish format-standard hentry category-cities category-open-data category-sharing-economy">
+	
+	<header class="entry-header">
+					<span class="entry-meta entry-meta-categories"><a href="../../../../category/cities/index.html" rel="category tag">Cities</a>, <a href="../../../../category/open-data/index.html" rel="category tag">Open Data</a>, <a href="../../../../category/sharing-economy/index.html" rel="category tag">Sharing Economy</a></span>
+				<h1 class="entry-title">Open Data and 21st Century&nbsp;Regulation</h1>		<p class="entry-meta entry-meta-time">
+						<a href="index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="December 22, 2015"><i class="fa fa-clock-o"></i>December 22, 2015</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-content">
+		<p><span style="font-weight:400;">In early December, Airbnb made headlines by </span><a href="http://www.nytimes.com/2015/12/02/technology/airbnb-releases-trove-of-new-york-city-home-sharing-data.html"><span style="font-weight:400;">releasing some data on how people are using the company’s platform in New York City</span></a><span style="font-weight:400;">.</span></p>
+<p><span style="font-weight:400;">In doing so, the company has provided an object lesson in the critical role that data plays (and will continue to play) in government regulation of private companies in the 21st century, and highlighted how ill-equipped governments are to obtain and use this data.</span></p>
+<p><b>Airbnb and the State</b></p>
+<p><span style="font-weight:400;">Over the past year, the use of Airbnb to rent properties in New York has received intense scrutiny from government regulators because of suspicion that a non-trivial amount of rentals listed on the site were in violation of state or city rules. In late 2014, New York State Attorney General Eric Schneiderman </span><a href="http://www.ag.ny.gov/pdfs/Airbnb%20report.pdf"><span style="font-weight:400;">released a report examining Airbnb rentals in New York</span></a><span style="font-weight:400;"> that concluded that “most short-term rentals booked [through Airbnb’s service] in New York violate the law.”</span></p>
+<p><span id="more-4048"></span></p>
+<p><span style="font-weight:400;">The recent data release by Airbnb was meant to make good on a promise by the company in response to the Attorney General’s report to be “open and transparent,” and to </span><a href="https://www.airbnbaction.com/blog/data-on-the-airbnb-community-in-nyc"><span style="font-weight:400;">underscore its contention</span></a><span style="font-weight:400;"> that the vast majority of the users of its service do so in compliance with state and local laws.</span></p>
+<p><span style="font-weight:400;">From the start, the release of this data was viewed with skepticism by some journalists, activists, and others that closely watch the “sharing economy”—in order to view it, interested parties needed to </span><a href="http://gawkerdata.kinja.com/i-saw-airbnbs-nyc-data-for-30-minutes-this-is-what-i-l-1746207377"><span style="font-weight:400;">make an appointment to review the data in person at Airbnb’s offices in New York</span></a><span style="font-weight:400;">. The data was highly redacted, was not published to company’s </span><a href="http://nerds.airbnb.com/data/"><span style="font-weight:400;">data website</span></a><span style="font-weight:400;">, and those viewing it were not allowed to copy it to review it more closely after their scheduled appointment.</span></p>
+<p><span style="font-weight:400;">In the weeks that followed the release, </span><a href="http://www.theverge.com/2015/12/4/9849242/airbnb-data-new-york-affordable-housing-illegal-hotels"><span style="font-weight:400;">outside</span></a> <a href="http://gothamist.com/2015/12/01/airbnb_laws_shmaws.php"><span style="font-weight:400;">reviews</span></a><span style="font-weight:400;"> of the data seem to contradict Airbnb’s primary claim that most of its hosts are using the service lawfully. Others have cited the need for more detailed information to draw definitive conclusions. Though Airbnb has indicated that it would like to share similar data on usage for other cities, there is no indication that the company will release more detailed information for New York City.</span></p>
+<p><span style="font-weight:400;">It seems clear that the ultimate question of whether Airbnb’s service is being used lawfully will be determined by examining data on how people use the service. State regulators and others know this and have used legal and </span><a href="http://insideairbnb.com/get-the-data.html"><span style="font-weight:400;">other means</span></a><span style="font-weight:400;"> to try and get this data. Airbnb also knows this, and it has carefully constructed its limited release of data (and its public outreach about this data release) to assert that they are in compliance with the law.</span></p>
+<p><span style="font-weight:400;">But if data is at the heart of government’s ability to regulate Airbnb and other “sharing economy” companies, why are they so ill-equipped to obtain and use it?</span></p>
+<p><b>Regulating the Sharing Economy</b></p>
+<p><span style="font-weight:400;">At its core, the sharing economy—whether defined by the example of </span><a href="https://www.uber.com/"><span style="font-weight:400;">Uber</span></a><span style="font-weight:400;">, </span><a href="https://www.airbnb.com/"><span style="font-weight:400;">Airbnb</span></a><span style="font-weight:400;">, or one of the other standard bearers of this emerging class of business—represents a change in the way that people consume goods and services that is enabled by advances in technology. This change in consumption results in a challenge to an existing, entrenched market actor (for Uber, the taxi industry; for Airbnb, the hotel industry) that is subject to existing government taxes and regulations.</span></p>
+<p><span style="font-weight:400;">The challenge for public officials and regulators is to avoid stifling new innovation that can result in better services but at the same time to ensure the fair and equitable application of rules that have been set up to regulate business operations and protect consumers. This is an issue that can have significant </span><a href="http://www.nytimes.com/2015/07/23/nyregion/de-blasio-administration-dropping-plan-for-uber-cap-for-now.html"><span style="font-weight:400;">political implications</span></a><span style="font-weight:400;">. Striking the proper balance between competing needs can indeed be tricky.  </span></p>
+<p><span style="font-weight:400;">But this challenge is not a new one for governments—tension between regulators and private interests </span><a href="http://www.upenn.edu/almanac/v48/n28/AncientTaxes.html"><span style="font-weight:400;">spans the history of collective governance</span></a><span style="font-weight:400;">. </span></p>
+<p><span style="font-weight:400;">Supporters of the sharing economy commonly </span><a href="http://www.nickgrossman.is/2015/06/04/regulation-the-internet-way/"><span style="font-weight:400;">criticize existing government regulations as outdated and ill-suited</span></a><span style="font-weight:400;"> to support innovation by 21st century technology companies. </span><a href="http://pages.ebay.com/help/feedback/scores-reputation.html"><span style="font-weight:400;">Reputation systems</span></a><span style="font-weight:400;"> are often pointed to as a 21st century alternative to traditional government regulation, to ensure that sharing economy firms and similar types of companies act in the best interest of consumers. </span></p>
+<p><span style="font-weight:400;">But there are a number of common examples where consumers engage in transactions for which they have an abundance of reputational information where the company providing the services is also highly regulated by government. Consider the example of dining out at a restaurant—never before have consumers had as much information as we do now about </span><a href="http://www.yelp.com/"><span style="font-weight:400;">the quality</span></a><span style="font-weight:400;"> and </span><a href="https://health.data.ny.gov/Health/Food-Service-Establishment-Last-Inspection/cnih-y5dw"><span style="font-weight:400;">cleanliness</span></a><span style="font-weight:400;"> of food service establishments. And yet, restaurants and food service establishments are highly regulated by multiple levels of government.</span></p>
+<p><span style="font-weight:400;">In addition, recent research specifically examining reputation systems used by technology companies suggests that reputation systems and more traditional central regulation can work beneficially in tandem. A </span><a href="http://econ.ohio-state.edu/saeedi/etrs_hsss.pdf"><span style="font-weight:400;">recent study from the Ohio State University</span></a><span style="font-weight:400;"> examined the reputation system used by eBay in conjunction with a buyer protection program—a centrally managed program to provide protections to buyers and recourse if they are dissatisfied with purchases (an approach strikingly similar to the notion of centralized regulation). The study concluded that:</span></p>
+<p><span style="font-weight:400;">“[W]e estimate that the total welfare rises by 2.9% after the introduction of the buyer protection program. This increased welfare demonstrates an efficiency gain by having the </span><i><span style="font-weight:400;">two mechanisms</span></i><span style="font-weight:400;">, the eBay Buyer Protection and eBay Top-Rated Sellers, in place.” [Emphasis added]</span></p>
+<p><span style="font-weight:400;">Sharing economy supporters also claim the the growth of companies like Airbnb, Uber, Taskrabbit and others has led to a fundamental change in the economy, with more people opting to become freelancers who—to paraphrase the words of sharing economy companies—become masters of their own destiny. But </span><a href="http://mercatus.org/publication/evaluating-growth-1099-workforce"><span style="font-weight:400;">another recent study from George Mason University</span></a><span style="font-weight:400;"> suggests that the freelancer phenomenon began long before the advent of sharing economy companies like Airbnb and Uber:</span></p>
+<p><span style="font-weight:400;">“Our data support the claim that there has been an increase in nontraditional employment, but the data refute the idea that this increase is caused by the sharing-economy firms that have arisen since 2008. Instead, we view the rise of sharing-economy firms as a response to a stagnant traditional labor sector and a product of the growing independent workforce.”</span></p>
+<p>The George Mason study helps to clarify the role that sharing economy companies can play in a changing economy—as opportunities for traditional employment become scarcer, the sharing economy may play an important role in providing employment for a changing workforce.</p>
+<p><span style="font-weight:400;">But we should not allow these potential benefits to be offset by other </span><a href="http://www.huffingtonpost.com/entry/uber-cab-companies-cities_5654bce6e4b0879a5b0cbe88"><span style="font-weight:400;">negative</span></a> <a href="http://www.sfchronicle.com/airbnb-impact-san-francisco-2015/#1"><span style="font-weight:400;">consequences</span></a><span style="font-weight:400;"> that may arise if sensible regulations are not applied sharing economy companies. </span></p>
+<p><b>Information Asymmetry</b></p>
+<p><span style="font-weight:400;">The exercise of regulating private interests by government almost always involves an information asymmetry. Governments seek to discover the occurrence of specific activities that are subject to regulation and to apply relevant rules and taxes to those activities.</span></p>
+<p><span style="font-weight:400;">Prior to the digital age, governments sought to (and still seek to) address this asymmetry by hiring groups of trained employees like auditors, inspectors and agents. The job of these individuals is to investigate certain kinds of activities and transactions to determine if the activity in question falls under the authority of a specific regulation or regulating entity, and then to enforce any applicable rules or taxes.</span></p>
+<p><span style="font-weight:400;">With the rise of the internet and the dawn of the digital age, governments have employed a wide range of new tools to help ensure that the activities of private interests comply with rules that have been adopted by elected and appointed bodies. The steady march of technical advancement has also made </span><a href="http://www.taxjar.com/smartcalcs/"><span style="font-weight:400;">compliance with government mandated taxes and rules easier</span></a><span style="font-weight:400;"> and more efficient for businesses than ever before.</span></p>
+<p><span style="font-weight:400;">The tension between how technology alters production and consumption patterns, and how these new patterns square with existing government rules is not new. </span></p>
+<p><span style="font-weight:400;">In the 1960’s, the rise of mail order retailers began a protracted debate on the </span><a href="https://supreme.justia.com/cases/federal/us/504/298/"><span style="font-weight:400;">application of state and local sales taxes</span></a><span style="font-weight:400;"> to remote sales—a debate that has raged through the time when internet retailers like Amazon developed and flourished, and that </span><a href="http://ww2.cfo.com/tax/2015/03/tax-collection-threat-looms-internet-retailers/"><span style="font-weight:400;">still rages today</span></a><span style="font-weight:400;">.</span></p>
+<p><span style="font-weight:400;">In the early 2000’s, a </span><a href="https://en.wikipedia.org/wiki/Vonage"><span style="font-weight:400;">new class of business</span></a><span style="font-weight:400;">—bolstered by the increasing availability of broadband internet access—began to offer consumers new options for telecommunication services that bypassed the Publicly Switched Telephone Network. In a scenario that is remarkably similar to the sharing economy, these new VoIP companies competed against large entrenched industry incumbents that were heavily regulated by government by offering customers improved service, a better customer experience, and lower prices.</span></p>
+<p><span style="font-weight:400;">The tension between the new service being offered to consumers VoIP companies and existing government rules was </span><a href="https://transition.fcc.gov/cgb/voip911order.pdf"><span style="font-weight:400;">ultimately resolved by an order from the FCC</span></a><span style="font-weight:400;">.</span></p>
+<p><span style="font-weight:400;">So while the tension with existing tax and regulatory requirements created by technical advances is not new, and existing government institutions have shown they are capable of resolving these tension to the benefit of consumers, things are a little different when we consider the companies that make up the sharing economy. </span></p>
+<p><span style="font-weight:400;">Sharing economy companies self identify as “technology companies”—not dispatch companies (in the case of Uber) or hoteliers (in the case of Airbnb) that happen to make heavy use of internet technologies. They position themselves not as providers of a service, but as enablers or connectors that bring together individuals that want to transact with each other.</span></p>
+<p><span style="font-weight:400;">The issue with respect to government regulations as they relate to sharing economy companies is not so much that existing regulations are outdated as some have claimed. Instead, it is that the infrastructure for ensuring compliance with these regulations was not constructed for the 21st century—or, at best, the infrastructure has been minimally and very unevenly built.</span></p>
+<p><span style="font-weight:400;">Government regulations need to speak the native language of these companies—in the 21st century, this language is almost always data in JSON or CSV format delivered over HTTP.</span></p>
+<p><b>A New Infrastructure for Government Regulation</b></p>
+<p><span style="font-weight:400;">Consider Airbnb’s recent data release—what if the State of New York, as part of its request to the company to share data, had offered Airbnb the ability to publish data to its </span><a href="https://data.ny.gov/"><span style="font-weight:400;">open data portal</span></a><span style="font-weight:400;">?</span></p>
+<p><span style="font-weight:400;">The state could have provided the company with a user account and requested that they publish their data using that account at regular intervals to allow for scrutiny by regulators and other interested parties. They could have provided Airbnb with </span><a href="http://ny.github.io/open-data-handbook/guidelines.html?1450195634212"><span style="font-weight:400;">existing guidelines for ensuring privacy as well as metadata guidelines</span></a><span style="font-weight:400;"> to help ensure data quality. </span></p>
+<p><span style="font-weight:400;">Even if Airbnb didn’t opt to publish data to the state’s open data portal, the request to do so would have helped to better qualify the deficiencies in the data the company actually did release. The state’s portal already contains scores of data sets with detailed information from dozens of agencies. Are technology companies like Airbnb less equipped to publish data on their core business operations than the </span><a href="https://data.ny.gov/Economic-Development/Liquor-Authority-Quarterly-List-of-Active-Licenses/hrvs-fxs2"><span style="font-weight:400;">State Liquor Authority</span></a><span style="font-weight:400;">? Really?</span></p>
+<p><span style="font-weight:400;">With very few exceptions, government open data portals are one-way vehicles—transporting data unidirectionally from government agencies to external consumers. Governments largely don&#8217;t view their open data portals as platforms for co-mingling data from different data producers, much less as vital instruments for successful 21st century regulation.</span></p>
+<p><span style="font-weight:400;">But what if they did?</span></p>
+<p><span style="font-weight:400;">With complete enough data, the question of whether an Airbnb host is in compliance with the law is fairly easy to spot. The issue is that in the absence of a standard mechanism for sharing this data openly, companies like Airbnb can </span><a href="http://publicpolicy.airbnb.com/wp-content/uploads/2015/11/Airbnb-Community-Compact.pdf"><span style="font-weight:400;">define their own terms</span></a><span style="font-weight:400;"> for behaving in an “open and transparent” way.</span></p>
+<p><span style="font-weight:400;">We need to expand the way we think about open data so that it&#8217;s not just about agencies publishing data to an open data portal, but instead is an integral way that we collectively help ensure the health and stability of our communities. We need to expand our notion of “government as a platform” to go beyond just building new civic apps to helping ensure efficient compliance with rules that are adopted collectively through democratic processes. </span></p>
+<p><span style="font-weight:400;">We’ve started to assemble some of the building blocks for this new infrastructure, but we now need to put the pieces in place.</span></p>
+<p><span style="font-weight:400;">For example, some governments publish data on </span><a href="http://us-city.census.okfn.org/dataset/zoning"><span style="font-weight:400;">zoning rules</span></a><span style="font-weight:400;"> as open data. But we need to go beyond simply publishing this data and expose these rules through an interface that allow them to be encapsulated in a transaction. This work has </span><a href="http://zoning.io"><span style="font-weight:400;">only just begun</span></a><span style="font-weight:400;"> and is,for now,largely driven by actors outside of government. </span></p>
+<p><span style="font-weight:400;">Imagine an infrastructure that would allow companies like Airbnb to instantly determine if a potential short-term rental was authorized under local zoning and rental regulations, and to determine if a rental tax was due on the transaction and the amount. </span></p>
+<p><span style="font-weight:400;">We are woefully short of this goal.</span></p>
+<p><span style="font-weight:400;">In fact, in jurisdictions that specifically require short-term renters to </span><a href="http://www.sf-planning.org/index.aspx?page=3750"><span style="font-weight:400;">register with the local government</span></a><span style="font-weight:400;">, there is no interface that supports an automated check to determine if a specific property has a permit and is authorized to conduct such a rental. The absence of this essential infrastructure to enforce local regulations may go a long way toward explaining the </span><a href="http://www.48hills.org/2015/02/17/almost-nobody-registered-airbnb-law/"><span style="font-weight:400;">dismal rate of compliance</span></a><span style="font-weight:400;">. </span></p>
+<p><span style="font-weight:400;">It seems clear that governments will not be able to successfully regulate these new companies without the infrastructure necessary to do so.</span></p>
+<p><span style="font-weight:400;">Building the infrastructure for 21st century regulation will require us to expand our ideas of open data and government as a platform. Checking for compliance with tax and regulatory requirements—by either party in a sharing economy transaction—should be as simple as making an API call.</span></p>
+<p><span style="font-weight:400;">Constructing this infrastructure won’t be done overnight, and it probably won’t be inexpensive. </span></p>
+<p><span style="font-weight:400;">But the stakes for state and local governments have never been higher.</span></p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-4048" class="share-twitter sd-button share-icon" href="index.html%3Fshare=twitter.html" target="_blank" title="Click to share on Twitter" ><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-4048" class="share-facebook sd-button share-icon" href="index.html%3Fshare=facebook.html" target="_blank" title="Click to share on Facebook" ><span>Facebook</span></a></li><li class="share-end"></li></ul></div></div></div><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-31186386-4048-631252b9d8798' data-src='//widgets.wp.com/likes/index.html?ver=20220105#blog_id=31186386&amp;post_id=4048&amp;origin=civicio.wordpress.com&amp;obj_id=31186386-4048-631252b9d8798&amp;domain=civic.io' data-name='like-post-frame-31186386-4048-631252b9d8798' data-title='Like or Reblog'><h3 class='sd-title'>Like this:</h3><div class='likes-widget-placeholder post-likes-widget-placeholder' style='height: 55px;'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div></div>					</div><!-- .entry-content -->
+
+	</article><!-- #post-## -->
+			
+				<nav class="navigation post-navigation" role="navigation">
+		<h1 class="screen-reader-text">Post navigation</h1>
+		<div class="nav-links">
+			<div class="nav-previous"><a href="../../../11/30/the-bomb-the-pill-and-the-shot/index.html" rel="prev">The Bomb, the Pill, and the&nbsp;Shot</a></div><div class="nav-next"><a href="../../../../2016/01/12/thinking-differently-about-data/index.html" rel="next">Thinking Differently About&nbsp;Data</a></div>		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+			<div id="comments" class="discussion">
+
+	
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply</h3><form action="https://civic.io/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate><input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="cf90dc640f" /><input type="hidden" name="_wp_http_referer" value="/2015/12/22/open-data-and-21st-century-regulation/" />
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest" />
+
+<div class="comment-form-field comment-textarea">
+	<label for="comment">Enter your comment here...</label>
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..."></textarea></div>
+</div>
+
+<div id="comment-form-identity">
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="index.html#comment-form-guest" id="postas-guest" class="nascar-signin-link"
+				 title="Login via Guest" 				>
+									</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:WordPress.com" id="postas-wordpress" class="nascar-signin-link"
+				 title="Login via WordPress.com" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></g></svg>				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Twitter" id="postas-twitter" class="nascar-signin-link"
+				 title="Login via Twitter" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"/></g></svg>				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Facebook" id="postas-facebook" class="nascar-signin-link"
+				 title="Login via Facebook" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"/></g></svg>				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="url" value="" /></div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="WordPress.com Logo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="" />
+						<p class="comment-form-posting-as pa-wordpress">
+			<strong></strong>
+			You are commenting using your WordPress.com account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Twitter picture" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="" />
+						<p class="comment-form-posting-as pa-twitter">
+			<strong></strong>
+			You are commenting using your Twitter account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="index.html" alt="Facebook photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="" />
+						<p class="comment-form-posting-as pa-facebook">
+			<strong></strong>
+			You are commenting using your Facebook account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function () {
+
+	function hide( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.setProperty( 'display', 'none' );
+		}
+	}
+
+	function show( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.removeProperty( 'display' );
+		}
+	}
+
+	var input = document.createElement( 'input' );
+	var comment = document.querySelector( '#comment' );
+
+	if ( input && comment && 'placeholder' in input ) {
+		var label = document.querySelector( '.comment-textarea label' );
+		if ( label ) {
+			var text = label.textContent;
+			label.parentNode.removeChild( label );
+			comment.setAttribute( 'placeholder', text );
+		}
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	hide( '#comment-form-identity' );
+	hide( '#comment-form-subscribe' );
+	hide( '#commentform .form-submit' );
+
+	if ( comment ) {
+		comment.style.height = '10px';
+
+		var handler = function () {
+			comment.style.height = HighlanderComments.initialHeight + 'px';
+			show( '#comment-form-identity' );
+			show( '#comment-form-subscribe' );
+			show( '#commentform .form-submit' );
+			HighlanderComments.resizeCallback();
+
+			comment.removeEventListener( 'focus', handler );
+		};
+
+		comment.addEventListener( 'focus', handler );
+	}
+}
+
+if ( document.readyState !== 'loading' ) {
+	highlander_expando_javascript();
+} else {
+	document.addEventListener( 'DOMContentLoaded', highlander_expando_javascript );
+}
+
+</script>
+
+<div id="comment-form-subscribe">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;"/> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p><p class="post-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto;"/> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog"  style="display: inline;">Notify me of new posts via email.</label></p></div>
+
+
+
+
+<p class="form-submit"><input name="submit" type="submit" id="comment-submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='4048' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="15f610f408" /></p>
+<input type="hidden" name="genseq" value="1662145209" />
+<p style="display: none !important;"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="244"/><script>document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );</script></p></form>	</div><!-- #respond -->
+	<div style="clear: both"></div></div>
+
+		
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/2015/12/22/open-data-and-21st-century-regulation/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"post_id":4048,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1,"reason_post_null":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+<script id='highlander-comments-js-extra'>
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/civicio.wordpress.com\/public.api\/connect\/?action=request&domain=civic.io","logoutURL":"https:\/\/civicio.wordpress.com\/wp-login.php?action=logout&_wpnonce=125beba3f0","homeURL":"https:\/\/civic.io\/","postID":"4048","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??/wp-content/js/textarea-autosize.min.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1662027824j'></script>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/2015/12/22/open-data-and-21st-century-regulation/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2015%252F12%252F22%252Fopen-data-and-21st-century-regulation%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2F2015%2F12%2F22%2Fopen-data-and-21st-century-regulation%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2015%252F12%252F22%252Fopen-data-and-21st-century-regulation%252F">Log in</a></li>
+																	<li class="actnbr-shortlink"><a href="https://wp.me/p26R0e-13i">Copy shortlink</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/blogs/31186386/posts/4048">
+											View post in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+	
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/civic.io\/2015\/12\/22\/open-data-and-21st-century-regulation\/":4048};
+	</script>
+				<script id='sharing-js-js-extra'>
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??-eJyNkN1OxCAQRl/I2dFUTXphfBRDYVqm/BSZwfXxRU2TjZvUvWKAc/jygecCdstKWXEVdPTBlsrnaZU7vLhKDUpsC2fByIEE3xs18ia7SPUvrJ5SR0qbkHjxyn3T356MDaKV1PobjX2+EZfABSLnAPNmm8DMVz3+CQJPxl0Xumi/kpbeA984W9Qzq1IF5UQ9lw484xJnmEzFZKQ7fQKt3z9yJAWWRArD6f43cD+Y6w/sDtyySeei4YriTeW87GuXXtPLw/PTOAzj+DisX0q5wGI='></script>
+<script type='text/javascript'>
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-twitter' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-twitter' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+</script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>	<iframe src='https://widgets.wp.com/likes/master.html?ver=20220105#ver=20220105&amp;origin=https://civic.io' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+	<div id='likes-other-gravatars'>
+		<div class="likes-text">
+			<span>%d</span> bloggers like this:		</div>
+		<ul class="wpl-avatars sd-like-gravatars"></ul>
+	</div>
+
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','post':'4048','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelF0MHNXY3E5aWtXM2lnciw9P3xXK3FSR2djeFR3WGk0TnxfdWVuWSZUcUdjdF09fEpTM2pIZ2tBamVuP2EwYXV0alRMPUJZMF1NMF9BeDNYTz8sU0UscltWczlXTzFjLWFqekVrekxkZi8uQXRHJl1CaFAsa0s0WS9ENi8rfCtzRTh2LkJ8YmpIOWt0Llk4UnZCPXB2YnVkMHhvcSV8RStVJiVjTjg='}]);
+_stq.push([ 'clickTrackerInit', '31186386', '4048' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

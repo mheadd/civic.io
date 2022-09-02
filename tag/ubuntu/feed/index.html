@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>Ubuntu &#8211; Civic Innovations</title>
+	<atom:link href="https://civic.io/tag/ubuntu/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Tue, 12 Jan 2010 22:51:07 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+<cloud domain='civic.io' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<image>
+		<url>https://s0.wp.com/i/buttonw-com.png</url>
+		<title>Ubuntu &#8211; Civic Innovations</title>
+		<link>https://civic.io</link>
+	</image>
+	<atom:link rel="search" type="application/opensearchdescription+xml" href="https://civic.io/osd.xml" title="Civic Innovations" />
+	<atom:link rel='hub' href='https://civic.io/?pushpress=hub'/>
+	<item>
+		<title>NoSQL Telephony with Tropo and CouchDB</title>
+		<link>https://civic.io/2010/01/12/nosql-telephony-with-tropo-and-couchdb/</link>
+					<comments>https://civic.io/2010/01/12/nosql-telephony-with-tropo-and-couchdb/#respond</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Tue, 12 Jan 2010 22:51:07 +0000</pubDate>
+				<category><![CDATA[CouchDB]]></category>
+		<category><![CDATA[Development Tools]]></category>
+		<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[Tutorials]]></category>
+		<category><![CDATA[Cloud Telephony]]></category>
+		<category><![CDATA[Tropo]]></category>
+		<category><![CDATA[Ubuntu]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1525</guid>
+
+					<description><![CDATA[In the last two posts, I&#8217;ve provided a basic overview of how to create cloud telephony applications using the Tropo platform and CouchDB. In the first post of this series, I walked through a quick install of CouchDB and provided information on getting a Tropo... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/01/12/nosql-telephony-with-tropo-and-couchdb/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>In the last two posts, I&#8217;ve provided a basic overview of how to create cloud telephony applications using the <a href="http://tropo.com" target="_blank">Tropo platform</a> and <a href="http://couchdb.apache.org/" target="_blank">CouchDB</a>.  </p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/couchdb-logo.png" alt="Apache CouchDB Logo" /></p>
+<p>In the <a href="http://www.voiceingov.org/blog/?p=1471">first post</a> of this series, I walked through a quick install of CouchDB and provided information on getting a Tropo account set up.  In the <a href="http://www.voiceingov.org/blog/?p=1510">second post</a>, we created a simple auto attendant Tropo script in PHP that populates a CouchDB database with a call record for each inbound call that is transferred.</p>
+<p>I&#8217;ll conclude the series with information on how to retrieve information from a CouchDB instance for use in a cloud telephony application, and talk about design documents.  This post will also introduce the reader to the concepts of CouchDB <em>Views</em> and <em>Show Functions</em> &#8211; powerful tools that can be harnessed to create truly cutting edge cloud phone apps.</p>
+<p>First, let&#8217;s create a CouchDB database to hold our call settings.</p>
+<p><strong>Creating a Call Settings Database</strong></p>
+<p>As mentioned in the previous CouchDB posts, you can create a new call settings database using <code>curl</code> from the command line, or using the Futon GUI.  </p>
+<blockquote><p>
+$ curl -X PUT <a href="http://your_new_couchdb_ip:5984/call_settings" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings</a></p>
+<p>You should see a response from CouchDB like this:</p>
+<p><strong>{&#8220;ok&#8221;:true}</strong></p>
+</blockquote>
+<p>You can add a record to the call settings database the same way.  This time, however, we&#8217;ll append the URL for our CouchDB database with a document ID, in this case &#8216;1000&#8217; &#8211; this is the extension that a caller to our cloud telephony app will dial.  We&#8217;ll use the document ID and and the CouchDB REST API to get all of the settings we&#8217;ll need to conduct the transfer &#8211; these settings can be seen in the document structure below (feel free to add others to meet your needs or preferences).</p>
+<blockquote><p>
+$ curl -X PUT <a href="http://your_new_couchdb_ip:5984/call_settings/1000" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/1000</a> -d &#8216;{&#8220;first_name&#8221;:&#8221;Joe&#8221;,&#8221;last_name&#8221;:&#8221;Blow&#8221;,&#8221;phone&#8221;:&#8221;17777777777&#8243;,&#8221;title&#8221;:&#8221;Master of Disaster&#8221;,&#8221;ring_tone&#8221;:&#8221;audio/ring.wav&#8221;}&#8217;</p>
+<p>You should see a response from CouchDB like this:</p>
+<p><strong>{&#8220;ok&#8221;:true,&#8221;id&#8221;:&#8221;1000&#8243;,&#8221;rev&#8221;:&#8221;1-0cf5a7c3a70ac5760f1a5d8dcb8b48d2&#8243;}</strong></p>
+</blockquote>
+<p>Let&#8217;s add a few more documents to our call settings database (replacing the telephone numbers below with real ones that you want callers to transfer to) and then view all of the documents that we have created.</p>
+<blockquote><p>
+$ curl -X PUT <a href="http://your_new_couchdb_ip:5984/call_settings/2000" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/2000</a> -d &#8216;{&#8220;first_name&#8221;:&#8221;Harry&#8221;,&#8221;last_name&#8221;:&#8221;Smith&#8221;,&#8221;phone&#8221;:&#8221;18888888888&#8243;,&#8221;title&#8221;:&#8221;President of the World&#8221;,&#8221;ring_tone&#8221;:&#8221;audio/ring.wav&#8221;}&#8217;</p>
+<p>$ curl -X PUT <a href="http://your_new_couchdb_ip:5984/call_settings/3000" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/3000</a> -d &#8216;{&#8220;first_name&#8221;:&#8221;Martin&#8221;,&#8221;last_name&#8221;:&#8221;Scorsese&#8221;,&#8221;phone&#8221;:&#8221;19999999999&#8243;,&#8221;title&#8221;:&#8221;The Departed&#8221;,&#8221;ring_tone&#8221;:&#8221;audio/ring.wav&#8221;}&#8217;</p>
+<p>You can view all of the documents in a CouchDB database using the HTTP GET method:</p>
+<p>$ curl -X GET <a href="http://your_new_couchdb_ip:5984/call_settings/_all_docs" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/_all_docs</a></p>
+<p>You should see a response from CouchDB like this:</p>
+<p><strong>{&#8220;total_rows&#8221;:3,&#8221;offset&#8221;:0,&#8221;rows&#8221;:[<br />
+{&#8220;id&#8221;:&#8221;1000&#8243;,&#8221;key&#8221;:&#8221;1000&#8243;,&#8221;value&#8221;:{&#8220;rev&#8221;:&#8221;1-0cf5a7c3a70ac5760f1a5d8dcb8b48d2&#8243;}},<br />
+{&#8220;id&#8221;:&#8221;2000&#8243;,&#8221;key&#8221;:&#8221;2000&#8243;,&#8221;value&#8221;:{&#8220;rev&#8221;:&#8221;1-ee2f09516df8b191a89791b01828d788&#8243;}},<br />
+{&#8220;id&#8221;:&#8221;3000&#8243;,&#8221;key&#8221;:&#8221;3000&#8243;,&#8221;value&#8221;:{&#8220;rev&#8221;:&#8221;1-a1399e8218ae75e1efb73ba3f87862ff&#8221;}}<br />
+]}</strong></p>
+</blockquote>
+<p>Now we need to modify our Tropo PHP script to retrieve the settings we want to use with each transferred call.  </p>
+<p>Note, for now we&#8217;ll keep the logic simple &#8211; if a caller enters an extension that does not exist we&#8217;ll get a specific HTTP response back from CouchDB &#8211; something in the 400 class of responses.  If this happens, we&#8217;ll just end the call &#8211; in the real world you&#8217;d want to do something a little more friendly, but you can sort that out when you build your own cloud telephony application. <img src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/72x72/1f609.png" alt="😉" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<p><strong>Modifying the Tropo Script</strong></p>
+<p>So, our new Tropo script looks like this:</p>
+<p>Note that the <code>getPhoneNumberByExtension()</code> method no longer returns a hard coded phone number &#8211; it is using the 4-digit extension entered by the caller to access our CouchDB database using the REST API.  The response from CouchDB is a document in JSON format, that we can easily parse using PHP&#8217;s handy <code>json_decode()</code> function.</p>
+<p>I&#8217;ve also modified the value of the $callLog variable to correctly capture some of the variables exposed in the Tropo environment (i.e., the session ID of the call, and the caller ID &#8211; see <a href="http://www.tropo.com/forums/?xt=1262904227270&amp;&amp;bb-cid=99&amp;bb-statusBitToShow=0&amp;bb-tid=1048001#bb" target="_blank">this thread</a> for more information).</p>
+<p>So now we have a working cloud telephony application built on Tropo that uses CouchDB to get its call settings, and also to write a call record for billing, reconciliation, etc. </p>
+<p>As cool as this is, there is still a lot more we can do with CouchDB in our cloud telephony apps.  Note the constants declared at the top of the Tropo script &#8211; the last two are blank; one for a design document name, and one for a show function.  </p>
+<blockquote><p>
+define(&#8220;COUCH_DB_DESIGN_DOCUMENT_NAME&#8221;, &#8220;&#8221;);<br />
+define(&#8220;COUCH_DB_SHOW_FUNCTION_NAME&#8221;, &#8220;&#8221;);
+</p></blockquote>
+<p>Let&#8217;s talk about those concepts now, and explore how they could be used in a cloud telephony application.</p>
+<p><strong>Getting more out of CouchDB &#8211; Design Documents, Map/Reduce and Show Functions</strong></p>
+<p>As the title of this post suggests, we&#8217;re building cloud-based phone applications without SQL.  CouchDB doesn&#8217;t use SQL &#8211; instead it uses a Map/Recuce framework to index documents in a database.</p>
+<p>Map functions can be used to emit a key-value listing of documents in a CouchDB database.  Reduce functions are used to aggregate the key-value pairs emitted by a Map function.  Map/Reduce functions (or Views) live inside of a special document in a CouchDB database called a &#8220;<a href="http://books.couchdb.org/relax/design-documents/design-documents" target="_blank">design document</a>&#8220;, which has a document ID prefixed with &#8220;_design/&#8221;.</p>
+<p>For example, suppose we have a special design document in our database called &#8220;_design/extensions&#8221; with a View called &#8220;getExtensions&#8221; &#8211; our View is made up of a Map function and (optionally) a Reduce function.  Let&#8217;s assume our View has only a Map function to return data on extensions with valid phone numbers to transfer a caller to.</p>
+<blockquote><p>
+function(doc) {<br />
+&nbsp;&nbsp;if(doc.phone.length == 11 &amp;&amp; doc.phone.substr(0,1) == &#8216;1&#8217;) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;emit(doc._id, doc.phone);<br />
+&nbsp;&nbsp;}<br />
+}
+</p></blockquote>
+<p>Our Map function (which is written in JavaScript, and stored in our design document) has one parameter &#8211; <code>doc</code>.  This function is called for each document in our database, and the <code>doc</code> parameter represents the document itself.  As can be seen, we simply examine each document in the database to see if it has a valid phone number (11 digits, starting with 1).</p>
+<p>Views are accessed using a specific URI structure (do note, however, that the REST API for querying Views can change significantly between CouchDB versions), and the response is a set of key-value pairs formatted as JSON.</p>
+<blockquote>
+<p><a href="http://server_ip_address:5984/database_name/_design/design_document_id/_view/view_name" rel="nofollow">http://server_ip_address:5984/database_name/_design/design_document_id/_view/view_name</a></p>
+<p>$ curl -X GET <a href="http://your_new_couchdb_ip:5984/call_settings/_design/extensions/_view/getExtensions" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/_design/extensions/_view/getExtensions</a></p>
+<p>You should see a response from CouchDB like this:</p>
+<p><strong>{&#8220;total_rows&#8221;:3,&#8221;offset&#8221;:0,&#8221;rows&#8221;:[<br />
+{&#8220;id&#8221;:&#8221;1000&#8243;,&#8221;key&#8221;:&#8221;1000&#8243;,&#8221;value&#8221;:&#8221;17777777777&#8243;},<br />
+{&#8220;id&#8221;:&#8221;2000&#8243;,&#8221;key&#8221;:&#8221;2000&#8243;,&#8221;value&#8221;:&#8221;18888888888&#8243;},<br />
+{&#8220;id&#8221;:&#8221;3000&#8243;,&#8221;key&#8221;:&#8221;3000&#8243;,&#8221;value&#8221;:&#8221;19999999999&#8243;}<br />
+]}</strong></p>
+</blockquote>
+<p>You can check to see if your Map function is working properly by adding a document with an invalid phone number.</p>
+<blockquote><p>
+$ curl -X PUT <a href="http://your_new_couchdb_ip:5984/call_settings/4000" rel="nofollow">http://your_new_couchdb_ip:5984/call_settings/4000</a> -d &#8216;{&#8220;first_name&#8221;:&#8221;Richard&#8221;,&#8221;last_name&#8221;:&#8221;Kimble&#8221;,&#8221;phone&#8221;:&#8221;4444444&#8243;,&#8221;title&#8221;:&#8221;The Fugitive&#8221;,&#8221;ring_tone&#8221;:&#8221;audio/ring.wav&#8221;}&#8217;
+</p></blockquote>
+<p>Accessing the <code>getExtensions</code> view will return the same results as before, as the phone number for the new document does not pass validation.  Using design documents and Views, cloud telephony developers can use CouchDB to build grammars for user input which will significantly enhance the usability of the sample application we&#8217;ve used during the last few posts.</p>
+<p>But there is even more potential with another piece of functionality in CouchDB &#8211; <a href="http://books.couchdb.org/relax/design-documents/shows" target="_blank">show functions</a>.  Show function also live in design documents, alongside Views.  Show functions allow a developer to return specifically formatted content from a CouchDB instance, not just data in JSON format.</p>
+<p>A basic show function that can be used to return information from our CouchDB database in the format of a <a href="http://www.w3.org/TR/speech-grammar/" target="_blank">SRGS grammar</a> might look like this.</p>
+<blockquote><p>
+function(doc, req) {<br />
+&nbsp;var grammer = &#8216;&lt;?xml version=&#8221;1.0&#8243;?&gt;&lt;grammar xmlns=&#8221;<a href="http://www.w3.org/2001/06/grammar&#8221;&gt;&#038;#8217" rel="nofollow">http://www.w3.org/2001/06/grammar&#8221;&gt;&#038;#8217</a>;;<br />
+&nbsp;grammar += &#8216;&lt;rule id=&#8221;R_1&#8243;&gt;&lt;one-of&gt;&#8217;;<br />
+&nbsp;grammar += &#8216;&lt;item&gt;&#8217; + doc.phone + &#8216;&lt;item&gt;&#8217;;<br />
+&nbsp;grammar += &#8216;&lt;/one-of&gt;&lt;/rule&gt;&lt;/grammar&gt;&#8217;;<br />
+&nbsp;return grammar;<br />
+}
+</p></blockquote>
+<p>Like Views, Show Functions are accessed using a specific URI structure.</p>
+<blockquote><p><a href="http://" rel="nofollow">http://</a>{server_ip_address}:5984/{database_name}/_design/{design_document_id}/_show/{show_function_name}/{document_id} </p></blockquote>
+<p>Note that the Show function above is different from the Map function discussed earlier in that it takes two parameters &#8211; <code>doc</code> and <code>req</code>.  As before, the <code>doc</code> parameter represents the document the function is called against.  The req parameter represents a parameter that is sent in with the HTTP request, which can be used inside the function to render output.  So a Show function canbe accessed using the above URL with an optional parameter as well, like so.</p>
+<blockquote><p>
+<a href="http://" rel="nofollow">http://</a>{server_ip_address}:5984/{database_name}/_design/{design_document_id}/_show/{show_function_name}/{document_id}<strong>?{parameter}={some_value}</strong>
+</p></blockquote>
+<p><strong>Conclusion</strong> </p>
+<p>I hope this series of posts has provided a helpful overview of CouchDB, with an emphasis on how it can be used to build cloud telephony applications.</p>
+<p>Cloud telephony platforms like <a href="http://tropo.com" target="_blank">Tropo</a>, <a href="http://cloudvox.com/" target="_blank">CloudVox</a>, <a href="http://www.callfire.com" target="_blank">CallFire</a> and others provide enormous flexibility to developers in building and deploying sophisticated cloud telephony applications.  </p>
+<p>Pair these tools with <a href="http://couchdb.apache.org/" target="_blank">CouchDB</a> and you&#8217;ve got a powerful combination for building full featured, easy to maintain cloud-based phone apps.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/01/12/nosql-telephony-with-tropo-and-couchdb/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/couchdb-logo.png" medium="image">
+			<media:title type="html">Apache CouchDB Logo</media:title>
+		</media:content>
+	</item>
+	</channel>
+</rss>

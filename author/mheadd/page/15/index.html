@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>mheadd | Civic Innovations | Page 15</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=2372'
+					+ '&is_singular=';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145814";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Posts by mheadd Feed" href="../../feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJyNkt1uwyAMhV9oDk2VtbuZ9iz8eMwdEIShGW8/Gq1R1nbtbpCN/R2ObMQUQY8hY8jCF4iuWAospqhHD+zJYb3IOs38JG5jFN4pUK5LcNV87rSlpQqTbZWE4tgP3abbClXIGaHcqD/BkUoyVcG5OlyEKGhXDLI4sPBoSKJDP9tYJdHJigkcWqlr5yk8xlttnf+C/jY/O21imKM8WZZ1LBlsInNh+98SSWYKlh/gevzBtl3/0vXA5KNDSHhsQzTEeemA20KrpZ0W0O59lNdTuINNZCzmhvM5hoxf95H5HykVEzJDOz0VD/mjvTV/qzf/2u92280wPO/3h29CRvpa?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s0.wp.com/wp-content/themes/h4/global.css?m=1420737423h&cssminify=yes' type='text/css' media='all' />
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/author/mheadd/page/15/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/_static/??-eJzTLy/QTc7PK0nNK9HPKtbPzU/KzEnVLS1OLUpMB4rpZual5etlFevoo6oryinRLSjKr6iEyWXmJeeUpqQWgySzCktTiyqhlF5uZh5BRbq5melFiSWpUMX2ubaGZsbm5gYmJpbmWQCPUzuV'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="profile" />
+<meta property="og:title" content="mheadd" />
+<meta property="og:url" content="http://civicio.wordpress.com" />
+<meta property="og:description" content="Mark Headd is the former Chief Data Officer for the City of Philadelphia, serving as one of the first municipal Chief Data Officers in the United States, and was also Director of Government Relatio…" />
+<meta property="profile:first_name" content="Mark" />
+<meta property="profile:last_name" content="Headd" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="https://secure.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=200&#038;d=identicon&#038;r=g" />
+<meta property="og:image:alt" content="mheadd" />
+<meta property="og:locale" content="en_US" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="Read all of the posts by mheadd on Civic Innovations" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="archive paged author author-mheadd author-3801781 paged-15 author-paged-15 customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/author/mheadd/page/15/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+			<header class="page-header">
+				<h1 class="page-title">
+					Author: <span class="vcard">mheadd</span>				</h1>
+							</header><!-- .page-header -->
+
+						
+				
+<article id="post-2372" class="post-2372 post type-post status-publish format-standard hentry category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/07/29/the-road-ahead-for-open-baltimore/index.html" rel="bookmark">The Road Ahead for Open&nbsp;Baltimore</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/07/29/the-road-ahead-for-open-baltimore/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="July 29, 2011"><i class="fa fa-clock-o"></i>July 29, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A couple of months ago, I wrote about <a href="http://www.voiceingov.org/blog/?p=2282">the state of the open data program in the city of Baltimore</a>. </p>
+<p>At the time, the buzz from a <a href="http://www.baltimorebrew.com/2011/02/12/happy-civic-hack-day-baltimore/">day of civic hacking</a> with data released by the city was still palpable and the developers of an application built in the wake of this event stood ready to release it for public use with a full marketing push.</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/bmore.jpeg" alt="City of Baltimore Logo" title="City of Baltimore Logo" width="133" height="140" style="float:right;padding:10px;" /></p>
+<p>Questions remained about how developers would be authorized to use city data for commercial applications, and &#8211; perhaps more importantly &#8211; how often the data released as part of the Open Baltimore initiative would be refreshed and maintained.</p>
+<p>At the recent <a href="http://bniajfi.org/baltimore_data_day">Baltimore Data Day</a> event &#8211; organized by the Baltimore Neighborhood Indicators Alliance &#8211; I had an opportunity to meet <a href="http://twitter.com/#!/baltimorecio">Rico Singleton</a> (CIO for the City of Baltimore) and some of his staff to talk about Open Baltimore.</p>
+<p>Based on what I heard from Mr. Singleton and his staff, I think that significant questions about the open Baltimore initiative still remain, but I am now more convinced of the city’s commitment to open data and to the long-term success of the program.</p>
+<p><strong>An Outsider’s Perspective</strong></p>
+<p>I don’t live in Baltimore so I sincerely hope that my perspective on the city’s open data program will be interpreted for what it is: a representative view of the many people who have friends or family there, who visit often, who care deeply about the state of the city, and who are interested in building civic apps for Baltimore.</p>
+<p>To the extent that there are political undercurrents to what is happening with open data in Baltimore, I’m detached from them. I won’t (and can’t) vote for any political representative in Baltimore and I don’t (and won’t) contribute money to any of their campaigns.</p>
+<p>I have, however, worked with other cities to provide advice and support for their open data programs &#8211; most notably the cities of San Francisco and Philadelphia &#8211; and I enjoy being active in the civic hacking ecosystem.  Outside of the city of Baltimore, I don’t think you’ll find a bigger supporter of the Open Baltimore program or someone rooting harder for its long-term success.</p>
+<p>I was encouraged by what I heard from Mr. Singleton and his staff last week at Baltimore Data Day, but long-term success for Open Baltimore still seems somewhat in doubt. </p>
+<p>Here is what I heard, and what I would suggest to Mr. Singleton and MOIT for making Open Baltimore a smashing long-term success.</p>
+<p><strong>An Open Discussion</strong></p>
+<p>Baltimore Data Day provided an opportunity for myself and <a href="http://twitter.com/#!/mikemakes">Mike Brenner</a> (a passionate advocate for open data in Baltimore and organizer of the <a href="http://weblogs.baltimoresun.com/news/technology/2011/02/civic_hack_day_in_baltimore_ki.html">Civic Hack Day</a>) to meet Rico Singleton in person.  I wanted to use this opportunity to discuss what I thought about Open Baltimore.</p>
+<p>Mr. Singleton was very approachable, friendly and eager to talk.  His time was somewhat limited at the event, but we had a chance to chat briefly about the Open Baltimore initiative and I was able to express some of the concerns that I have heard from others in and around the open data movement in Baltimore.</p>
+<p>Chief among them was that the data in the Open Baltimore site is <a href="http://data.baltimorecity.gov/">quickly becoming stale</a>.  For example, some of the more prominent data sets are now quite old &#8211; data on 311 service requests is only current to January, and parking citation data is only current to March.</p>
+<p>If developers are going to use city data to build civic apps (or if activists and community leaders are going to use it to advocate for those they represent) this data must be kept more current.  Mr. Singeton (and MOIT staff at the event) seemed to understand this concern, but none offered a clear and convincing response to how the city would address it.</p>
+<p>Two representatives from MOIT staff were on hand to talk at the Baltimore Data Day event as well &#8211; Heather Hudson (the full time program manager for Open Baltimore) and Tom Jones (technical support for Open Baltimore and other MOIT initiatives).  Both discussed in some detail an effort by the city to provide more realtime updates to the Open Baltimore site, particularly for high demand data sets like parking citations.</p>
+<p>Both Hudson and Jones seemed excited and passionate about this effort, but neither provided specifics on when this process or system would be put into regular use.  While I was initially very excited to hear about this effort, it was pointed out to me by others afterwards that this discussions <a href="http://discuss.baltimorecity.gov/topic/why-haven-t-the-311-and-crime-data-sets-been-updated">has been going on for some time</a>.</p>
+<p>In the limited time that was available, I asked both Hudson and Mr. Singleton if the city would be willing to endorse and actively participate in another data hacking event focused on the use of city data to build civic apps. </p>
+<p>Both thought it was a good idea and accepted the offer.  Mr. Singleton shook hands with myself and Mike Brenner on it before departing for another event.</p>
+<p><strong>The Road Ahead for Open Baltimore</strong></p>
+<p>I’ve said this before and I truly believe it &#8211; the City of Baltimore’s open data program has some of the key ingredients needed for real long-terms success.</p>
+<p>Chief among them &#8211; in my opinion &#8211; is the selection of <a href="http://www.socrata.com/">Socrata</a> as the platform for serving data sets.  The <a href="http://dev.socrata.com/">Socrata platform</a> is just awesome and the company is a leader in the open data movement, helping develop standards that benefit any government wishing to start down this road.</p>
+<p>In addition, there is a passionate and active developer community in Baltimore &#8211; as evidenced by the attendance at and enthusiasm from the Civic Hack Day organized earlier this year.</p>
+<p>But to capitalize on these things, I believe that Mr. Singleton and his staff need to do some things differently.</p>
+<p><em>Communication</em></p>
+<div style="margin-left:10px;">
+The city needs to do a better job communicating with developers about what it is doing to improve the Open Baltimore site and in soliciting feedback on how it can do things better.</p>
+<p>Neither the city’s <a href="http://discuss.baltimorecity.gov/openbaltimore">forums</a> on Open Baltimore or the Open Baltimore <a href="https://twitter.com/#!/openbaltimore">twitter feed</a> are especially active (one can almost hear the crickets). </p>
+<p>How is the city communicating with the technology community about Open Baltimore? Am I missing something? I see lots of discussion in social networks like <a href="https://www.facebook.com/groups/baltimoretech">Facebook</a> from the technology community in Baltimore, but almost nothing from the city on what it’s hopes, plans or intentions are for Open Baltimore.</p>
+<p>On a personal note, it registered rather sharply with me that neither Ms. Hudson nor Mr. Jones from MOIT is on Twitter (I specifically asked about this).  Mr Singleton is at best an <a href="https://twitter.com/#!/baltimorecio">infrequent Twitter user </a>and none of them seems to be active on Facebook.</p>
+<p>It’s telling that although several people I talked to had heard about the city’s efforts to push realtime data to the Open Baltimore site, no one seems to know what the timeline for this effort is.  Beyond the discussion with Hudson and Jones at Baltimore Data Day last week, I’m not aware of any specific data sets being named as candidates for this effort either (Hudson indicated that parking citations are part of the beta &#8220;realtime project&#8221;).</p>
+<p>Developers may not be happy with the frequency of updates to particular data sets, but they would be far more understanding if they had clear information on what was being done behind the scenes to enhance them.  Without good information, ominous conclusions are more likely to be drawn.</p>
+<p>Moreover, I think it would be great to see MOIT tell the story behind this push for realtime updates. I got the sense in talking with MOIT staff last week that this is a rather unique effort among cities that use the Socrata platform.  What a great story to tell &#8211; I’m sure the technology community in Baltimore would love to hear it.
+</p></div>
+<p><em>Engagement</em></p>
+<div style="margin-left:10px;">
+Our motivation in asking Mr. Singleton and Ms. Hudson to stand shoulder-to-shoulder with local organizers for another Civic Hack Day was simple &#8211; I think the city needs to engage consumers of open data (i.e., developers) more directly.</p>
+<p>Other cities and states that have embarked on open data programs have undertaken multifaceted efforts to engage developers and overtly communicate with them that the government wants them to use its data to build awesome things. This is noticeably absent from the Open Baltimore initiative.</p>
+<p>While I would personally love to see a full on app development contest in Baltimore, I think another  Civic Hack Day with the city’s explicit endorsement (and full participation) would go a long way toward communicating with developers that the city wants their help in turning city data into useful end products.</p>
+<p>It’s also worth noting that Baltimore Data Day itself represented something of a missed opportunity for engagement on Open Baltimore. The event would have been a perfect fit for a presentation on the status, and future goals of Open Baltimore and there were many participants at the event who would have benefited from some time with Mr. Singleton.</p>
+<p>(Another open data pioneer in Baltimore &#8211; <a href="http://twitter.com/#!/vinylfox">Shea Frederick</a>, one of the creators of <a href="http://www.spotagent.com/">SpotAgent</a> &#8211; was unable to meet with Mr. Singleton or his staff at the event as they did not arrive until almost midday.)</p>
+</div>
+<p>In my opinion, the City should do more to reach out to the developer and tech communities in and around Baltimore. They are your best possible allies for making Open Baltimore a success.</p>
+<p>I look forward to seeing the Open Baltimore initiative become successful in the long term, and I hope that this advice (from one interested outsider) can help make a difference.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2360" class="post-2360 post type-post status-publish format-standard hentry category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/07/24/local-focus-drives-apps-for-metro-chicago/index.html" rel="bookmark">Local Focus Drives Apps for Metro&nbsp;Chicago</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/07/24/local-focus-drives-apps-for-metro-chicago/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="July 24, 2011"><i class="fa fa-clock-o"></i>July 24, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Really like the information I am getting about the <a href="http://www.appsformetrochicago.com/">Apps for Metro Chicago</a> contest.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/apps-for-chicago.jpeg" alt="Apps for Metro Chicago" title="Apps for Metro Chicago" width="240" height="70" style="float:right;margin:5px;padding:5px;" /><br />
+This OpenGov app development contest seems to have taken a lot of the learnings from other contests and incorporated them into some of the things that define how it will operate.</p>
+<p>Case in point, a focus on &#8220;local usefulness&#8221; &#8211; here is a snippet from the <a href="http://www.appsformetrochicago.org/rules#criteria">judging criteria</a>:</p>
+<blockquote><p>
+The judges are looking for apps that are built with the input and support of not-for-profits, community organizations and businesses. If you can include a letter from a partner group saying &#8220;we&#8217;ve used this app and it furthers our mission and/or business&#8221; in your submission, you get extra points. If you work closely with a partner group to develop an app that helps them solve a problem and build a plan to integrate your app into their online presence, your app will automatically rise to the top of the pile.
+</p></blockquote>
+<p>That&#8217;s smart, and could result in some first rate apps beng submitted for this contest.  </p>
+<p>It&#8217;s a definite departure from the focus of other OpenGov app contests &#8211; like the app contest that was conducted as <a href="http://www.opengovwest.org/events/conference/opengovwest-11/1304-2/">part of OpenGov West</a>, which focused on apps that crossed over government boundaries and used data sets from multiple governments.</p>
+<p>It will be interesting to see how this local focus affects the kind (and number) of apps submitted.</p>
+<p>I may have to roll up my sleeves and get an entry together for this one. 😉</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2347" class="post-2347 post type-post status-publish format-standard hentry category-cell-phones category-couchdb category-development-tools category-digital-divide category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/06/02/phind-it-for-me-live-in-philly/index.html" rel="bookmark">&#8220;Phind It For Me&#8221; Live in&nbsp;Philly</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/06/02/phind-it-for-me-live-in-philly/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="June 2, 2011"><i class="fa fa-clock-o"></i>June 2, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Really excited to launch a new OpenGov project in Philadelphia &#8211; <a href="http://phinditfor.me/">Phind It For Me</a>.</p>
+<p>The service is built on <a href="http://phlapi.com">PHLAPI</a> and the point data sets it houses.  As such, one could understand why I&#8217;d be interested in <a href="http://www.voiceingov.org/blog/?p=2334">enhancing the data sets currently in PHLAPI</a>.</p>
+<p>I&#8217;m really excited about this project &#8211; source code <a href="https://github.com/mheadd/finditforme">available on GitHub</a> &#8211; and would love to see if there is an interest in launching in other cities with CouchDB-based geospatial data repositories, like <a href="http://www.voiceingov.org/blog/?p=2234">Baltimore</a>.</p>
+<p>It&#8217;s built on the awesome new <a href="http://smsified.com/">SMSified platform</a> from Voxeo (disclaimer, I work there) and uses a Node.js module I built for <a href="http://blog.smsified.com/2011/05/introducing-the-smsified-node-js-module/">working with the SMSified API</a>.</p>
+<p>As always, dear readers, any comments or feedback is welcomed.</p>
+<p>Do head on over to the <a href="http://phinditfor.me/">project website</a> and check it out! </p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2307" class="post-2307 post type-post status-publish format-standard hentry category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/05/19/app-contests-and-open-data-alive-and-well/index.html" rel="bookmark">App Contests and Open Data: Alive and&nbsp;Well</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/05/19/app-contests-and-open-data-alive-and-well/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="May 19, 2011"><i class="fa fa-clock-o"></i>May 19, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Earlier this month, an article appeared in Government Technology magazine <a href="http://www.govtech.com/e-government/Apps-Contest-Winners-Need-Better-Government-Data.html?page=1">focusing on the legacy of the opengov app development contest</a>, pioneered in Washington DC several years ago with the Apps for Democracy contest.</p>
+<p>This article raises some important questions for app contest organizers, particularly governments that may view them as a way to stimulate interest in using open data sets.  It also examines the long-term viability (and current status) of applications developed as part of the Apps for Democracy contest, and suggests that there is a relationship between the ultimate benefit of government sponsored app contests and the long-term operation of such apps.</p>
+<p>Some of the issues raised in this article have come up before, and I&#8217;ve <a href="../../../../2010/06/08/a-glass-half-full-view-of-government-app-contests/index.html">written about</a> them and taked about them extensively in different forums.</p>
+<p>I think examining the return on investment for government sponsored app contests, and looking for ways to make them more useful and successful, is a very good thing.</p>
+<p>However, this article had some statements in it that I feel compelled to address, and it also lacked the proper focus to achieve what it may have set out to do &#8211; provide information on the legacy of Apps for Democracy and the current state of government app contests.</p>
+<h3>Open Data is Alive and Well</h3>
+<p>One of the statements I feel compelled to address was attributed to one of the organizers of the original Apps for Democracy contest, Peter Corbett of iStrategy Labs: </p>
+<blockquote><p>
+“You don’t see cities like New Orleans, St. Louis, Kansas City or any major metropolises jumping and saying, ‘We need to do this now.’ There doesn’t seem to be a stampede movement like there should be,” Corbett said, pointing out that open data initiatives are catching fire in European countries.
+</p></blockquote>
+<p>I respectfully disagree with my friend Peter on this point.</p>
+<p>In just the last few months we have seen major metropolises like <a href="http://opendataphilly.org/">Philadelphia</a>, <a href="http://data.baltimorecity.gov/">Baltimore</a> and <a href="http://data.cityofchicago.org/">Chicago</a> (to name just a few) unveil open government data portals.  And these cities also have vigorous communities around their portals, organizing app development events and pushing for additional data sets.  </p>
+<p>Does this qualify as a stampede? Probably not, but lets not pretend that a growing number of cities are not embracing open data. They clearly are. </p>
+<p>It isn&#8217;t just cities, either. State governments are also joining the movement &#8211; <a href="http://data.oregon.gov/">Oregon</a> and <a href="http://data.ca.gov/">California</a> jump immediately to mind.</p>
+<p>And those that embraced open data early are formalizing their commitment to open data &#8211; the City of Portland is a <a href="http://siliconflorist.com/2009/09/28/city-portland-mayor-sam-adams-resolution-open-source-open-data-transparency-communities-official/">great example of this</a>.</p>
+<p>And it isn&#8217;t just cities in the U.S., either &#8211; municipal governments in Canada have also been particularly active on the open data front.</p>
+<h3>What Defines Success?</h3>
+<p>The article takes the view that because some of the applications that are developed as part of government sponsored app contests are not commercially viable, or maintained long-term, there is limited benefit to government sponsorship and support (particularly financial support).</p>
+<blockquote><p>
+[M]any apps generated by government open data programs cease being updated once hype over their creation subsides. Governments usually lack the interest and resources to take over maintenance of the applications, and developers have trouble making money off them.
+</p></blockquote>
+<p>If I took a guess, I&#8217;d say with a fair amount of confidence that most developers who build civic applications have no interest in making money off them (beyond enough to offset out of pocket costs).</p>
+<p>But should commercialization, or even long-term viability, of an app developed as part of a government sponsored app contest be used as a measure of their usefulness?  This is an issue <a href="../../../../2010/06/08/a-glass-half-full-view-of-government-app-contests/index.html">I&#8217;ve dicussed before</a>, and my felings have not changed.</p>
+<blockquote><p>
+The road to tech startup profitability and success is a long and hard one, and it’s littered with the hollowed out husks of ideas (some very bad, some very good) that for one reason or another just don’t make it.</p>
+<p>Should we be overly concerned that the dynamic of government app contest entries is essentially the same as it is for any other sort of technology startup project? Personally, I don’t think so.
+</p></blockquote>
+<p>The record for success on all technology startups is daunting, and yet governments spend considerable sums funding startups through economic development activities, tax benefits and support for VCs (some governments provide resources to back VC and &#8220;angel&#8221; investor funds).</p>
+<p>Why is there a different standard for open gov startups?</p>
+<p>It&#8217;s also worth noting that many open gov startup projects leave enhanced open data sets in their wake.  If one of the things open gov app developers must do to support their project is to manually clean up or enhance data, this can result in better data sets for other developer to use down the road, providing an additional public benefit.</p>
+<h3>App contests are Going Strong</h3>
+<p>The following quote in the article is attributed to Former DC CIO Bryan Sivak:</p>
+<blockquote><p>
+“[Open data] has sort of lost some of the luster it had a couple of years ago, but I think that’s typical for any sort of newer idea — new technology, new product or whatever,” Sivak said. “When you first launch something there is a peak of inflated expectation, which inevitably drops into the valley of disinterest.”
+</p></blockquote>
+<p>It&#8217;s hard to find evidence of this disinterest in the plethora of app development contests and hackathons taking place all over the country, each with government open data as their foundation.</p>
+<p>Examples of this abound &#8211; New York City&#8217;s <a href="http://nycbigapps.com/">Big Apps II</a>, <a href="http://www.ca.gov/appsforcalifornians/">Apps for Californians</a>, open data hacking events in <a href="http://bcni2011.eventbrite.com/">Philly</a>, <a href="http://civichackday.eventbrite.com/">Baltimore</a> and <a href="http://loqi.me/poll/geoloqi-hackathon-2010">Portland</a>, <a href="http://www.apps4ottawa.ca/">Apps for Ottowa</a>, <a href="http://contest.apps4edmonton.ca/">Apps for Edmonton</a>, <a href="http://www.opengovwest.org/events/conference/opengovwest-11/1304-2/">OpenGov West</a>, <a href="http://appsforcommunities.challenge.gov/">Apps for Communities</a>. The list goes on. And on.</p>
+<p>I think the article&#8217;s focus on DC is it&#8217;s ultimate undoing. </p>
+<p>Once a leader in the open government movement, DC municipal government seems to have <a href="http://311.dc.gov/cwi/Open311/v2/">completely lost interest in open data</a> and engaging application developers.  This is partly the result of the <a href="http://www.washingtonpost.com/wp-dyn/content/article/2010/09/15/AR2010091500834.html">ouster of Mayor Adrian Fenty</a> and, as a result, a new set of priorities coming from a new Mayor.</p>
+<p>But if the legacy of Apps for Democracy isn&#8217;t visible when you look at DC, it&#8217;s visible outside of the District.  It lies in the many other cities and states that have embraced open data (and the app contest as a tool for promoting the use of open data), as central tenants to their transparency policies.</p>
+<h3>What&#8217;s the Big Deal?</h3>
+<p>I believe that this article has the potential to damage the move toward open data, particularly in places that have yet to embrace it.</p>
+<p>Let&#8217;s face it &#8211; your average middle to upper management public IT official isn&#8217;t getting their news by filtering Twitter hashtags, or reading <a href="http://news.ycombinator.com/">Hacker News</a>.  </p>
+<p>They are more likely to have a copy of Government Technology Magazine on their desk, and it&#8217;s a fairly easy take away from this article that there is something wrong with the open data movement.</p>
+<p>Nothing could be further from the truth, and those of us that support it have an obligation to ensure that people who make decisions in government are aware that the movement is healthy, and going strong.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2274" class="post-2274 post type-post status-publish format-standard hentry category-couchdb category-open-government category-open-source category-standards">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/03/03/building-an-open311-application-with-nodejs-and-couchdb/index.html" rel="bookmark">Building an Open311 Application with Node.js and&nbsp;CouchDB</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/03/03/building-an-open311-application-with-nodejs-and-couchdb/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="March 3, 2011"><i class="fa fa-clock-o"></i>March 3, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Lots of work is being done to finalize the next version of the Open311 API spec (officially referred to as <a href="http://wiki.open311.org/GeoReport_v2">GeoReport V2</a>).</p>
+<p>Almost a year ago I launched <a href="http://tweetmy311.org/">TweetMy311</a> &#8211;  a service that lets people report non-emergency service requests using a smart phone and Twitter.  Since then, a lot has changed &#8211; not only with the Open311 specification but with the tools available to build powerful Twitter-based applications.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/nodejs_-300x102.jpg" alt="Node.js" title="Node.js" width="300" height="102" style="float:right;padding:5px;margin:5px;" /><br />
+In the last several months, I&#8217;ve spent a lot of time learning about and working with <a href="http://nodejs.org/">Node.js</a>. Some of the things I did in the initial version of TweetMy311 (<a href="http://tweetmy311.org/about-2/how-its-built/">written in PHP</a>) are so much easier to do in Node.js that I&#8217;ve decided to completely rewrite the application to use Node.  In addition, since I initially launched TweetMy311 CouchDB (the NoSQL database on which the app is built) has also <a href="http://blog.couchone.com/post/1027100082/whats-new-in-couchdb-1-0-part-4-securityn-stuff">seen a lot of enhancements</a>.</p>
+<p>I&#8217;ve expecting the overhaul I&#8217;m currently working on to make the application code a lot more efficient and easy to understand.  Once this overhaul is complete, I intend to release a big chunk of it as open source software, so that anyone that wants to build a powerful Node.js/CouchDB-based civic app can do so.</p>
+<p>It&#8217;s also exciting to see new cities get on board the Open311 bandwagon.  The <a href="http://www.cityofboston.gov/doit/apps/citizensconnect.asp">City of Boston</a> is now supporting Open311 and has started to issue API keys to developers.</p>
+<p>As part of my work to overhaul TweetMy311, I&#8217;ve developed a neat little <a href="https://github.com/mheadd/node-open311">Node.js library for interacting with the Open311 API</a>.  Since I just started to work with the Boston implementation, I thought it would be helpful to others interested in doing so to walk through a quick example.</p>
+<p>If you want to run this example for yourself, you&#8217;ll need to have Node.js installed, specifically the latest version &#8211; v0.4.2.  If you have the <a href="http://npmjs.org/">Node Package Manager</a> installed, you can simply do:</p>
+<blockquote>
+<pre>
+npm install open311
+</pre>
+</blockquote>
+<p>Once you&#8217;ve done this, you should be able to run the following script:</p>
+<p>Which will output:</p>
+<p>This is just a quick example of how to make the <a href="http://wiki.open311.org/GeoReport_v2#GET_Service_List">most basic of API calls</a> with the Node.js Open311 module.  You can use this module to build fully feature Open311 applications.</p>
+<p>I&#8217;ll be doing some more blogging in the weeks ahead as the rewrite of TweetMy311 continues, and work on this phase of the GeoReport V2 spec is concluded.</p>
+<p>Stay tuned!</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2256" class="post-2256 post type-post status-publish format-standard hentry category-open-government category-standards">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/02/23/the-key-to-open-gov-success-common-standards/index.html" rel="bookmark">The Key to Open Gov Success: Common&nbsp;Standards</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/02/23/the-key-to-open-gov-success-common-standards/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="February 23, 2011"><i class="fa fa-clock-o"></i>February 23, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>There is a really good post on the state of open government in Canada and the use of specific data licenses by Canadian cities over on <a href="http://eaves.ca/2011/02/16/the-state-of-open-data-in-canada-the-year-of-the-license/">David Eaves&#8217; blog</a>.</p>
+<p>His post raises an important issue for the open government movement, one that I believe will ultimately determine it&#8217;s success or failure &#8211; the adoption of common standards by multiple governments in support of open government.  This is something I&#8217;ve <a href="../../../../2010/04/01/opengov-apis-interfacing-with-open-government/index.html">touched on before</a>.</p>
+<p>Eaves&#8217; recent post discusses the importance of common licensing standards for open data.  Equally important, in my mind, are other standards like those being developed for <a href="http://open311.org/2010/10/georeport-v2-spec-stabilizes/">Open311</a>, and standards for data formats (like <a href="http://code.google.com/transit/spec/transit_feed_specification.html">GTFS</a>).</p>
+<p>One of the intended outcomes of the open government movement is the development of applications built on top of open data and open APIs. One of the primary advantages for governments from this type of &#8220;civic development&#8221; stems from the fact that (with rare exception) governments are not in direct competition with each other, and face common challenges.</p>
+<p>This means that solutions built to address issues in one jurisdiction or municipality can potentially provide a benefit in other municipalities.  That is the theoretical underpinning for efforts like <a href="http://civiccommons.org/">Civic Commons</a>.</p>
+<p>But for this to work, there must be mutually agreed upon standards for things like data formats, APIs and data licensure to name just a few.  Crafting and adopting these standards is work. Hard work.  And making this even more difficult is the fact that there are those who would benefit from the absence of such standards &#8211; <a href="../../../../2010/08/09/time-to-get-tough-with-311-vendors/index.html">software vendors and other service providers</a>.</p>
+<p>Without painting all such vendors with the same brush (there are some notable exceptions), the absence of standards allows vendors to lock customers into their particular solutions, and provides an opportunity for them to sell the same solution over and over to different governments.</p>
+<p>I&#8217;m not against capitalism (far from it), but governments need to get wise to the fact that common standards for data and APIs are what will ultimately help deliver on the promise of open government.  </p>
+<p>And also that there are those that do not wish such standards to be adopted or for open government to succeed.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2243" class="post-2243 post type-post status-publish format-standard hentry category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/02/03/cfa-hosts-lab-day-in-philly/index.html" rel="bookmark">CfA Hosts Lab Day in&nbsp;Philly</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/02/03/cfa-hosts-lab-day-in-philly/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="February 3, 2011"><i class="fa fa-clock-o"></i>February 3, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p><img src="https://i0.wp.com/photos2.meetupstatic.com/photos/event/8/c/e/9/global_20916073.jpeg" alt="CfA Philadelphia" style="float:right;padding:5px;margin:5px;" /></p>
+<p><a href="http://codeforamerica.org/philadelphia/">Code for America Philadelphia</a> is hosting an event this Friday at <a href="http://www.indyhall.org/">Indy Hall</a> in Philly.</p>
+<p><a href="http://www.meetup.com/Code-for-America-Philly/events/16199569/">Lab Day</a> is a chance to get together with the CfA Philly team, developers and civic hackers to share ideas and work on projects to make Philadelphia a better place.  If you haven&#8217;t yet met the CfA Philly team, or if you want to get involved in helping support the CfA effort, this is a great event to attend.</p>
+<p>Plus there will be food and drink provided by my company, <a href="https://www.tropo.com/">Tropo</a>.  You bring your laptop and your ideas, we&#8217;ll bring the calories.</p>
+<p>So if you have some time tomorrow, and you feel like hacking on an open government project, or just want to meet a dedicated bunch of people working to make their city better, come join the fun.</p>
+<p>Hope to see you there.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2234" class="post-2234 post type-post status-publish format-standard hentry category-couchdb category-development-tools category-open-government category-open-source category-twitter">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/01/21/experiments-in-open-data-baltimore-edition/index.html" rel="bookmark">Experiments in Open Data: Baltimore&nbsp;Edition</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/01/21/experiments-in-open-data-baltimore-edition/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="January 21, 2011"><i class="fa fa-clock-o"></i>January 21, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A lot of my open gov energy of late has been focused on replicating a technique pioneered by <a href="http://twitter.com/maxogden">Max Ogden</a> (creator of <a href="http://pdxapi.com/">PDXAPI</a>) to convert geographic information in shapefile format into an easy to use format for developers.</p>
+<p>Specifically, Max has pioneered a technique for converting shapefiles into documents in an instance of <a href="https://github.com/vmx/couchdb">GeoCouch</a> (the geographic -enabled version of <a href="http://couchdb.apache.org/">CouchDB</a>).</p>
+<p>I was thrilled recently to come across <a href="http://bniajfi.org/map_gallery/gis_shapefiles">some data for the City of Baltimore</a> and since I know there are some open government developments in the works there, I decided to put together a quick screencast showing how open data &#8211; when provided in an easily used format &#8211; can form the basis for some pretty useful civic applications.</p>
+<p>The screencast below walks through a quick demonstration of <a href="https://gist.github.com/790499">an application I wrote in PHP</a> to run on the <a href="https://www.tropo.com/home.jsp">Tropo</a> platform &#8211; it currently supports SMS, IM and Twitter use.  </p>
+<p>Just send an address in the City of Baltimore to one of the following user accounts along with a hashtag for the type of location you are looking for:</p>
+<ul>
+<li>SMS: <strong>(410) 205-4503</strong></li>
+<li>Jabber / Gtalk: <strong>bmorelocal@tropo.im</strong> </li>
+<li>Twitter: <strong>@baltimoreAPI</strong></li>
+</ul>
+<p>This demo application interacts with a GeoCouch instance I have running in Amazon EC2 &#8211; you can take a look at the data I populated it with by going to <a href="http://voiceingov.iriscouch.com/">baltapi.com</a> and accessing the standard CouchDB user interface.  I haven&#8217;t really locked this instance down all that tight, but there really isn&#8217;t anything in it that I can&#8217;t replace.</p>
+<p><img loading="lazy" src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/bl-sms-296x300.jpg" alt="Locate places in Baltimore via SMS" title="Locate places in Baltimore via SMS" width="296" height="300" class="alignnone size-medium wp-image-2290" /></p>
+<p>Besides, one of the nice things about this technique is how easy it is to convert data from shapefile format and populate a GeoCouch instance.  Hopefully others with GIS datasets will look at this approach as a viable one for providing data to developers.  (If anyone has some shapefiles for the City of Baltimore and you want to share them, let me know and I&#8217;ll load them into <a href="http://voiceingov.iriscouch.com/">baltapi.com</a>.</p>
+<p>There are a number of people in Baltimore pushing for an open data program from their city government, and I have heard that there are some really cool things in the pipeline.  I can&#8217;t wait to see how things develop there, and I want to do anything I can to help.</p>
+<p>Hopefully, this simple demo will be useful in illustrating both the ease with which data can be shared with developers and the potential benefit that applications built on top of open data can hold for municipalities.</p>
+<p><strong>UPDATE (4/18/2011):</strong> I&#8217;ve actually replicated all of the Baltimore data from the EC2 instance discussed in this blog post to the new <a href="http://www.iriscouch.com/">Iris Couch</a> instance.  Iris Couch is by far the easiest way to get started using CouchDB, and Couch&#8217;s <a href="http://wiki.apache.org/couchdb/Replication">replication</a> feature makes it easy to move data into an Iris Couch instance.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2220" class="post-2220 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/01/04/echoes-of-manorgovfresh/index.html" rel="bookmark">Echoes of Manor.GovFresh</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/01/04/echoes-of-manorgovfresh/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="January 4, 2011"><i class="fa fa-clock-o"></i>January 4, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A new year means retrospection and resolutions.</p>
+<p>For me, looking back on 2010, one of the most memorable events I participated in was <a href="http://www.voiceingov.org/blog/?p=2017">an event held in Manor, TX</a>. that focused on the use of new technologies by local governments.<br />
+<img style="margin:10px;padding:10px;float:right;" /><br />
+The Manor.GovFresh event &#8211; organized by <a href="http://govfresh.com/">GovFresh</a> founder <a href="http://twitter.com/lukefretwell">Luke Fretwell</a> &#8211; cast a long shadow on open government efforts in 2010 and made many <a href="http://techpresident.com/blog-entry/look-back-techpres-year-was-2010-edition">year-end lists</a> of most significant happenings for the year.</p>
+<p>I led to sessions at the Manor.GovFresh event &#8211; one on <a href="http://www.voiceingov.org/blog/?p=2028">citizen service and 311</a>, and the other on open government data.</p>
+<p>The event itself was a great experience for me &#8211; the chance to meet and network with other open government advocates, developers, and municipal officials (some of whom I had &#8220;Twitter-only&#8221; relationships with before) was a real treat.</p>
+<p>I also had a couple of important personal take aways from this event.</p>
+<p>First, in advance of the event I worked on a cloud-based telephony solution for local governments called <a href="http://www.munivox.org/about/">MuniVox</a>. My goal with this project was to provide an easy to use solution for small local governments that want the benefits of a sophisticated (and often expensive) telephony system, making it cheap and easy to implement and a snap to manage.  And while I&#8217;m happy with the work I did on this project, I have some grand plans for it going forward.</p>
+<p>In addition, coming out of the open government data session at Manor.GovFresh I had the idea to craft an &#8220;open government playbook&#8221; &#8211; something that local governments can use to quickly get started with an open data program.  I drew a lot of my inspiration for this idea from the awesome presentations given by <a href="http://twitter.com/chrismetcalf">Chris Metcalf</a>, Developer Evangelist at <a href="http://www.socrata.com/">Socrata</a>, during the open government data session.</p>
+<p>Chris gave two presentations at the event that really distilled a ton of great inforamtion on how to get started using open data into clear and simple slides.  I thought they would be a great foundation for a more widely distributed document.  Chris was kind enough to furnish me with his materials, and I have the first draft of the document started.</p>
+<p>However, toward the end of 2010 both personal and professional changes conspired to take my attention  away from these projects.  But the echoes of Manor.GovFresh are ringing loudly in my ears now, and I&#8217;ve resolved to push both of these projects forward early in the new year.</p>
+<p>Stay tuned for some cool stuff on both of these fronts. </p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2197" class="post-2197 post type-post status-publish format-standard hentry category-couchdb category-open-government category-open-source category-twitter">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/12/06/tapping-into-open-government/index.html" rel="bookmark">Tapping into Open&nbsp;Government</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/12/06/tapping-into-open-government/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="December 6, 2010"><i class="fa fa-clock-o"></i>December 6, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>This past weekend, I had the pleasure of hanging out with a bunch of fellow geeks for the better part of a day in Philly at <a href="http://neomindlabs.com/">Neomind Labs</a> to work on an open government / open data project as part of the <a href="http://www.opendataday.org/">Open Data Hackathon</a>.</p>
+<p><a href="http://www.flickr.com/photos/thoughtmerchants/5232925268/in/set-72157625404311883/"><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/5232925268_ab72f4d6bc_m.jpg" alt="Hacking on Open Data" title="Hacking on Open Data" style="float:right;padding:10px;margin:5px;" /></a></p>
+<p>Though most of us had just met, we were able to quickly identify a project that we all thought was worth spending some time on &#8211; a more user friendly way of submitting reports of potholes to the City of Philadelphia. (The <a href="http://potholes.phila.gov/">current interface</a> for doing this is not especially user friendly.)</p>
+<p>Once we had decided what we wanted to do, we got down to talking about how to do it &#8211; after some coffee and doughnuts (graciously supplied by the guys at Neomind) we began a productive brainstorming session that included lots of talk about the <a href="http://dev.twitter.com/">Twitter API</a>, <a href="http://couchdb.apache.org/">CouchDB</a>, <a href="http://www.sinatrarb.com/">Sinatra</a> and <a href="http://heroku.com/">Heroku</a>. Shortly thereafter, we committed some tasks to a large whiteboard in the office and began working on our project.</p>
+<p>As the day progressed, I couldn&#8217;t help but be struck by how much untapped potential there is in the developer community for open government initiatives.  There is so much potential benefit for municipalities if they would just reach out to the developers that live there and engage them to help solve problems and make their communities better.  </p>
+<p>There are lots of smart, civic-minded people out there that want to help.  They&#8217;re just waiting to be asked.  Sometimes, like this past weekend, an opportunity comes around that provides a glimpse of how significant this untapped potential.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/twitter.jpeg" alt="Twitter" title="Twitter" style="float:left;padding:10px;margin:5px;" /><br />
+The guys at Neomind are a perfect example of this.</p>
+<p>The City of Philadelphia is working towards releasing open data sets and engaging developers to use them to build civic apps. But right now opportunities to build open data apps are not always that obvious.  (There is a lot of progress being made on this front and I hope to blog more about the good work being done by Philadelphia very soon.)</p>
+<p>But if developers are coming together to build open government apps in cities that aren&#8217;t doing all that much yet with open data or developer outreach &#8211; like they did this past weekend &#8211; imagine what will happen when they do.</p>
+<p>Cities like <a href="http://twitter.com/#!/opendataphilly">Philadelphia</a> and <a href="http://twitter.com/#!/BmoreApps">Baltimore</a> that are moving rapidly toward releasing open government data sets will reap significant benefits as developers in those cities start to use them to build useful applications.</p>
+<p>These cities stand to reap the benefits of all of the civic-minded geeks that are out there waiting to be engaged to help make their communities better.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				<nav class="navigation paging-navigation" role="navigation">
+		<h1 class="screen-reader-text">Posts navigation</h1>
+		<div class="nav-links">
+
+						<div class="nav-previous"><a href="../16/index.html" >Older Posts</a></div>
+			
+						<div class="nav-next"><a href="../14/index.html" >Newer Posts</a></div>
+			
+		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+		
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/author/mheadd/page/15/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+		<script type="text/javascript">
+		var infiniteScroll = {"settings":{"id":"main","ajaxurl":"https:\/\/civic.io\/?infinity=scrolling","type":"click","wrapper":false,"wrapper_class":"infinite-wrap","footer":"site-main","click_handle":"1","text":"Older posts","totop":"Scroll back to top","currentday":"06.12.10","order":"DESC","scripts":[],"styles":[],"google_analytics":false,"offset":15,"history":{"host":"civic.io","path":"\/author\/mheadd\/page\/%d\/","use_trailing_slashes":true,"parameters":""},"query_args":{"paged":15,"author_name":"mheadd","error":"","m":"","p":0,"post_parent":"","subpost":"","subpost_id":"","attachment":"","attachment_id":0,"name":"","pagename":"","page_id":0,"second":"","minute":"","hour":"","day":0,"monthnum":0,"year":0,"w":0,"category_name":"","tag":"","cat":"","tag_id":"","author":3801781,"feed":"","tb":"","meta_key":"","meta_value":"","preview":"","s":"","sentence":"","title":"","fields":"","menu_order":"","embed":"","category__in":[],"category__not_in":[],"category__and":[],"post__in":[],"post__not_in":[],"post_name__in":[],"tag__in":[],"tag__not_in":[],"tag__and":[],"tag_slug__in":[],"tag_slug__and":[],"post_parent__in":[],"post_parent__not_in":[],"author__in":[],"author__not_in":[],"lazy_load_term_meta":false,"posts_per_page":10,"ignore_sticky_posts":false,"suppress_filters":false,"cache_results":false,"update_post_term_cache":true,"update_post_meta_cache":true,"post_type":"","nopaging":false,"comments_per_page":"50","no_found_rows":false,"order":"DESC"},"query_before":"2022-09-02 19:10:14","last_post_date":"2010-12-06 19:04:38","body_class":"infinite-scroll","loading_text":"Loading new page","stats":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio&x_pagetype=infinite-click"}};
+		</script>
+		<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/author/mheadd/page/15/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2011%252F07%252F29%252Fthe-road-ahead-for-open-baltimore%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2Fauthor%2Fmheadd%2Fpage%2F15%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2011%252F07%252F29%252Fthe-road-ahead-for-open-baltimore%252F">Log in</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/feeds/1432890">
+											View site in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="Write a Comment..."
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="Post Comment" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s2.wp.com/_static/??-eJyljMEKwjAQRH/IuFQ00IP4LXGzlNTNJmQ3lP69Cu2hFy/e5g0zD5bqsIiRGOTuKvcpicJMVgO+NobaSuxoqQjkT2JSwNBKV2LQJVVq7tklMp1R9QR/O/fpXvzSWmKKbgrM1NYjfW+PfB/8zV8v4+iH+Q1JuFpU?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack-carousel-js-extra'>
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s2.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"1bf354b661","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/civicio.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fcivic.io%2F2011%2F01%2F21%2Fexperiments-in-open-data-baltimore-edition%2F","blog_id":"31186386","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio","is_public":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s2.wp.com/_static/??-eJyVUNtOwzAM/SE8U2lMvCA+BeXitm5zU+Ks7O+XCTrBkLrxdk5yLrZxSWBiEAqCU0FLRzaUPndTecIfX75CcnXgUJBDz4HldAW3WhnJU8FUNRIPo3AjLVorMxfJJGZ80LHiB+Vl5gSOwwx9NLVAz3/WuFME2sXhv56RlKW8cbCJJLXd8YODQVlYhDIIe2qz0oZPWc8BtMroVWmehkDy5Yr3y745phxtNcIxfNXrys6iUTnWQu6qXh92rXEjXNiRhUE5R/n0m2241nBYkon+hjbfu3/rDodu370871+nM/Hw9u0='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<script type="text/javascript">
+			(function() {
+				var extend = function(out) {
+					out = out || {};
+
+					for (var i = 1; i < arguments.length; i++) {
+						if (!arguments[i])
+						continue;
+
+						for (var key in arguments[i]) {
+						if (arguments[i].hasOwnProperty(key))
+							out[key] = arguments[i][key];
+						}
+					}
+
+					return out;
+				};
+				extend( window.infiniteScroll.settings.scripts, ["mobile-useragent-info","rlt-proxy","jquery-core","jquery-migrate","jquery","wpcom-actionbar-placeholder","grofiles-cards","wpgroho","devicepx","the-neverending-homepage","backstretch","eighties","skip-link-focus-fix","eighties-blog","eighties-header","jetpack-twitter-timeline","wpcom-masterbar-tracks-js","jetpack-carousel","tiled-gallery","carousel-wpcom"] );
+				extend( window.infiniteScroll.settings.styles, ["wpcom-smileys","the-neverending-homepage","wp-block-library","mediaelement","wp-mediaelement","jetpack-layout-grid","jetpack-ratings","coblocks-frontend","wpcom-core-compat-playlist-styles","wpcom-text-widget-styles","wpcom-bbpress2-staff-css","eighties-font-awesome","eighties","geo-location-flair","reblogging","a8c-global-print","h4-global","global-styles","eighties-header","eighties-headings","eighties-body","jetpack-global-styles-frontend-style","jetpack-carousel-swiper-css","jetpack-carousel","tiled-gallery"] );
+			})();
+		</script>
+				<span id="infinite-aria" aria-live="assertive"></span>
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelF2MEx4cVVaOX51a3ZKQSVBfGRjQkM/Qy5qM29rTnZ4UlJ8Sm5qblVtWGJqalM4JldtLFBQNUw2T2NGSWUzNWpnLmkzeDk1a1otQUksPTRDWXo9LW5BQSwvQlA0W212WVBWMFt4Xz1TZkwuUyUvcldbM1Zkd2lQSm9bYSV1WXA0RE9NUjR+ZFFQUWF+aUM9NA=='}]);
+_stq.push([ 'clickTrackerInit', '31186386', '0' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script defer id="bilmur" data-customproperties="{&quot;enq_jquery&quot;:&quot;1&quot;,&quot;logged_in&quot;:&quot;0&quot;,&quot;wptheme&quot;:&quot;pub\/eighties&quot;}" data-provider="wordpress.com" data-service="simple"  src="../../../../wp-content/js/bilmur.min.js%3Fi=3&amp;m=202235"></script><script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>geocode &#8211; Civic Innovations</title>
+	<atom:link href="https://civic.io/tag/geocode/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Fri, 20 Nov 2009 16:16:24 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+<cloud domain='civic.io' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<image>
+		<url>https://s0.wp.com/i/buttonw-com.png</url>
+		<title>geocode &#8211; Civic Innovations</title>
+		<link>https://civic.io</link>
+	</image>
+	<atom:link rel="search" type="application/opensearchdescription+xml" href="https://civic.io/osd.xml" title="Civic Innovations" />
+	<atom:link rel='hub' href='https://civic.io/?pushpress=hub'/>
+	<item>
+		<title>Command Line GeoTwitter</title>
+		<link>https://civic.io/2009/11/20/command-line-geotwitter/</link>
+					<comments>https://civic.io/2009/11/20/command-line-geotwitter/#respond</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Fri, 20 Nov 2009 16:16:24 +0000</pubDate>
+				<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[Twitter]]></category>
+		<category><![CDATA[311]]></category>
+		<category><![CDATA[API]]></category>
+		<category><![CDATA[geocode]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1364</guid>
+
+					<description><![CDATA[A few months back I wrote a quick post about tweeting from the command line. With the recent announcement that Twitter&#8217;s location feature is starting to go live, I decided to revisit this idea, with an eye toward adding locational information. (I am, at heart,... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2009/11/20/command-line-geotwitter/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>A few months back I wrote a quick post about <a href="http://www.voiceingov.org/blog/?p=691">tweeting from the command line</a>.  With the recent announcement that Twitter&#8217;s location feature is <a href="http://www.techcrunch.com/2009/11/19/twitter-location-api/" target="_blank">starting to go live</a>, I decided to revisit this idea, with an eye toward adding locational information.</p>
+<p>(I am, at heart, a cheapskate &#8211; I could have bought one of the existing Twitter clients that support locational Tweets but I really just want to play around with this new feature for now.  The command line is free, baby!)</p>
+<p>Twitter&#8217;s API methods now support <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method:-statuses update" target="_blank">adding geographic coordinates</a> with a status update.  Sending out a GeoTweet using the command line is easy (note, this example assumes you know the lat/long of the location you want to associate with your Tweet).</p>
+<p>Open up your favorite editor and drop the following into it:</p>
+<p><code>curl -s -u user:password -d status="$1" -d lat="$2" -d long="$3"   http://twitter.com/statuses/update.xml &gt; /dev/null</code></p>
+<p>Save the file and make sure it is executable (chmod u+x fileName). You can execute this file at the command line like this: </p>
+<p><code>$ ./fileName "Testing twitter geolocation feature" "+39.754571" "-75.571985"</code></p>
+<p>When you examine the properties of this tweet, you will see that it now has geographic information associated with it:</p>
+<p><code>&lt;geo xmlns:georss="http://www.georss.org/georss"&gt;<br />
+&nbsp;&nbsp;&lt;georss :point&gt;39.754571 -75.571985&lt;/georss&gt;<br />
+&lt;/geo&gt;</code></p>
+<p>How cool is that!</p>
+<p>As more Twitter applications (and the Twitter website itself) roll out support for this new feature, a host of <a href="http://www.voiceingov.org/blog/?p=1176">new Gov 2.0 potential</a> is going to be unlocked.  I think this will have huge implications for services like 311, where location is critical to service requests.  </p>
+<p>Municipalities like <a href="http://twitter.com/311nyc" target="_blank">New York City</a> and <a href="http://twitter.com/sf311" target="_blank">San Francisco</a> that have already incorporated Twitter into their 311 service will have a big head start in this regard.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2009/11/20/command-line-geotwitter/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+	</item>
+	</channel>
+</rss>

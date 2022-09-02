@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>Open Source | Civic Innovations</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=4552'
+					+ '&is_singular=';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145194";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Open Source Category Feed" href="feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJyNkt1uwyAMhV9oDk2VtbuZ9iz8eMwdEIShGW8/Gq1R1nbtbpCN/R2ObMQUQY8hY8jCF4iuWAospqhHD+zJYb3IOs38JG5jFN4pUK5LcNV87rSlpQqTbZWE4tgP3abbClXIGaHcqD/BkUoyVcG5OlyEKGhXDLI4sPBoSKJDP9tYJdHJigkcWqlr5yk8xlttnf+C/jY/O21imKM8WZZ1LBlsInNh+98SSWYKlh/gevzBtl3/0vXA5KNDSHhsQzTEeemA20KrpZ0W0O59lNdTuINNZCzmhvM5hoxf95H5HykVEzJDOz0VD/mjvTV/qzf/2u92280wPO/3h29CRvpa?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s0.wp.com/wp-content/themes/h4/global.css?m=1420737423h&cssminify=yes' type='text/css' media='all' />
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/category/open-source/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/_static/??-eJzTLy/QTc7PK0nNK9HPKtbPzU/KzEnVLS1OLUpMB4rpZual5etlFevoo6oryinRLSjKr6iEyWXmJeeUpqQWgySzCktTiyqhlF5uZh5BRbq5melFiSWpUMX2ubaGZsbm5gYmJpbmWQCPUzuV'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Open Source &#8211; Civic Innovations" />
+<meta property="og:url" content="https://civic.io/category/open-source/" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="Posts about Open Source written by mheadd" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="archive category category-open-source category-25 customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/category/open-source/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+			<header class="page-header">
+				<h1 class="page-title">
+					Open Source				</h1>
+							</header><!-- .page-header -->
+
+						
+				
+<article id="post-4552" class="post-4552 post type-post status-publish format-standard hentry category-cities category-open-data category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2016/05/09/thinking-outside-the-portal/index.html" rel="bookmark">Thinking Outside the&nbsp;Portal</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2016/05/09/thinking-outside-the-portal/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="May 9, 2016"><i class="fa fa-clock-o"></i>May 9, 2016</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<div data-shortcode="caption" id="attachment_4557" style="width: 1010px" class="wp-caption aligncenter"><img loading="lazy" aria-describedby="caption-attachment-4557" data-attachment-id="4557" data-permalink="https://civic.io/2016/05/09/thinking-outside-the-portal/15879341_5870271038_b/" data-orig-file="https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg" data-orig-size="1018,383" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Plug and play" data-image-description="" data-image-caption="&lt;p&gt;Photo courtesy of Flickr user Jonathan Khoo.&lt;/p&gt;
+" data-medium-file="https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=300" data-large-file="https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=1000" src="https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=1000&#038;h=376" alt="Plug and play" width="1000" height="376" class="size-large wp-image-4557" srcset="https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=1000&amp;h=376 1000w, https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=150&amp;h=56 150w, https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=300&amp;h=113 300w, https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg?w=768&amp;h=289 768w, https://civicio.files.wordpress.com/2016/05/15879341_5870271038_b.jpg 1018w" sizes="(max-width: 1000px) 100vw, 1000px" /><p id="caption-attachment-4557" class="wp-caption-text">Photo courtesy of Flickr user Jonathan Khoo.</p></div>
+<p>The centerpiece of any government open data effort is usually a data portal.</p>
+<p>Data portals host open data or provide listings for datasets, and typically include things like license information, data schemas, developer documentation and a host of other details aimed at making it easier for end consumers to find and use data. There is a great deal of variation in the degree to which government data portals succeed in making it easier for people to find and use data &#8211; some do it very well, others do not.</p>
+<p>In some ways, an open data portal can simultaneously represent all that is right with a government open data program &#8211; all the potential it has for changing the way government works and how people interact with their government &#8211; as well as all of its limitations. </p>
+<p>I am <a href="../../2015/04/01/i-hate-open-data-portals/index.html">not unbiased</a> in this opinion.</p>
+<p> <a href="../../2016/05/09/thinking-outside-the-portal/index.html#more-4552" class="more-link">Read More <i class="fa fa-caret-right"></i></a></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-4497" class="post-4497 post type-post status-publish format-standard hentry category-cities category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2016/03/10/civic-onboarding/index.html" rel="bookmark">Civic Onboarding</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2016/03/10/civic-onboarding/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="March 10, 2016"><i class="fa fa-clock-o"></i>March 10, 2016</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<div data-shortcode="caption" id="attachment_4500" style="width: 1010px" class="wp-caption aligncenter"><img loading="lazy" aria-describedby="caption-attachment-4500" data-attachment-id="4500" data-permalink="https://civic.io/2016/03/10/civic-onboarding/3389178928_c28941c15f_o/" data-orig-file="https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg" data-orig-size="1550,597" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;5&quot;,&quot;credit&quot;:&quot;????????????????????&quot;,&quot;camera&quot;:&quot;NIKON D200&quot;,&quot;caption&quot;:&quot;????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????&quot;,&quot;created_timestamp&quot;:&quot;1139471811&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;16&quot;,&quot;iso&quot;:&quot;1600&quot;,&quot;shutter_speed&quot;:&quot;0.016666666666667&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;1&quot;}" data-image-title="3389178928_c28941c15f_o" data-image-description="" data-image-caption="&lt;p&gt;Photo courtesy of Flickr user Chuck Simmins&lt;/p&gt;
+" data-medium-file="https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=300" data-large-file="https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=1000" class="size-large wp-image-4500" src="https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=1000&#038;h=385" alt="Photo courtesy of Flickr user Chuck Simmins" width="1000" height="385" srcset="https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=1000&amp;h=385 1000w, https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=150&amp;h=58 150w, https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=300&amp;h=116 300w, https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=768&amp;h=296 768w, https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg?w=1024&amp;h=394 1024w, https://civicio.files.wordpress.com/2016/03/3389178928_c28941c15f_o.jpg 1550w" sizes="(max-width: 1000px) 100vw, 1000px" /><p id="caption-attachment-4500" class="wp-caption-text">Photo courtesy of Flickr user Chuck Simmins</p></div>
+<p>Tomorrow, the President will <a href="https://medium.com/@WhiteHouse/surge-pricing-for-diapers-456df8b59c1f#.4na94p8kn">speak at SXSW and issue a call to action</a> for people inside and outside government to collaborate and solve the hard problems facing our country. This is a call to action that governors and mayors should echo &#8211; our communities are filled with people that want to help.</p>
+<p>Reading about the <a href="https://jet.com/JetCares">Community Diaper Project</a> and other efforts to get affordable disposable diapers to low income families got me so excited about recruiting those from outside government to work on hard problems that I forgot I have <a href="../../2014/01/10/onboarding-civic-hackers/index.html">written about this before</a>. I missed a lot in my first post.</p>
+<p> <a href="../../2016/03/10/civic-onboarding/index.html#more-4497" class="more-link">Read More <i class="fa fa-caret-right"></i></a></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3945" class="post-3945 post type-post status-publish format-standard hentry category-open-data category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2015/09/28/participation-and-the-cult-of-catalogs/index.html" rel="bookmark">Participation and the Cult of&nbsp;Catalogs</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2015/09/28/participation-and-the-cult-of-catalogs/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="September 28, 2015"><i class="fa fa-clock-o"></i>September 28, 2015</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<blockquote><p><span style="font-weight:400;">“Anonymous access to the data must be allowed for public data, including access through anonymous proxies. Data should not be hidden behind ‘walled gardens.’”<br />
+</span><span style="font-weight:400;">&#8211; <a href="http://opengovdata.org/">8 Principles of Open Government Data</a> </span></p></blockquote>
+<p><span style="font-weight:400;">In the world of open data, there are few things that carry more weight than the original 8</span><span style="font-weight:400;"> principles</span><span style="font-weight:400;"> of open data.</span></p>
+<p>Drafted by a group of influential leaders on open data that came together in Sebastopol, CA in 2007, this set of guidelines is the defacto standard for evaluating the quality of data released by governments, and is used by activists regularly to prod public organizations to become more open.</p>
+<p><span style="font-weight:400;">With this in mind, it was intriguing to hear a well known champion of open data at the Sunlight Foundation’s recent <a href="http://transparencycamp.org/">Transparency Camp</a> in Washington DC raise some interesting questions about one of these principles, typically considered sacrosanct in the open data community.</span></p>
+<p> <a href="../../2015/09/28/participation-and-the-cult-of-catalogs/index.html#more-3945" class="more-link">Read More <i class="fa fa-caret-right"></i></a></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-4661" class="post-4661 post type-post status-publish format-standard hentry category-open-source category-procurement category-procurement-reform">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2015/07/07/why-18fs-new-approach-to-procurement-reform-matters/index.html" rel="bookmark">Why 18F&#8217;s New Approach to Procurement Reform&nbsp;Matters</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2015/07/07/why-18fs-new-approach-to-procurement-reform-matters/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="July 7, 2015"><i class="fa fa-clock-o"></i>July 7, 2015</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<div data-shortcode="caption" id="attachment_4662" style="width: 1010px" class="wp-caption aligncenter"><img loading="lazy" aria-describedby="caption-attachment-4662" data-attachment-id="4662" data-permalink="https://civic.io/2015/07/07/why-18fs-new-approach-to-procurement-reform-matters/4521705403_c9e8736c6a_b/" data-orig-file="https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg" data-orig-size="1002,426" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="Fast Track" data-image-description="" data-image-caption="&lt;p&gt;Image courtesy of Flickr user lchunt.&lt;/p&gt;
+" data-medium-file="https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=300" data-large-file="https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=1000" class="size-large wp-image-4662" src="https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=1000&#038;h=425" alt="Fast Track" width="1000" height="425" srcset="https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=1000&amp;h=425 1000w, https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=150&amp;h=64 150w, https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=300&amp;h=128 300w, https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg?w=768&amp;h=327 768w, https://civicio.files.wordpress.com/2016/06/4521705403_c9e8736c6a_b.jpg 1002w" sizes="(max-width: 1000px) 100vw, 1000px" /><p id="caption-attachment-4662" class="wp-caption-text">Image courtesy of Flickr user lchunt.</p></div>
+<p>In <a href="../../2015/06/26/govtech-is-not-broken/index.html">another recent post</a>, I talked about how public sector technology procurement was not well suited for the digital age.</p>
+<p>But there are some efforts underway that seek to identify new methods of procuring technology solutions for government. As these ideas start to take hold, there is hope that those in the govtech community will create a set of strategies for more successfully implementing public sector technology solutions.</p>
+<h4>Built to fail?</h4>
+<p>The design of procurement policies that are used by our federal, state, and local governments are meant to encourage broad participation by requiring things like public announcements of solicitations, open vendor meetings, and fixed deadlines for submitting responses. The hope is to make the process as predictable and transparent as possible, and to level the playing field so that any qualified vendor can participate.</p>
+<p>Procurement policies are also designed to mitigate risk and to ensure that selected vendors are competent and capable of undertaking the work required in government IT projects. It is important that these policies be consistent with the government’s duty to be responsible stewards of public resources.</p>
+<p>In light of this, there is a great irony in the outcomes that these policies often seem to produce.</p>
+<p> <a href="../../2015/07/07/why-18fs-new-approach-to-procurement-reform-matters/index.html#more-4661" class="more-link">Read More <i class="fa fa-caret-right"></i></a></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3861" class="post-3861 post type-post status-publish format-standard hentry category-open-government category-open-source category-procurement category-uncategorized">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2015/06/26/govtech-is-not-broken/index.html" rel="bookmark">GovTech is Not&nbsp;Broken</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2015/06/26/govtech-is-not-broken/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="June 26, 2015"><i class="fa fa-clock-o"></i>June 26, 2015</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>When we talk about the challenges that face governments in acquiring and implementing new technology, the conversation eventually winds around to the procurement process.</p>
+<p>That&#8217;s when things usually get ugly. &#8220;It&#8217;s broken,&#8221; they say. &#8220;It just doesn&#8217;t work.&#8221;</p>
+<p>What most people who care about this issue fail to recognize, however, is that while the procurement process for technology may not work well for governments or prospective vendors (particularly smaller, younger companies), it is not broken. </p>
+<p>It works exactly as it was designed to work.</p>
+<p> <a href="../../2015/06/26/govtech-is-not-broken/index.html#more-3861" class="more-link">Read More <i class="fa fa-caret-right"></i></a></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3481" class="post-3481 post type-post status-publish format-standard hentry category-cities category-open-data category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2014/09/29/open-data-beyond-the-big-city/index.html" rel="bookmark">Open Data Beyond the Big&nbsp;City</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2014/09/29/open-data-beyond-the-big-city/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="September 29, 2014"><i class="fa fa-clock-o"></i>September 29, 2014</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>This is an expanded version of a talk I gave last week at the <a href="https://www.youtube.com/watch?v=67AXJ_Y1VEA&amp;list=PL65XgbSILalWFStqV0z0N9pvftstJ8AAh&amp;index=46">Code for America Summit</a>. </p>
+<h4>An uneven future</h4>
+<blockquote><p>
+“The future is already here – it&#8217;s just not evenly distributed.”<br />
+William Gibson. The Economist, December 4, 2003
+</p></blockquote>
+<p>The last time I herd Tim O&#8217;Reilly speak was at the <a href="http://www.cvent.com/events/accela-engage-2014/event-summary-0aeb5c9d1b864806a08493267b8b185e.aspx">Accela Engage</a> conference in San Diego earlier this year. In his remarks, Tim used the above quote from William Gibson &#8211; it struck me as a pretty accurate way to describe the current state of open data in this country.</p>
+<p>Open data is the future – of how we govern, of how public services are delivered, of how governments engage with those that they serve. And right now, it is unevenly distributed. I think there is a strong argument to be made that data standards can provide a number of benefits to small and mid-sized municipal governments and could provide a powerful incentive for these governments to adopt open data.</p>
+<p>One way we can use standards to drive the adoption of open data is to partner with companies like <a href="http://www.yelp.com/healthscores">Yelp</a>, <a href="http://www.zillow.com/research/data/">Zillow</a>, <a href="https://developers.google.com/transit/gtfs/reference">Google</a> and others that can use open data to enhance their services. But how do we get companies with 10s and 100s of millions of users to take an interest in data from smaller municipal governments?</p>
+<p>In a word &#8211; <a href="http://www.codeforamerica.org/our-work/data-formats/">standards</a>.</p>
+<h4>Why do we care about cities?</h4>
+<p>When we talk about open data, it’s important to keep in mind that there is <a href="https://www.data.gov/open-gov/">a lot of good work happening</a> at the federal, state and local levels all over the country. Plenty of states and even counties doing good things on the open data front, but for me it’s important to evaluate where we are on open data with respect to cities. </p>
+<p>States typically occupy a different space in the service delivery ecosystem than cities, and the kinds of data that they typically make available can be vastly different from city data. State capitols are often far removed from our daily lives and we may hear about them only when a budget is adopted or when the state legislature <a href="http://abcnews.go.com/Health/stories-wendy-davis-anti-abortion-bill-filibuster/story?id=19506336">takes up a controversial issue</a>. </p>
+<p>In cities, the people that represent and serve us us can be our neighbors &#8211; the guy behind you at the car wash, or the woman who’s child is in you son’s preschool class. Cities matter.</p>
+<p>As cities go, we need to consider carefully that importance of smaller cities &#8211; there are <a href="http://factfinder2.census.gov/bkmk/table/1.0/en/PEP/2012/PEPANNRSIP.US12A">a lot more of them</a> than large cities and a non-trivial number of people live in them.</p>
+<p>If we think about small to mid-sized cities, these governments are central to providing a core set of services that we all rely on. They run police forces and fire services. They collect our garbage. They’re intimately involved in how our children are educated. Some of them operate transit systems and airports. Small cities matter too.</p>
+<h4>Big cities vs. small cities on open data</h4>
+<p>So if cities are important &#8211; big and small &#8211; how are they doing on open data? It turns out that big cities have adopted open data with much more regularity than smaller cities.</p>
+<p>If we look at data from the Census Bureau on incorporated places in the U.S. and information <a href="https://docs.google.com/spreadsheet/ccc?key=0AsNAXuadeXIxdG4xbnBTVnpVVkFQWUFBM1JGeEt4OEE&amp;usp=drive_web#gid=2">from a variety of sources</a> on governments that have adopted open data policies and making open data available on a public website, we see the following:</p>
+<p><strong>Big Cities:</strong></p>
+<ul style="margin-bottom:12px;">
+<li>9 of the 10 largest US cities have adopted open data.</li>
+<li>19 of the top 25 most populous cities have adopted open data.</li>
+<li>Of cities with populations &gt; 500k, 71% have adopted open data.</li>
+</ul>
+<p><strong>Small Cities:</strong></p>
+<ul style="margin-bottom:12px;">
+<li>256 incorporated places in the U.S. with populations between 500k – 100k.</li>
+<li>Only 39 have open data policy or make open data available.</li>
+<li>A mere 15% of smaller cities have adopted open data.</li>
+</ul>
+<p>The data behind this analysis is <a href="https://docs.google.com/spreadsheet/ccc?key=0AsNAXuadeXIxdG4xbnBTVnpVVkFQWUFBM1JGeEt4OEE&amp;usp=drive_web#gid=0">here</a>. As we can see, it shows a markedly different adoption rate for open data between large cities (those with populations of 500,000 or more) and smaller cities (those with populations between 100,000 and 500,000).</p>
+<h4>Why is this important?</h4>
+<p>We could chalk up this difference to the fact that big cities simply have more data. They may have more people asking for information, which can drive the release of open data. They have larger pools of technologists, startups and civic hackers to use the data. They may have more resources to publish open data, and to manage communities of users around that data.</p>
+<p>I don&#8217;t know that there is one definitive answer here &#8211; there&#8217;s ample room for discussion on this point.</p>
+<p>We should care about this because &#8211; quite simply &#8211; a lot of people call smaller cities home. If we add up the populations of the 256 places noted above with populations between 100,000 and 500,000, it actually exceeds the combined population of the 34 largest cities (with populations of 500,000 or more) &#8211; 46,640,592 and 41,155,553 respectively. Right now these people are potentially missing out on the many <a href="http://opendatahandbook.org/en/why-open-data/">benefits of open data</a>.</p>
+<p>But more than simple math, if one of the virtues of our approach to democracy in this country is that we have lots of governments below the federal level to act as “laboratories of democracy” then we’re missing an opportunity here. If we can get more small cities to embrace open data, we can encourage more experimentation, we can evaluate the kinds of data that these cities release and what people do with it. We can learn more about what works &#8211; and what doesn&#8217;t.</p>
+<p>In addition, we now know that open data is one tool that can be used to <a href="http://www.hbs.edu/faculty/Publication%20Files/14-034_3dcc83ea-aa8d-463d-bd66-d0ff8c267506.pdf">help address historically low trust in government institutions</a>. It&#8217;s <a href="http://www.latimes.com/nation/la-na-ferguson-shooting-20140928-story.html">not hard to find</a> smaller governments in this country that could use all the help they can get in repairing relations with those they serve.</p>
+<h4>How do we fix this?</h4>
+<p>There&#8217;s at least a few things we can do to address this problem.</p>
+<p>First, we need more  options for smaller governments to release open data. We&#8217;re not going make progress in getting smaller governments to adopt open data if the cost of standing up a data portal has the same budget impact as the salary for a teacher, or a cop, or a firefighter, or a building inspector &#8211; I just don&#8217;t think that&#8217;s sustainable.</p>
+<p>Equally important, we need to work on developing useful new <a href="../../2013/02/26/on-data-standards-for-cities/index.html">data standards</a>. This won&#8217;t always be easy, but it&#8217;s important work and we need to do it.</p>
+<p><a href="https://twitter.com/mheadd/status/515255103909949440"><img src="https://civicio.files.wordpress.com/2014/09/tweet-open-data.png?w=500&#038;h=288" alt="open data standards tweet" width="500" height="288" class="aligncenter" /></a></p>
+<p>For smaller cities without the deep technology, journalism and research communities that can help drive open data adoption, data standards are a way to export civic technology needs to larger cities. I believe they are critical to driving adoption of open data in the many small and midsized cities in this country.</p>
+<p>We&#8217;ve already seen what open data looks like in big cities, and they are already moving to take <a href="http://plenar.io/">the next steps</a> in the evolution of their open data programs &#8211; but smaller cities risk getting left behind.</p>
+<p>They next frontier in open data is in small and mid-sized cities.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3266" class="post-3266 post type-post status-publish format-standard hentry category-cities category-open-data category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2014/03/20/the-philadelphia-experiment/index.html" rel="bookmark">The Philadelphia Experiment</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2014/03/20/the-philadelphia-experiment/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="March 20, 2014"><i class="fa fa-clock-o"></i>March 20, 2014</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Three years ago next month, the City of Philadelphia&#8217;s open data portal was <a href="http://technical.ly/philly/2011/04/25/data-crunched-all-that%E2%80%99s-needed-to-jump-start-an-open-data-movement-is-a-city-government-that-doesn%E2%80%99t-stand-in-the-way/">launched by local technology firm Azavea</a> as part of the inaugural Philly Tech Week. Two years ago next month, Philadelphia joined the small (but growing) fraternity of cities to adopt a formal open data policy &#8211; a milestone that stands as one of the first in something I think of as an &#8220;experiment&#8221; in municipal transparency. </p>
+<p>Since this experiment first began, our open data efforts have come a very long way, and Philadelphia is now looked at as a national leader on open data and civic technology. In many ways it is now time for a new chapter in the Philadelphia experiment &#8211; our city is ready to take open data to the next level.</p>
+<p>For me, though, it is time to step back and take a different role in the Philadelphia technology community and the broader open data effort &#8211; both here and in other places.</p>
+<p><strong>How Far We&#8217;ve Come</strong></p>
+<p>In the last several years, Philadelphia has grown into a national leader on open data and civic technology. We enthusiastically <a href="http://ph.ly/OpenDataGuide">share our experience and our ideas</a> with other municipalities that want to kick off their own open data experiment.</p>
+<p>Our open data portal contains <a href="https://trello.com/b/iUUy84lK/city-of-philadelphia-open-data-pipeline">dozens of new data sets</a> added since the adoption of our open data policy, some released for the very first time by city government. The <a href="http://opendataphilly.org/">OpenDataPhilly</a> platform has inspired <a href="http://www.opendatacincy.org/">efforts in other cities</a> that look to us as a model for how to implement their open data efforts.</p>
+<div class="jetpack-video-wrapper"><span class="embed-youtube" style="text-align:center; display: block;"><iframe class="youtube-player" width="560" height="315" src="https://www.youtube.com/embed/ObrlsMA7c3M?version=3&#038;rel=1&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;fs=1&#038;hl=en&#038;autohide=2&#038;wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"></iframe></span></div>
+<p>We have embraced not only open data, but also open source software and we are actively <a href="https://github.com/CityOfPhiladelphia">sharing both our code and our data on platforms like GitHub</a> as a way to engage with the broader data community and tap into communities of innovators. The City of Philadelphia now has <a href="http://government.github.com/stories/philadelphia-gets-going-and-gets-open/">more public GitHub repos</a> than any other city in the country, and more are on the way.</p>
+<p>We&#8217;re leading the discussion on the development of new <a href="http://www.huffingtonpost.com/mark-headd/how-technology-can-fight-the-flu_b_4495730.html">municipal data standards</a> that will help speed the adoption of other open data releases, and enhance the value of civic technology.</p>
+<p>We&#8217;re finding innovative new ways to engage with local technology vendors by making <a href="http://bigideasphl.com/">opportunities for smaller technology projects more visible</a>. We&#8217;re <a href="../../2013/03/27/experiments-in-github-based-procurement/index.html">using GitHub</a> and other platforms to make responding to technology procurement opportunities easier, more engaging and more valuable.</p>
+<p>We have a <a href="http://phlapi.com/">growing suite of developer-ready APIs</a> that can be used to quickly and easily create powerful new civic apps. And, most importantly, we&#8217;re collaborating with <a href="http://codeforphilly.org/">one of the most active civic hacking communities in the country</a> and helping to enable the building of all sorts of <a href="http://www.phlcrimemapper.com/">new</a> <a href="http://lti.planphilly.com/">awesome</a> <a href="http://groundedinphilly.org/">apps</a>. </p>
+<p><strong>The Road Ahead</strong></p>
+<p>Philadelphia is ready for the next chapter in its open data experiment. </p>
+<p>The milestones that lay ahead will see the release of important new data sets that will enable more meaningful and more sustainable <a href="http://ph.ly/DiscussPhillyData">civic engagement in our city</a>. These new data releases and APIs will also help create the foundation for unprecedented collaboration between city departments and other governments. No force has more potential to enable <a href="../../2014/01/02/2014-the-year-of-open-data/index.html">significant improvements in government efficiency and operations</a> than open data.</p>
+<p>I&#8217;ll be watching all of this unfold from a new vantage point &#8211; as a member (once again) of the Philly technology and civic hacking communities. In early April, I&#8217;ll step down from my post as Chief Data Officer and return to being a professional technologist. </p>
+<p>I&#8217;ll be talking more in the weeks ahead about exactly what I&#8217;ll be doing, but I&#8217;ll still be working with governments and open data. I&#8217;ll also still be in Philly &#8211; my wife and I will continue to live and work here, and our kids will still go to school here.</p>
+<p>It has truly been an honor and a privilege to serve this great city, and I owe a debt of gratitude to Managing Director Rich Negrin and CIO Adel Abeid for the opportunity. I look forward to continuing to do so going forward, but from outside city government.</p>
+<p>Philly&#8217;s open data effort has always been bigger than any one person &#8211; it&#8217;s always been about the community. It&#8217;s now time for me to rejoin that community.</p>
+<p>See you at the next <a href="http://technical.ly/philly/events/hackathons/">hackathon</a>.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3243" class="post-3243 post type-post status-publish format-standard hentry category-civic-hacking category-open-data category-open-government category-open-source category-procurement-reform">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2014/03/02/on-sustainable-civic-technology/index.html" rel="bookmark">On Sustainable Civic&nbsp;Technology</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2014/03/02/on-sustainable-civic-technology/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="March 2, 2014"><i class="fa fa-clock-o"></i>March 2, 2014</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Sustaining civic technology will mean that both government&#8217;s IT infrastructure and the civic technology sector that builds on it will need to change.</p>
+<p>A pair of recent blog posts caught my eye and highlighted this theme in my head, and motivated me to capture a few thoughts on this topic.</p>
+<p>The first post was by Dan O&#8217;Neil, Executive Director of the Smart Chicago Collaborative. <a href="http://www.derivativeworks.com/2014/02/some-thoughts-toward-the-maturation-of-the-civic-innovation-sector-of-the-technology-industry.html">Dan&#8217;s post</a> on the the things that need to happen to drive the &#8220;&#8230;maturation of the civic innovation sector of the technology industry&#8221; are worth the read. It&#8217;s a great post that helps highlight the connection between legacy IT system in government and open data, which is used to build civic technology.</p>
+<blockquote><p>
+&#8220;[without] existing legacy gov IT systems, there would be no civic tech. The data we use for our civic tech projects doesn’t get collected, managed, and exported by itself.&#8221;
+</p></blockquote>
+<p>The second post is from the Bay Area design firm Stamen, and highlights the need for data visualizations (and other bits of civic technology that rely on open data) to be maintained over time. The post <a href="http://content.stamen.com/a_tale_of_two_cities_maps">uses the analogy of gardening</a> to underscore the need to constantly update and maintain the things we build with data.</p>
+<blockquote><p>
+&#8220;If you plant a flower in a garden and then never give it water or light, it will in fact die. Unless, of course, it happens to placed in just the perfect spot, in which case it will need to be pruned. Either way, some kind of tending is always required.</p>
+<p>We don’t always think of digital works in the same way, perhaps because their metaphor of creation more closely resembles that of a built object, like a bookcase or building. But even buildings need maintenance, and after so many years, the shelves on the bookcase may falter and need new ones. We need to be more conscious about this aspect of dynamic data visualization, at the outset.&#8221;
+</p></blockquote>
+<p>These two posts call out the need for both the government technology systems that lie at the foundation of open data, and the civic technology that uses this data to get better. To mature. To advance to the next level.</p>
+<p>For me, the takeaways from these two posts are pretty clear.</p>
+<p><strong>Technology and civic apps are like gardening &#8211; except when they&#8217;re not.</strong></p>
+<p>I like the analogy of gardening applied to investment in technology solutions. It underscores the need to continually invest in the maintenance and upkeep of the solutions that are used to consume government data. However, I think there is some danger in using this analogy in that it obscures the the fundamental nature of change in the technology world. </p>
+<p>I can tend my garden today in pretty much the same way as someone did 100 years ago &#8211; soil, water and sunshine. Boom. However, when building a technology solution (particularly web-based solutions) its not feasible to use the same approach or components that might have been acceptable as recently as 10 years ago. Budgeting for maintenance and enhancements for technology projects isn&#8217;t a nice to have &#8211; its absolutely essential to their success. The pace of change in the world of technology is just too fast for anything less.</p>
+<p><strong>We have to fix the budget process as it relates to investment in technology.</strong></p>
+<p>I&#8217;ve <a href="../../2012/05/25/bizzaro-budgeting-and-public-sector-innovation/index.html">harped on this before</a>, but we most definitely need to get better at helping non-technology people in government (particularly budget officials) understand the need for continuous support and maintenance of IT projects. Correction &#8211; we need to help them understand technology better in general. Not since the <a href="http://en.wikipedia.org/wiki/The_Bachelor_(U.S._TV_series)#Seasons">first season of The Bachelor</a> has there been a worse match than the current public budgeting process and the pace of change in the world of technology.</p>
+<p>To understand how acute this problem is, ask some you know that works in state or local government if they (or someone they work with) interacts as part of their job with a technology system that is 10 years old or older. I think the responses would be surprising to many people, and rather alarming to most professional technologists.</p>
+<p><strong>Government needs to embrace its role as a data steward</strong></p>
+<p>Governments need to understand their role in the civic technology production chain. The current public budgeting and procurement processes make us lousy at investing in the kinds of technology that chance rapidly &#8211; like those that power web-based solutions. </p>
+<p>When I read the post by Stamen about their Crimespotting project with the City of Oakland, I see a city that hasn&#8217;t accepted its role as a mature data steward:</p>
+<blockquote><p>
+&#8220;&#8230;over the years, the project started wavering. Oakland’s API has sputtered to the point of being nonfunctional, rendering Oakland Crimespotting totally spotless.&#8221;
+</p></blockquote>
+<p>If governments are serious about open data, they need to invest in systems that will make their data easy to consume and readily available &#8211; without this, the civic technology sector won&#8217;t go far. </p>
+<p>I think part of this is <a href="../../2012/11/18/the-app-economy-and-gov-as-a-platform/index.html">accepting the role of data steward</a>, and engineering our IT infrastructure accordingly. I don&#8217;t know if Stamen&#8217;s was the only project consuming the Oakland crime data API, but building a robust community of users around open data can help public officials see the importance of investing to keep these systems stable and available.</p>
+<p><strong>Don&#8217;t underestimate the  power of open source</strong></p>
+<p>When it comes to helping ensure that civic technology solutions continue to thrive after launch, there is almost nothing better than leveraging the power of open source. There&#8217;s nothing wrong with closed source solutions built on top of open data, but if governments are paying for custom solutions from vendors to display open data we should <a href="https://github.com/cityofphiladelphia/myPhillyRising">insist that the underlying code be open sourced</a>. This can go a long way toward helping ensure that it continues to evolve over time, as civic technologists contribute fixes and enhances and (potentially) as other governments fork these solutions for their own use.</p>
+<p>It&#8217;s really cool to see the conversation around civic technology and open data focused on how we can take the great work that has been done to the next level. I think it means we&#8217;re ready for the next steps.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3142" class="post-3142 post type-post status-publish format-standard hentry category-cities category-civic-hacking category-development-tools category-open-data category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2014/01/10/onboarding-civic-hackers/index.html" rel="bookmark">Onboarding Civic Hackers</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2014/01/10/onboarding-civic-hackers/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="January 10, 2014"><i class="fa fa-clock-o"></i>January 10, 2014</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Earlier this week, I had the pleasure of attending a civic hacking event jointly organized by <a href="http://codeforphilly.org/">Code for Philly</a> and <a href="http://www.girldevelopit.com/chapters/philadelphia">Girl Develop It Philly</a>. The event had a tremendously good turnout &#8211; over 50 people by my count &#8211; making it one of the larger events Code for Philly has organized in recent months.</p>
+<p><img src="https://civicio.files.wordpress.com/2014/01/cfa_gdi.jpg?w=300&#038;h=225" alt="cfa_gdi" width="300" height="225" style="float:right;padding:5px;" /></p>
+<p>The mission of Girl Develop It is to empower women to learn software development, and as a result there were a good number of people at the event being introduced to civic hacking for the first time. This got me thinking about ways to onboard people new to civic hacking (and people new to coding) into civic technology projects.</p>
+<p>None of these is new, but here are five ideas I came up with after the event:</p>
+<p><strong>Data Liberation</strong> &#8211; the foundation of civic hacking project is open data, and far too much of the data civic hackers need is locked up in broken websites and unusable formats. Helping to <a href="http://pdfliberation.wordpress.com/">break some of this data free</a> can be a tremendous benefit to open data users and civic hacking projects.</p>
+<p><strong>Documentation</strong> &#8211; far too many open source and civic hacking projects go without proper documentation to help other developers contribute and to support end users. Helping to create or expand documentation for a project can be critical to helping it succeed.</p>
+<p><strong>User Testing</strong> &#8211; Organizing and conducting end user testing for civic technology projects is sadly rare. There are some <a href="http://www.smartchicagocollaborative.org/introducing-the-cut-group-get-paid-to-test-civic-apps/">efforts underway to change this</a> but in order for civic hacking projects to improve and succeed we need real feedback from mainstream users.</p>
+<p><strong>Outreach</strong> &#8211; One legitimate criticism of civic apps is that too few people know they exist. There are efforts working to change this, like <a href="http://appsforphilly.org/">Apps for Philly</a> (still in its infancy) &#8211; a site that lists a host of different civic technology apps that are available for users. Adding new projects to this listing (and others like it) will both help these projects succeed and give the person doing it a much clearer sense of the civic technology landscape.</p>
+<p><strong>Helper Libraries</strong> &#8211; a great way to get comfortable writing code and to help out a civic technology project is to write <a href="http://phlapi.com/libraries.html">helper libraries</a> for projects with APIs. At the Apps for Philly <a href="http://appsforphilly.org/events/transit-2013">Transit Hackathon</a>, one project utilized recently released data from the City of Philadelphia on bicycle thefts. The lead developer created a <a href="http://bikethefts.jeffsbox.net/">new API for this data</a> to enable other projects to use it. Building new client libraries in a range of different languages would be a great way to support other developers that want to incorporate bike theft data into their projects, and to get some hands on experience writing code.</p>
+<p>There are so many ways to contribute to open source projects and to help support civic hacking efforts &#8211; these are just a few.</p>
+<p>We need more great events like the one organized by Code for Philly and Girl Develop it Philly to bring together all of the talented people we have in our city to work on these important projects.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-3034" class="post-3034 post type-post status-publish format-standard hentry category-open-data category-open-government category-open-source category-procurement">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2013/10/14/five-ways-to-make-government-procurement-better/index.html" rel="bookmark">Five Ways to Make Government Procurement&nbsp;Better</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2013/10/14/five-ways-to-make-government-procurement-better/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="October 14, 2013"><i class="fa fa-clock-o"></i>October 14, 2013</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Nothing in recent memory has focused attention on the need for wholesale reform of the government IT procurement system more than the troubled launch of <a href="http://healthcare.gov">healthcare.gov</a>.</p>
+<p><img src="https://civicio.files.wordpress.com/2013/10/broken-car.jpg?w=300&#038;h=199" alt="broken-car" width="300" height="199" style="float:right;padding:5px;margin-left:10px;"></p>
+<p>There has been a myriad of <a href="http://blog.dobt.co/post/63381111778/the-healthcare-gov-fiasco">blog posts</a>, <a href="http://www.buzzfeed.com/alexhoward/how-the-first-internet-president-produced-american-governmen">stories</a> and <a href="http://mobile.nytimes.com/2013/10/13/us/politics/from-the-start-signs-of-trouble-at-health-portal.html">articles</a> written in the last few weeks detailing all of the problems that led to the ignominious launch of the website meant to allow people to sign up for health care coverage.</p>
+<p>Though the details of this high profile flop are in the latest headlines, the <a href="../../2012/01/23/will-lack-of-procurement-reform-smother-civic-startups/index.html">underlying cause has been talked about many times before</a> &#8211; the process by which governments contract with outside parties to obtain IT services is broken.</p>
+<p>The process clearly does not work well for governments &#8211; and many would argue that it does not work well for vendors either. Typical government procurement rules shut out many small firms that may be well positioned to execute on a government IT project but lack the organizational endurance to make it through the selection process.</p>
+<p>What are the problems with the government procurement process and how can we fix them? How can we foster more participation in the procurement process by more firms that are qualified to do work? How can we lower the prices that governments pay for IT products and services and help ensure better quality? </p>
+<p>Here&#8217;s my take on the major problems with the current system, and five recommendations for how we can start to fix them.</p>
+<h4>The procurement process is too costly and complex</h4>
+<p>The most under-appreciated characteristic of the government procurement process as it exists today is that it&#8217;s current design is largely intentional. Much like the federal and state income tax systems, we imbue a number of values deemed important into our procurement processes in the hopes of fostering favorable outcomes.</p>
+<p>Requirements for women and minority-owned business participation; requirements that governments utilize local vendors; requirements that governments favor vendors that have any number of different traits or qualities &#8211; no one would argue that these requirements are aimed at producing positive outcomes. But the price of using the procurement system as the vehicle for achieving these ends means that the process is more complex for all participants. This is true, even if the positive outcomes desired are not realized, or realized to a lesser extent than hoped for.</p>
+<p>The added complexity borne by all participants doesn&#8217;t guarantee the intended results.</p>
+<p>Probably the most overarching value we imbue in the procurement system is risk aversion &#8211; in fact, much of the complexity and cost of the current system (for both governments and vendors) can be attributed to the desire to reduce the risk assumed by governments when partnering with outside firms.</p>
+<p>Requirements like <a href="http://www.colorado.edu/engineering/civil/db/DBS/glossary.cgi?word=Proposal+Bond">proposal</a> and <a href="http://en.wikipedia.org/wiki/Performance_bond">performance bonds</a>, professional liability insurance coverage and the submission of audited financial statements (sometimes several years worth) &#8211; to name just a few &#8211; are all meant to offset the risk governments assume when they outsource work to a vendor. In some respects, these requirements can be deemed beneficial to governments and indicate prudent stewardship of public resources.</p>
+<p>However, the widespread use of these and similar requirements by governments at all levels doesn&#8217;t seem to have lessened the incidence of IT project failures, and they can drive up the cost of IT projects by pricing smaller firms out of the bidding process. For example, many small firms argue that the bond industry doesn&#8217;t have a good understanding of how to underwrite IT projects, so it can be difficult to get a performance bond as part of a bid response. The result &#8211; many smaller firms that may be well qualified to do work simply walk away from the process. This is true even of these provisions don&#8217;t lower the actual risk assumed by governments as part of large IT projects.</p>
+<p>Again, the added complexity and cost borne by all participants doesn&#8217;t guarantee the intended results.</p>
+<p>The use of these risk mitigation provisions at all levels of government helps highlight a more fundamental problem that is at the heart of the broken procurement process in government &#8211; a shocking <a href="../../2013/06/06/the-case-for-making-procurement-harder/index.html">lack of IT knowledge within government</a>. </p>
+<p>A better much way for governments to hedge against the risks inherent in any large project &#8211; particularly IT projects &#8211; is to develop the internal capacity to manage and implement them successfully.</p>
+<h4>The procurement process moves too slowly</h4>
+<p>This is actually a fair criticism of government in general, but it is a particularly acute during the procurement process. To illustrate the magnitude of the issue, consider that in the City of Philadelphia the period between a contract award (a vendor gets selected to work on a project) and the final execution of that contract (the beginning of actual work) can take an average of four months for some projects.</p>
+<p>We can make the same observation about the pace at which governments operate that we have about the procurement process &#8211; much of this is <a href="http://en.wikipedia.org/wiki/Federalist_No._47">by design</a>. But long procurement and <a href="../../2012/05/25/bizzaro-budgeting-and-public-sector-innovation/index.html">budget cycles</a> can drive away smaller firms that can not afford to invest significant resources in projects that don&#8217;t provide a return for months on end.</p>
+<p>There are usually requirements for government RFPs to be posted publicly and widely advertised, and that all interested parties have an equal opportunity to participate through public bid notices and open vendor meetings. All of these requirements are meant to enhance the transparency of the bidding process but they can also add to the time it takes to select a vendor for a project, and for the vendor to begin work.</p>
+<p>An emphasis on transparency in the procurement process is undoubtedly a good thing. But there are other steps that governments can might to dramatically enhance the transparency of the public procurement process without adding steps that slow the process down and discourage many prospective vendors from participating.</p>
+<h4>Some things we can do to make procurement better</h4>
+<p>With all of this in mind, here are &#8211; in no particular order &#8211; five suggested changes that can be adopted to improve the government procurement process.</p>
+<p><strong>Raise the threshold on simplified / streamlined procurement</strong></p>
+<p>Many governments use a separate, more streamlined process for smaller projects that do not require a full RFP (in the City of Philadelphia, professional services projects that do not exceed $32,000 annually go through this more streamlined bidding process). In Philadelphia, we&#8217;ve had great success in using these smaller projects to test <a href="../../2013/03/27/experiments-in-github-based-procurement/index.html">new ideas and strategies</a> for partnering with IT vendors. There is much we can learn from these experiments, and a modest increase to enable more experimentation would allow governments to gain valuable new insights.</p>
+<p>Narrowing the focus of any enhanced thresholds for streamlined budding to web-based projects would help mitigate risk and foster a quicker process for testing new ideas.</p>
+<p><strong>Identify clear standards for projects</strong></p>
+<p>Having a clear set of vendor-agnostic IT standards to use when developing RFPs and in performing work can make a huge difference in how a project turns out. Clearly articulating standards for:</p>
+<ul style="margin-bottom:5px;">
+<li>The various components that a system will use.</li>
+<li>The environment in which it will be housed.</li>
+<li>The testing it must undergo prior to final acceptance.</li>
+</ul>
+<p>&#8230;can go a long way to reduce the risk an uncertainly inherent in IT projects. </p>
+<p>It&#8217;s worth noting that most governments probably already have a set of IT standards that are usually made part of any IT solicitation. But these standards documents can quickly become out of date &#8211; they must undergo constant review and refinement. In addition, many of the people writing these standards may confuse a specific vendor product or platform with a true standard. </p>
+<p><strong>Require open source</strong></p>
+<p>Requiring that IT projects be open source during development or after completion can be an effective way to reduce risk on an IT project and enhance transparency. This is particularly true of web-based projects.</p>
+<p>In addition, government RFPs should encourage the use of existing open source tools &#8211; leveraging existing software components that are in use in similar projects and maintained by an active community &#8211; to foster external participation by vendors and volunteers alike. When governments <a href="https://github.com/cityofphiladelphia">make the code behind their project open source</a>, they enable anyone that understands software development to help make them better.</p>
+<p><strong>Develop a more robust internal capacity for IT project management and implementation</strong></p>
+<p>Governments must find ways to develop the internal capacity for developing, implementing and managing technology projects.</p>
+<p>Part of the reason that governments make use of a variety of different risk mitigation provisions in public bidding is that there is a lack of people in government with hands on experience building or maintaining technology. There is a dearth of makers in government, and there is a direct relationship between the perceived risk that governments take on with new technology projects and the lack of experienced technologists working in government.</p>
+<p>Governments need to find ways to develop a <a href="http://en.wikipedia.org/wiki/Maker_culture">maker culture</a> within their workforces and should prioritize recruitment from the local technology and civic hacking communities. </p>
+<p><strong>Make contracting, lobbying and campaign contribution data public as open data</strong></p>
+<p>One of the more disheartening revelations to come out of the analysis of healthcare.gov implementation is that some of the firms that were awarded work as part of the project also <a href="http://reporting.sunlightfoundation.com/2013/aca-contractors/">spent non-trivial amounts of money on lobbying</a>. It&#8217;s a good bet that this kind of thing also happens at the state and local level as well.</p>
+<p>This can seriously undermine confidence in the bidding process, and may cause many smaller firms &#8211; who lack funds or interest in lobbying elected officials &#8211; to simply throw up their hands and walk away.</p>
+<p>In the absence of statutory or regulatory changes to prevent this from happening, governments can enhance the transparency around the bidding process by working to ensure that all contracting data as well as data listing publicly registered lobbyists and <a href="https://github.com/CityOfPhiladelphia/phl-campaign-finance-data">contributions to political campaigns</a> is open.</p>
+<p>Ensuring that all prospective participants in the public bidding process have confidence that the process will be fair and transparent is essential to getting as many firms to participate as possible &#8211; including small firms more adept at agile software development methodologies. More bids typically equates to higher quality proposals and lower prices. </p>
+<p>None of the changes list above will be easy, and governments are positioned differently in how well they may achieve any one of them. Nor do they represent the entire universe of things we can do to improve the system in the near term &#8211; these are items that I personally think are important and very achievable. </p>
+<p>One thing that could help speed the adoption of these and other changes is the development of robust communication framework between government contracting and IT professionals in different cities and different states. I think a &#8220;Municipal Procurement Academy&#8221; could go a long way toward achieving this.</p>
+<p>Look for more details on a Municipal Procurement Academy &#8211; to train state and local officials on best practices for IT procurement &#8211; in a future post.</p>
+<p>[Note &#8211; picture courtesy of Flickr user <a href="http://www.flickr.com/photos/curtisperry/7085049783/in/photolist-bN5JsK-8Jbw3F-8JeAFJ-8JeBgE-8JbvvF-aKEgEH-8Mjbpv-8MneV3-99r8vw-a3tAGn-dePU96-8MpwbA-bafgdt-bSfSxM-ejraA1-9Q7hYd-8qYQWB-aew6fn-egcpQY-ekRA7p-9PG53Y-c5NRmh-dVy7PS-dDxZtf-aYbqED-efGkZo-8pVUur-dV9aSt-9nrtoa-cbr1eC-7MFA6U-bAbjWd-7yjx6x-8FLxEP-9hmJYZ-afUB7x/">Curtis Perry</a>]</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				<nav class="navigation paging-navigation" role="navigation">
+		<h1 class="screen-reader-text">Posts navigation</h1>
+		<div class="nav-links">
+
+						<div class="nav-previous"><a href="page/2/index.html" >Older Posts</a></div>
+			
+			
+		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+		
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/category/open-source/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+		<script type="text/javascript">
+		var infiniteScroll = {"settings":{"id":"main","ajaxurl":"https:\/\/civic.io\/?infinity=scrolling","type":"click","wrapper":false,"wrapper_class":"infinite-wrap","footer":"site-main","click_handle":"1","text":"Older posts","totop":"Scroll back to top","currentday":"14.10.13","order":"DESC","scripts":[],"styles":[],"google_analytics":false,"offset":1,"history":{"host":"civic.io","path":"\/category\/open-source\/page\/%d\/","use_trailing_slashes":true,"parameters":""},"query_args":{"category_name":"open-source","error":"","m":"","p":0,"post_parent":"","subpost":"","subpost_id":"","attachment":"","attachment_id":0,"name":"","pagename":"","page_id":0,"second":"","minute":"","hour":"","day":0,"monthnum":0,"year":0,"w":0,"tag":"","cat":25,"tag_id":"","author":"","author_name":"","feed":"","tb":"","paged":0,"meta_key":"","meta_value":"","preview":"","s":"","sentence":"","title":"","fields":"","menu_order":"","embed":"","category__in":[],"category__not_in":[],"category__and":[],"post__in":[],"post__not_in":[],"post_name__in":[],"tag__in":[],"tag__not_in":[],"tag__and":[],"tag_slug__in":[],"tag_slug__and":[],"post_parent__in":[],"post_parent__not_in":[],"author__in":[],"author__not_in":[],"lazy_load_term_meta":false,"posts_per_page":10,"ignore_sticky_posts":false,"suppress_filters":false,"cache_results":false,"update_post_term_cache":true,"update_post_meta_cache":true,"post_type":"","nopaging":false,"comments_per_page":"50","no_found_rows":false,"order":"DESC"},"query_before":"2022-09-02 18:59:54","last_post_date":"2013-10-14 23:52:38","body_class":"infinite-scroll","loading_text":"Loading new page","stats":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio&x_pagetype=infinite-click"}};
+		</script>
+		<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/category/open-source/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2016%252F05%252F09%252Fthinking-outside-the-portal%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2Fcategory%2Fopen-source%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2016%252F05%252F09%252Fthinking-outside-the-portal%252F">Log in</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/feeds/1432890">
+											View site in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="Write a Comment..."
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="Post Comment" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/_static/??-eJyljMEKwjAQRH/IuFS00IP4LTFZytZNdskmLf17FexBkF68zTzmDSzqguSKuUJqTrmNlA0mrOrD49NBi8QWKkmG9EqMBsEXaYYMtpBicfeWI+MxmB3g789tuoG924Kmko1mdDNFlB9kT6/EGN3ombGs3+2t3dK16y/9+TQMfTc9ASy8ct0=?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack-carousel-js-extra'>
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s2.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"1bf354b661","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/civicio.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fcivic.io%2F2016%2F05%2F09%2Fthinking-outside-the-portal%2F","blog_id":"31186386","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio","is_public":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s2.wp.com/_static/??-eJyVUO1OwzAMfCE8U2mb+IN4FJQmbus2X0qclr09QdAJBmrHvzvbd2cblwg6eCEvOGY0NLOm+HYY8wN+a7kC0ZaefUb2HXuWyxXczspAjjLG0iJxPwhXUq1bpacsiUQPdypWfOd4njiCZT9BF3TJ0PGvM3aCoLWh/69mIGUobTxsJIn1dnxlr1EWFqEEwo7qrrShU8axh1YldCpXTUUg6eOL+2FfHGMKpmjh4D/j28LWoFYplEz2Or0WDjVxwzxRjsFnnglmNhT+qOw4CFsy0CtrKV1+sg3Vuh4sUQd3Q6vuxT0353NzbE6Px6fxHaPWEIs='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<script type="text/javascript">
+			(function() {
+				var extend = function(out) {
+					out = out || {};
+
+					for (var i = 1; i < arguments.length; i++) {
+						if (!arguments[i])
+						continue;
+
+						for (var key in arguments[i]) {
+						if (arguments[i].hasOwnProperty(key))
+							out[key] = arguments[i][key];
+						}
+					}
+
+					return out;
+				};
+				extend( window.infiniteScroll.settings.scripts, ["mobile-useragent-info","rlt-proxy","jquery-core","jquery-migrate","jquery","wpcom-actionbar-placeholder","grofiles-cards","wpgroho","devicepx","the-neverending-homepage","backstretch","eighties","skip-link-focus-fix","eighties-blog","eighties-header","jetpack-twitter-timeline","wpcom-masterbar-tracks-js","jetpack-carousel","jetpack-responsive-videos-min-script","tiled-gallery","carousel-wpcom"] );
+				extend( window.infiniteScroll.settings.styles, ["wpcom-smileys","the-neverending-homepage","wp-block-library","mediaelement","wp-mediaelement","jetpack-layout-grid","jetpack-ratings","coblocks-frontend","wpcom-core-compat-playlist-styles","wpcom-text-widget-styles","wpcom-bbpress2-staff-css","eighties-font-awesome","eighties","geo-location-flair","reblogging","a8c-global-print","h4-global","global-styles","eighties-header","eighties-headings","eighties-body","jetpack-global-styles-frontend-style","jetpack-carousel-swiper-css","jetpack-carousel","jetpack-responsive-videos-style","tiled-gallery"] );
+			})();
+		</script>
+				<span id="infinite-aria" aria-live="assertive"></span>
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelFGLz9dVitIOC4sX1N8eUMyfnFaTWtbP2ZKVXYsR1NaYi01LHJUWmpyRHxCSGNJJm5FSjhIMVVSeF1CbG1nNTZKal8uXXd4PTcmQTF+VjArWjVOQmJtMj1aNm1aZHFSQn5RM0ZqTzlqV0ElX3NpMll2diY3SnE/TD96RXNqJW04TlhIREJPUnIvdlRLZXhqcXBB'}]);
+_stq.push([ 'clickTrackerInit', '31186386', '0' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

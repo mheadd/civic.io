@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	
+	>
+<channel>
+	<title>
+	Comments on: Building an IM Bot for the NY Senate OpenLeg API	</title>
+	<atom:link href="https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Mon, 29 Jun 2009 19:47:01 +0000</lastBuildDate>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+	<item>
+		<title>
+		By: Mark Headd		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-125</link>
+
+		<dc:creator><![CDATA[Mark Headd]]></dc:creator>
+		<pubDate>Mon, 29 Jun 2009 19:47:01 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-125</guid>
+
+					<description><![CDATA[Sweet!  Thanks, Dave!!]]></description>
+			<content:encoded><![CDATA[<p>Sweet!  Thanks, Dave!!</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Dave Hoff		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-124</link>
+
+		<dc:creator><![CDATA[Dave Hoff]]></dc:creator>
+		<pubDate>Mon, 29 Jun 2009 18:40:34 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-124</guid>
+
+					<description><![CDATA[Nathan, Mark,
+
+Our API will support pushing messages to users in the form of an @reply or DM currently, but we do intend on adding a broadcast type push that will update your bots status as your looking to do. We&#039;ll let you know when that&#039;s in place.]]></description>
+			<content:encoded><![CDATA[<p>Nathan, Mark,</p>
+<p>Our API will support pushing messages to users in the form of an @reply or DM currently, but we do intend on adding a broadcast type push that will update your bots status as your looking to do. We&#8217;ll let you know when that&#8217;s in place.</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Mark Headd		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-123</link>
+
+		<dc:creator><![CDATA[Mark Headd]]></dc:creator>
+		<pubDate>Wed, 24 Jun 2009 15:52:59 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-123</guid>
+
+					<description><![CDATA[Nathan:
+
+I think a push type of interaction might best be handled by the Twitter API itself - http://apiwiki.twitter.com/Twitter-API-Documentation. Probably no need for IMified for this part.
+
+As you get the bill status changes, they can be added to the @opensenate Twitter account (or the account of your choice) via a simple status update API call.  Anyone following @opensenate would see the updated bill status. Additionally, you could add #hashtags to make it easier for followers and others to pick out the ones of importance to them (e.g., #s21 status changed to xxx).
+
+I had thought about adding a permalink to the bill in the @opensenate Tweets, and plan on doing so shortly.  I will probably want to make a call to a URL shortening service, to reduce the number of characters to the bill permalink, before adding it to the Tweet.  I&#039;ve used the cli.gs API (http://cli.gs/#api) for this in the past.  Probably won&#039;t be able to do it until this weekend though - we&#039;re at the end of a sprint at my day job and we&#039;re closing out the last few items before sprint review.
+
+I&#039;ve done both of the above (invoking the Twitter API to update status, and shortening a URL for posting in a Tweet) on previous projects.  You may notice that the code sample I include in the post has a base class for REST-based API invocations.  
+
+This base class can be easily extended to do both of the above.  Makes it really easy to add new functionality to the NY Senate bot!
+
+I&#039;ll post back here and hit you up with a @reply when I&#039;ve had a chance to add the permalink to the @opensenate Tweets.
+
+What are your thoughts on just using the Twitter API to crank out status updates when the status of the bills change?]]></description>
+			<content:encoded><![CDATA[<p>Nathan:</p>
+<p>I think a push type of interaction might best be handled by the Twitter API itself &#8211; <a href="http://apiwiki.twitter.com/Twitter-API-Documentation" rel="nofollow ugc">http://apiwiki.twitter.com/Twitter-API-Documentation</a>. Probably no need for IMified for this part.</p>
+<p>As you get the bill status changes, they can be added to the @opensenate Twitter account (or the account of your choice) via a simple status update API call.  Anyone following @opensenate would see the updated bill status. Additionally, you could add #hashtags to make it easier for followers and others to pick out the ones of importance to them (e.g., #s21 status changed to xxx).</p>
+<p>I had thought about adding a permalink to the bill in the @opensenate Tweets, and plan on doing so shortly.  I will probably want to make a call to a URL shortening service, to reduce the number of characters to the bill permalink, before adding it to the Tweet.  I&#8217;ve used the cli.gs API (<a href="http://cli.gs/#api" rel="nofollow ugc">http://cli.gs/#api</a>) for this in the past.  Probably won&#8217;t be able to do it until this weekend though &#8211; we&#8217;re at the end of a sprint at my day job and we&#8217;re closing out the last few items before sprint review.</p>
+<p>I&#8217;ve done both of the above (invoking the Twitter API to update status, and shortening a URL for posting in a Tweet) on previous projects.  You may notice that the code sample I include in the post has a base class for REST-based API invocations.  </p>
+<p>This base class can be easily extended to do both of the above.  Makes it really easy to add new functionality to the NY Senate bot!</p>
+<p>I&#8217;ll post back here and hit you up with a @reply when I&#8217;ve had a chance to add the permalink to the @opensenate Tweets.</p>
+<p>What are your thoughts on just using the Twitter API to crank out status updates when the status of the bills change?</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Nathan Freitas		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-122</link>
+
+		<dc:creator><![CDATA[Nathan Freitas]]></dc:creator>
+		<pubDate>Wed, 24 Jun 2009 15:01:35 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-122</guid>
+
+					<description><![CDATA[Also, when the bot tweets back the info on the bill, you should also include the bill permalink in the response:
+
+http://open.nysenate.gov/openleg/api/html/bill/Sxxxx etc]]></description>
+			<content:encoded><![CDATA[<p>Also, when the bot tweets back the info on the bill, you should also include the bill permalink in the response:</p>
+<p><a href="http://open.nysenate.gov/openleg/api/html/bill/Sxxxx" rel="nofollow ugc">http://open.nysenate.gov/openleg/api/html/bill/Sxxxx</a> etc</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Nathan Freitas		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-121</link>
+
+		<dc:creator><![CDATA[Nathan Freitas]]></dc:creator>
+		<pubDate>Wed, 24 Jun 2009 14:59:36 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-121</guid>
+
+					<description><![CDATA[API docs are posted here, fyi: http://wiki.github.com/nysenatecio/OpenLeg
+
+Nice work on the Twitter support. I am working on something along those lines, but perhaps you can add it... i want to post all bill actions out to a Twitter account as they happen (or as we get them each hour). Can IMified handle a &quot;push&quot; type of feed as opposed to a query?]]></description>
+			<content:encoded><![CDATA[<p>API docs are posted here, fyi: <a href="http://wiki.github.com/nysenatecio/OpenLeg" rel="nofollow ugc">http://wiki.github.com/nysenatecio/OpenLeg</a></p>
+<p>Nice work on the Twitter support. I am working on something along those lines, but perhaps you can add it&#8230; i want to post all bill actions out to a Twitter account as they happen (or as we get them each hour). Can IMified handle a &#8220;push&#8221; type of feed as opposed to a query?</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Dave Hoff		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-120</link>
+
+		<dc:creator><![CDATA[Dave Hoff]]></dc:creator>
+		<pubDate>Thu, 18 Jun 2009 17:50:27 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-120</guid>
+
+					<description><![CDATA[Very cool Mark! Thanks for choosing IMified to demo the API integration and for sharing your code.]]></description>
+			<content:encoded><![CDATA[<p>Very cool Mark! Thanks for choosing IMified to demo the API integration and for sharing your code.</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Mark Headd		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-119</link>
+
+		<dc:creator><![CDATA[Mark Headd]]></dc:creator>
+		<pubDate>Thu, 18 Jun 2009 11:51:21 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-119</guid>
+
+					<description><![CDATA[The work you guys at the NY Senate are doing is important, and deserves the attention of the developer community (which I have no doubt you&#039;ll get).
+
+I&#039;d like to work on a voice-enabled telephone app in the near future, and perhaps develop more formal collections of class libraries for interacting with the API (PHP and C#).
+
+I&#039;m inspired by what you guys are doing -- can&#039;t wait to see what you guys have planned next!]]></description>
+			<content:encoded><![CDATA[<p>The work you guys at the NY Senate are doing is important, and deserves the attention of the developer community (which I have no doubt you&#8217;ll get).</p>
+<p>I&#8217;d like to work on a voice-enabled telephone app in the near future, and perhaps develop more formal collections of class libraries for interacting with the API (PHP and C#).</p>
+<p>I&#8217;m inspired by what you guys are doing &#8212; can&#8217;t wait to see what you guys have planned next!</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Nathan Freitas		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-118</link>
+
+		<dc:creator><![CDATA[Nathan Freitas]]></dc:creator>
+		<pubDate>Thu, 18 Jun 2009 10:24:45 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-118</guid>
+
+					<description><![CDATA[The API is back up now... apologies for the outages here and there. Still getting our production server issues ironed out.
+
+Thanks for building this AWESOME bot. You are officially the first external API user. That deserves some sort of prize!]]></description>
+			<content:encoded><![CDATA[<p>The API is back up now&#8230; apologies for the outages here and there. Still getting our production server issues ironed out.</p>
+<p>Thanks for building this AWESOME bot. You are officially the first external API user. That deserves some sort of prize!</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Mark Headd		</title>
+		<link>https://civic.io/2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/#comment-117</link>
+
+		<dc:creator><![CDATA[Mark Headd]]></dc:creator>
+		<pubDate>Thu, 18 Jun 2009 04:12:35 +0000</pubDate>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1005#comment-117</guid>
+
+					<description><![CDATA[Hmmm. Looks like the API might be down.
+
+If you run into any problems testing this app, bear in mind that the API is still in Beta.]]></description>
+			<content:encoded><![CDATA[<p>Hmmm. Looks like the API might be down.</p>
+<p>If you run into any problems testing this app, bear in mind that the API is still in Beta.</p>
+]]></content:encoded>
+		
+			</item>
+	</channel>
+</rss>

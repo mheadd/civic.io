@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>Regulations.gov &#8211; Civic Innovations</title>
+	<atom:link href="https://civic.io/tag/regulations-gov/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Thu, 23 Feb 2012 16:32:36 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+<cloud domain='civic.io' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<image>
+		<url>https://s0.wp.com/i/buttonw-com.png</url>
+		<title>Regulations.gov &#8211; Civic Innovations</title>
+		<link>https://civic.io</link>
+	</image>
+	<atom:link rel="search" type="application/opensearchdescription+xml" href="https://civic.io/osd.xml" title="Civic Innovations" />
+	<atom:link rel='hub' href='https://civic.io/?pushpress=hub'/>
+	<item>
+		<title>GET /open/government/apis</title>
+		<link>https://civic.io/2012/02/23/get-opengovernmentapis/</link>
+					<comments>https://civic.io/2012/02/23/get-opengovernmentapis/#comments</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Thu, 23 Feb 2012 16:19:30 +0000</pubDate>
+				<category><![CDATA[civic hacking]]></category>
+		<category><![CDATA[code samples]]></category>
+		<category><![CDATA[APIs]]></category>
+		<category><![CDATA[Programmable Web]]></category>
+		<category><![CDATA[Regulations.gov]]></category>
+		<guid isPermaLink="false">http://civic.io/?p=239</guid>
+
+					<description><![CDATA[Roughly three years ago, Tim O&#8217;Reilly defined a vision for &#8220;Government as a platform.&#8221; Today, there are around 240 API&#8217;s listed on Programmable Web that identify as &#8220;government&#8221; APIs. This number is sure to climb in the weeks and months ahead, as more and more... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2012/02/23/get-opengovernmentapis/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>Roughly <a href="http://techcrunch.com/2009/09/04/gov-20-its-all-about-the-platform/">three years ago</a>, Tim O&#8217;Reilly defined a vision for &#8220;Government as a platform.&#8221;</p>
+<p>Today, there are <a href="http://www.programmableweb.com/apitag/?q=government">around 240 API&#8217;s listed on Programmable Web that identify as &#8220;government&#8221; APIs</a>. This number is sure to climb in the weeks and months ahead, as more and more governments, public authorities and agencies deploy APIs for developers to use.</p>
+<p>One such API, recently released as part of the relaunch of <a href="http://www.regulations.gov/">Regulations.gov</a>, got my attention when it was <a href="http://gov20.govfresh.com/regulations-gov-relaunches-with-apis-integrates-social-media-hopes-for-public-participation/">highlighted by Alex Howard of O&#8217;Reilly Media</a>.</p>
+<p>The Regulations.gov API is part of a broader effort to use new technology and social media to engage citizens in the public rule making process.  </p>
+<p>The rise of API-based programming, and the dramatic success of <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> in recent years over other kinds of API formats (i.e., <a href="http://en.wikipedia.org/wiki/SOAP">SOAP</a>), has helped spur lots of innovation and even changed the way that people build software. It&#8217;s encouraging to see efforts like the Regulations.gov relaunch try and tap into this energy and grab some developer mindshare to spur innovation.</p>
+<p>But if governments are going to attract developers with APIs, then it makes sense to look at government APIs and evaluate them against other, more commonly used APIs to see how they stack up.  People respond to incentives, and developers are no different &#8211; if an API is well documented and easy to use, developers are more likely to give it a try.  The more &#8220;friction&#8221; an API has, the less likely it is to attract developers.</p>
+<p>How does the new Regulations.gov API measure up? I decided to take a few hours to give it a test and find out.  Here&#8217;s what I found.</p>
+<p><span id="more-239"></span></p>
+<p><strong>Sign me up!</strong></p>
+<p>The Regulations.gov API requires an API key to use &#8211; this is pretty common in the world of API programming, but Regulations.gov introduces some unneeded friction here. </p>
+<p>Most widely used APIs built around <a href="http://en.wikipedia.org/wiki/Platform_as_a_service">PaaS</a> offerings are largely self-service. They are set up to get developers up and running quickly with little or no need for &#8220;hands on&#8221; assistance from support staff.  The process of signing up for a API key is usually frictionless &#8211; provide some basic information and a valid e-mail address and your off to the races.</p>
+<p>I had to request a Regulations.gov API key using a plain old web form &#8211; submitting my name, phone number and e-mail address.  This request was manually processed, and I received an e-mail back from support staff the next day asking me to identify the organization I represented.  </p>
+<p>I explained in my response that I was doing independent research and noted my intention to write about the experience of using the Regulations.gov API.  Shortly thereafter, I received my API key and was able to start testing.</p>
+<p>The reason for this process being manual is not obvious to me. I completely get the need to issue an API key, but surely this process can be automated.  At present, the API is read only (via GET requests) so there isn&#8217;t all that much users can do currently other than run queries.</p>
+<p>The entire process took about 1.5 &#8211; 2 days to complete &#8211; far too long in my opinion if I had intentions of using the Regulations.gov API at a hackathon or other civic hacking event.  The event might have been finished by the time I got my API key to beging testing.</p>
+<p>There doesn&#8217;t seem to be any reason why this process couldn&#8217;t take minutes rather than days. This seems like needless friction that will discourage many developers from giving this API a hard look.</p>
+<p><strong>The weak link in the chain</strong></p>
+<p>They say that a chain is only as strong as it&#8217;s weakest link. I say that an API is only as good as it&#8217;s documentation. </p>
+<p>This is another area where I think the Regulation.gov API could be improved. The API docs are in <a href="http://www.regulations.gov/docs/Regulations_Gov_API_User_Guide.pdf">PDF format</a>, and are somewhat tedious to navigate. There are lots and lots of <a href="https://stripe.com/docs">very good examples</a> to emulate when designing API documentation.</p>
+<p>Additionally, I found the names of some of the parameters used with API calls a bit cryptic &#8211; e.g., &#8220;Comment Period Start Date&#8221; is represented in an API call as &#8221; cmsd&#8221;, while &#8220;Comment Period End Date&#8221; is represented as &#8220;cmd&#8221;.  I realize this is a bit picky, but it would be much nicer if these parameters were more clearly named.</p>
+<p><strong>Less talk, more code</strong></p>
+<p>Overall, I found the Regulations.gov API easy to work with.  In the course of a couple of hours, I reviewed the documentation, rans some quick command line tests to kick the tires a bit and then pounded out a rudimentary script.</p>
+<p>Here is a simple Node.js script for querying the API and displaying the results. Complete code for this simple demo <a href="https://gist.github.com/1893123">can be found here</a>.</p>
+<pre class="brush: jscript; title: ; notranslate">
+// Include required modules and config.
+var http = require('http');
+var util = require('util');
+var config = require('./config');
+
+// Search options.
+var dct = process.argv[2] || 'O';
+var a = process.argv[3] || 'EPA';
+var cp = process.argv[4] || 'O';
+
+// Options for HTTP  request.
+var options = {
+  host: 'regulations.gov',
+  port: 80,
+  method: 'GET'
+};
+
+// Build path to API endpoint.
+var path = '/api/documentsearch/v1.json?dct=' + dct 
+  + '&amp;a=' + a 
+  + '&amp;cp=' + cp 
+  + '&amp;api_key=' + config.credentials.api_key;
+
+options.path = path;
+
+// Create HTTP client and make request.
+var apiCall = http.request(options, function(response){
+
+  // Simple string to hold response from API.
+  var searchResult = '';
+  response.on('data', function(chunck){
+    searchResult += chunck;
+  });
+  response.on('end', function(){
+    var doc = JSON.parse(searchResult);
+    
+    // Print out number of documens found.
+    var docs = doc.searchresult.documents.document;
+    
+    // Write out Docket ID for each.
+    util.puts('Search found: ' + doc.searchresult.recordCount + ' documents.');
+    for(var i=0; i&lt;docs.length; i++) {
+      util.puts(docs[i].docketId);
+    }
+  });
+
+});
+apiCall.end();
+</pre>
+<p>One observation on the results returned from the document search endpoint &#8211; which this sample script uses &#8211; the document structure returned is somewhat complex and not especially well documented.  I wasn&#8217;t easily discernable from the documentation what the structure of the result would be based on specific parameters included in the search (I opted for JSON as the result format).</p>
+<p>As a result, when the default search options are changed (by passing in different arguments to the script when it&#8217;s executed) the resulting <a href="https://gist.github.com/1893123#gistcomment-85697">Docket ID listing is incorrect</a>.</p>
+<p>I might be missing something obvious, and it seems likely that this might be clearer to someone with a bit more familiarity with the structure of proposed regulations. But if the goal here is to attract mainstream developers to use the Regulations.gov API, then I think there is an opportunity to improve the documentation in this regard.</p>
+<p>Overall, I really like what I see in the Regulations.gov API. If you haven&#8217;t had a play with it, I would encourage you to request an API and give the documentation a look.</p>
+<p>It&#8217;s heartening to see the vision for &#8220;Government as a platform&#8221; becoming reality. Looking forward to more great APIs from government agencies.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2012/02/23/get-opengovernmentapis/feed/</wfw:commentRss>
+			<slash:comments>3</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+	</item>
+	</channel>
+</rss>

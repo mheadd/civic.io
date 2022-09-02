@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>Civic Innovations | The Future is Open | Page 19</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=1165'
+					+ '&is_singular=';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145820";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../comments/feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJyNkt1uwyAMhV9oDk2VtbuZ9iz8eMwdEIShGW8/Gq1R1nbtbpCN/R2ObMQUQY8hY8jCF4iuWAospqhHD+zJYb3IOs38JG5jFN4pUK5LcNV87rSlpQqTbZWE4tgP3abbClXIGaHcqD/BkUoyVcG5OlyEKGhXDLI4sPBoSKJDP9tYJdHJigkcWqlr5yk8xlttnf+C/jY/O21imKM8WZZ1LBlsInNh+98SSWYKlh/gevzBtl3/0vXA5KNDSHhsQzTEeemA20KrpZ0W0O59lNdTuINNZCzmhvM5hoxf95H5HykVEzJDOz0VD/mjvTV/qzf/2u92280wPO/3h29CRvpa?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s0.wp.com/wp-content/themes/h4/global.css?m=1420737423h&cssminify=yes' type='text/css' media='all' />
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/page/19/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/_static/??-eJzTLy/QTc7PK0nNK9HPKtbPzU/KzEnVLS1OLUpMB4rpZual5etlFevoo6oryinRLSjKr6iEyWXmJeeUpqQWgySzCktTiyqhlF5uZh5BRbq5melFiSWpUMX2ubaGZsbm5gYmJpbmWQCPUzuV'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1662027824h&cssminify=yes' type='text/css' media='all' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel='shortlink' href='https://wp.me/26R0e' />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Civic Innovations" />
+<meta property="og:description" content="The Future is Open" />
+<meta property="og:url" content="https://civic.io/" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="The Future is Open" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="home blog paged paged-19 customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/page/19/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+						
+				
+<article id="post-1165" class="post-1165 post type-post status-publish format-standard hentry category-general-discussion category-open-government">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/09/23/longevity-for-open-data-and-gov-20/index.html" rel="bookmark">Longevity for Open Data and Gov&nbsp;2.0</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/09/23/longevity-for-open-data-and-gov-20/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="September 23, 2009"><i class="fa fa-clock-o"></i>September 23, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p><a href="http://blogs.gartner.com/andrea_dimaio/2009/09/22/open-data-and-application-contests-government-2-0-at-the-peak-of-inflated-expectations/" target="_blank">People that work for Gartner</a> are starting to use &#8220;hype cycle&#8221; and &#8220;Gov 2.0&#8221; in the same sentence (or rather, sentences that are really really close together).  There is also a <a href="http://www.govloop.com/profiles/blogs/gov-20-glitz-and-gabright" target="_blank">thoughtful piece on GovLoop</a> examining which aspects of Gov 2.0 are on the right track and the wrong track.</p>
+<p>I&#8217;ve raised <a href="http://www.voiceingov.org/blog/?p=1027">similar questions about Gov 2.0 efforts in the past</a>, and the need to tie them to quantifiable performance measures.</p>
+<p>With all of the excitement around the country and around the world focused on opening public data and Gov 2.0, proponents need to take steps to tie these efforts back to the core mission of the governments and agencies that they serve.  If open data and Gov 2.0 are a fad, then their 15 minutes are probably almost up &#8212; the longevity of these efforts and initiatives will be a function solely of their ability to enhance the performance of governments.</p>
+<p>Efforts that support open government data and greater use of alternative communication channels (like social media) for communicating with constituents are fast approaching an important tipping point.  The initial attraction of these efforts is that they are seen as forward thinking and cutting edge &#8212; they are inherently attractive because of their &#8220;newness.&#8221;  But when social media penetration has reached the point that even the local dogcatcher is on Twitter, its natural for people in government (particularly those that don&#8217;t live and breath this stuff) to start asking: &#8220;What&#8217;s the point?&#8221;</p>
+<p>Skepticism is probably most imminent for open government data projects because they typically require some investment of staff time and other resources.  These efforts need to be carefully crafted to ensure a tangible relationship to the underlying mission of the governments or agencies undertaking them.  How does opening government data help realize the goals of an agency?  How does opening government data make the job of government cheaper or more effective?</p>
+<p>These kinds of questions can be difficult (even offensive) to address when there is a strong belief in open government data as a principle. Nevertheless, if open government data projects and Gov 2.0 are to be around longer than 15 minutes, these are the types of questions that need to be answered.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1136" class="post-1136 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/09/06/leveraging-the-government-20-platform/index.html" rel="bookmark">Leveraging the Government 2.0&nbsp;Platform</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/09/06/leveraging-the-government-20-platform/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="September 6, 2009"><i class="fa fa-clock-o"></i>September 6, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A couple months back, I was thrilled to see the New York State Senate <a href="http://wiki.github.com/nysenatecio/OpenLeg" target="_blank">expose an API for querying the status of bills</a> in its Legislative Information System.  </p>
+<p>The release of this API is just one component of an exciting change underway in the Senate&#8217;s IT management (under NY Senate CIO Andrew Hoppin and his talented staff), and to my way of thinking it perfectly captures what people like Tim O’Reilly mean when they talk about <a href="http://www.techcrunch.com/2009/09/04/gov-20-its-all-about-the-platform/" target="_blank">government as a platform</a>.  </p>
+<p>The NY Senate is doing a lot these days to make government more open and more efficient (through the use of open source software tools like Drupal).  But the API excites me the most because of what I think it says about open government.  </p>
+<p>When governments make their data available in public formats, and expose APIs for querying such data, they are throwing the door open to outside developers to build useful things.  That&#8217;s significant, and the NY Senate should get some major props for being among the first (if not <strong>the</strong> first) legislative body in the country to provide an API for their legislative information.</p>
+<p>When governments make data available through an API, they are telling developers: &#8220;Use any platform or programming language you want to access our data.&#8221;  The basic requirements for invoking an API like the NY Senate&#8217;s (or the <a href="http://api.dc.gov/" target="_blank">District of Columbia&#8217;s 311 API</a>) is the ability to communicate via HTTP and to parse XML, or JSON.  Since pretty much every modern programming language and development platform can do these things, it creates opportunities for developers of all stripes.</p>
+<blockquote style="font-size:1.3em;"><p>But if APIs are platform and language agnostic, they are also modality agnostic &#8211; if the data exposed through an API is compact enough, there are lots of different ways to present this data to an end user.
+</p></blockquote>
+<p>In my opinion, government APIs also make a very compelling (albeit somewhat more subtle) statement about the different modalities that can be used to access data. More traditional types of applications that use government APIs are browser-based, visual applications. But if APIs are platform and language agnostic, they are also modality agnostic &#8211; if the data exposed through an API is compact enough, there are lots of different ways to present this data to an end user.  Providing multi-modal access to government data and services is something I have been interested in for a long time, and this interest was the catalyst for the <a href="http://dti.delaware.gov/services/accessde.shtml" target="_blank">Access Delaware project</a> I helped start when I worked for the State of Delaware back in 2003.</p>
+<p>Shortly after the folks at the NY Senate launched their API, I <a href="http://www.voiceingov.org/blog/?p=1005">began working on an application</a> that would allow someone to query the status of a bill using an Instant Messaging Client.  At the time, I said that I wanted to add additional functionality for different user agents (including regular telephones) to make my demo application truly multi-modal.</p>
+<p>I&#8217;ve been getting things done in dribs and drabs, but I now finally have the telephone interface complete and the latest code checked into <a href="http://github.com/mheadd/nys-bill-bot/tree/master" target="_blank">GitHub</a>.  There are four different methods for querying legislative information exposed via the NY Senate API:</p>
+<ul>
+<li style="margin-bottom:4px;">Instant Messaging Client (Jabber): <strong>opensenate@bot.im</strong></li>
+<li style="margin-bottom:4px;">Twitter Client: Send a tweet formatted as a @reply to <strong>@opensenate</strong> </li>
+<li style="margin-bottom:4px;">Short Message Service (SMS): Send a text message to <strong>(315) 308-1943</strong> </li>
+<li>Regular Telephone: Call <strong>(646) 736-2439</strong> (Available in both English and Spanish.)</li>
+</ul>
+<p>The same underlying application logic services all four modalities. The telephone interface requires an additional layer &#8211; I opted to use <a href="http://www.voiceingov.org/blog/?page_id=4">CCXML</a> for this because the <a href="http://www.w3.org/TR/ccxml/#Send" target="_blank">send/response format</a> that can be used to obtain data from external sources is very similar to the response format used for the other three modalities.</p>
+<p>Right now, I&#8217;m using the Voxeo/IMified platform to host the application. It&#8217;s very much still hosted in a staging environment, so it probably won&#8217;t stand up to a heavy user load.  Its also why I&#8217;m a bit limited right now in the phone numbers deployed for SMS and voice access &#8212; I would prefer to have only one number for this, but at least the two numbers I&#8217;m using are both NY State numbers.</p>
+<p>There are a host of other services cropping up that specialize in hosting multichannel communications apps &#8211; one of the more exciting is called <a href="http://messagepub.com/" target="_blank">MessagePub</a> (look for a separate post on the MessagePub service in the next week or two).  This is good news for governments that want to encourage developers to build multichannel applications.</p>
+<p>Even though this is just a small demo application, It demonstrates what can be done when an organization like the NY Senate has forward thinking IT leadership, that embraces open standards, open source and open information.</p>
+<p>Remember; its about the platform.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1114" class="post-1114 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/08/26/opening-government-data-the-san-francisco-way/index.html" rel="bookmark">Opening Government Data &#8211; the San Francisco&nbsp;Way</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/08/26/opening-government-data-the-san-francisco-way/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="August 26, 2009"><i class="fa fa-clock-o"></i>August 26, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>The City of San Francisco recently unveiled a <a href="http://www.datasf.org" target="_blank">one-stop clearinghouse</a> for all sorts of data generated and maintained by city agencies.  Its an exciting first step in an effort that is <a href="http://www.govtech.com/gt/articles/715125" target="_blank">high on the agenda</a> of San Francisco CIO Chris Vein and Mayor Gavin Newsom &#8211; a tangible and visible commitment to open source technologies, open government data and citizen engagement.</p>
+<p>San Francisco is reportedly taking a different approach to encouraging the use of this data than has been tried in other jurisdictions, notably the <a href="http://www.appsfordemocracy.org/" target="_blank">District of Columbia</a>.  Instead of running a contest and offering cash prizes, San Francisco will explore the idea of an &#8220;App Store,&#8221; where developers can have their work highlighted and showcased.  This is an interesting idea, and the time may be right for a new approach to encouraging developers to use data from governments.</p>
+<p>As a participant in the first Apps for Democracy contest, I feel strongly that at the time it was the best approach to engaging developers and getting them excited about building applications using civic data provided by DC.  It was so successful that it spawned a second Apps for Democracy competition, two similarly focused contests <a href="http://sunlightlabs.com/contests/appsforamerica/" target="_blank">sponsored by the Sunlight Foundation</a> and the forthcoming <a href="http://nyfi.observer.com/politics/208/pdf-bloomberg-announces-big-apps-contest-says-dine-winner" target="_blank">&#8220;Big Apps&#8221; competition</a> in New York City.  But I think San Francisco might be on to something here &#8211; the &#8220;development contest&#8221; paradigm for encouraging civic coders might not be as successful going forward as it was when DC first tried it.</p>
+<p>For the open government data initiatives of cities like San Francisco, DC and New York to flourish long-term the motivating factors for developers to build applications have to be more sustained than can reasonably be accomplished within the confines of a &#8220;contest.&#8221;  Contests end &#8211; local governments need mechanisms to encourage development with their data beyond the awards ceremony.</p>
+<p>The notion of an Apps Store is an interesting one, with longer-term potential &#8211; I think it will resonate with developers and provide more sustained motivation for developers to build applications that use data from San Francisco agencies.</p>
+<p>Looking forward to seeing this idea develop &#8211; and to (potentially) <a href="http://www.voiceingov.org/blog/?p=1105">getting an app in the App Store</a>.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1105" class="post-1105 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/08/19/looking-for-collaborators/index.html" rel="bookmark">Looking for Collaborators</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/08/19/looking-for-collaborators/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="August 19, 2009"><i class="fa fa-clock-o"></i>August 19, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>I&#8217;m thinking about starting a project to develop an application that uses crime incident data from the City of San Francisco and allows people to identify crimes that occur close to their homes and/or places of business.  I worked on a <a href="http://www.voiceingov.org/blog/?p=150">similar project</a> for the original Apps for Democracy contest last year.</p>
+<p>Crime incident data from the SF Police Department is available in <a href="http://en.wikipedia.org/wiki/Keyhole_Markup_Language" target="_blank">KML</a> format <a href="http://apps.sfgov.org/datafiles/Police/" target="_blank">here</a>.  I&#8217;d like to take the data in these files &#8211; which appears to be updated daily &#8211; and populate a relational database with information on specific crime incidents, including locational information.  </p>
+<p>I&#8217;d also like to develop an application that citizens can access to identify the crime incidents that occur closest to their specific locations (home, work, or wherever they happen to be at the moment).  The application would be accessible through a range of modalities &#8211; standard cell phone, micro-browser, Twitter, IM client, etc. &#8211; and would query the relational database storing crime incidents.</p>
+<p>If anyone is interested in working on such a project, <a href="http://twitter.com/mheadd" target="_blank">give me a shout</a>.  I&#8217;ll post updates on any progress made on such a project going forward.  </p>
+<p>Looking forward to hearing from other civic coders!</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1099" class="post-1099 post type-post status-publish format-standard hentry category-open-government category-twitter tag-identica tag-microblogging tag-twitter">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/08/06/identica-looking-pretty-good/index.html" rel="bookmark">Identi.ca Looking Pretty&nbsp;Good!</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/08/06/identica-looking-pretty-good/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="August 6, 2009"><i class="fa fa-clock-o"></i>August 6, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>For those government agencies using Twitter for notification, 311 and other services I&#8217;ll bet its been <a href="http://www.nytimes.com/aponline/2009/08/06/technology/AP-US-TEC-Twitter-Outage.html" target="_blank">a tough morning</a>.</p>
+<p>They may want to have a look at <a href="http://identi.ca/" target="_blank">Identi.ca</a> &#8211; a competing (albeit much smaller) micro-blogging site that even <a href="http://www.readwriteweb.com/archives/identica_implements_the_twitte.php" target="_blank">piggybacks on Twitter&#8217;s API</a>.  I&#8217;ve said before that government&#8217;s need to <a href="http://www.voiceingov.org/blog/?p=532">spread the love</a> among different social networking sites. </p>
+<p>I&#8217;m guessing that today there are more people who will be receptive to such advice&#8230;</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1073" class="post-1073 post type-post status-publish format-standard hentry category-open-government category-open-source category-phone-voting">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/08/04/its-about-the-crowd/index.html" rel="bookmark">It&#8217;s About the&nbsp;Crowd</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/08/04/its-about-the-crowd/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="August 4, 2009"><i class="fa fa-clock-o"></i>August 4, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Last night, when the polls closed for the <a href="http://delawareonline.com/article/20090804/NEWS02/908040337" target="_blank">special election in Delaware&#8217;s 19th Senate District</a>, people across the state fired up their browsers and pulled up the web site for the Department of Elections to check the results.  And then they waited&#8230; And waited&#8230; And waited some more.</p>
+<h3>The waiting is the hardest part</h3>
+<p>The unofficial results for the election never really made it to the web.  There was much grousing on Twitter about the lengthy delay in posting the results, and some reports that Department of Elections officials did not know why they technology they were using wasn&#8217;t posting to the web.  This morning, a temporary page listing the results (which appears to have been manually thrown together) <a href="http://elections.delaware.gov/results/html/unofresl.shtml" target="_blank">appears on the Elections web site</a>.</p>
+<p>Before I really get into my groove here, let me say this.  There are scores of dedicated, hardworking people that volunteer their time on election day in this state.  I know some of them &#8211; they are good friends.  They almost always go unappreciated for the hard work they do to make sure that our elections run smoothly.  We owe them our thanks for their service.</p>
+<p>Having said that, if there are experienced, hardworking people investing their time into our elections process why are some aspects of it so broken?  With all of the expense and effort that goes into our elections process, for something as simple as posting the results online (particularly in an election where only about 6,000 people actually vote) to fail clearly shows that the system is broken.</p>
+<h3>Tapping into the crowd</h3>
+<p>There is a different way to do this &#8211; one that is cheaper, faster and better in almost every sense.  How can the state fix this broken system? Tap into &#8220;<a href="http://en.wikipedia.org/wiki/Crowdsourcing" target="_blank">the crowd</a>.&#8221;  </p>
+<p><em>Delaware officials should issue an open call to suggest alternatives to the current system of posting election results on the web &#8211; one that is cheap, simple and reliable.</em></p>
+<p>Delaware is full of talented, enthusiastic, civic-minded technologists who would be only too happy to help the state devise a solution.  I&#8217;ll prove it.  </p>
+<p>Since I know a little bit about the voting machine systems in Delaware, and the process used to tabulate vote totals, I wanted to propose a simple, straightforward way to collect voting totals from polling places around the state (of course there are phones involved).</p>
+<h3>Here&#8217;s an idea&#8230;</h3>
+<p>The State of Delaware makes almost exclusive use of the ELECTronic 1242 voting machine from <a href="http://www.sourcewatch.org/index.php?title=Guardian_Voting_Systems_ELECTronic_1242" target="_blank">Guardian Voting Systems</a>.  This machine captures voting totals on several memory modules, one of which is removable. The removable module is taken from the machine (after polls have closed) to a centralized tabulation site.  I&#8217;m not exactly sure how the voting totals make it from the tabulation sites (I believe that there are a number of these across the state, but I&#8217;m not sure how many) to the web, but this appears to have been <a href="http://twitter.com/del_editor/status/3116493434" target="_blank">the issue last night</a>.</p>
+<p>One of the nice things about the ELECTronic 1242 is that it also provides a paper printout of voting totals &#8211; the paper printouts, along with the memory cartridges, become part of the official voting record.  This is what got me thinking.</p>
+<p>Why not employ a simple, convenient and secure phone application that would let polling place workers call in the voting totals after the polls close?  Building such an application would not be hard to do &#8211; polling place workers could use a cell phone or a phone provided at the polling location to call their vote totals in. Access to the system could be tied to a workers&#8217; <acronym title="Automatic Number Identification">ANI</acronym> and would require the use of access codes.  More robust security (to ensure that only poll workers can submit vote totals) could entail a call back mechanism (if ANI spoofing is a concern) or even voice biometrics &#8211; there are a number of options available in this regard.</p>
+<p>This would allow the voting totals to be called in immediately after the polls close. These unofficial results could be stored in a web-ready database, and bypass the cumbersome, unreliable process of taking data out of the centralized tabulation centers and moving it out to the web.</p>
+<p>The State of Delaware already has lots of experience building telephone applications &#8212; some with comparable security requirements (e.g., checking the status of a tax refund).  In addition, the Department of Elections itself has fielded a phone application in the past &#8211; one built on a mature platform using open standards &#8212;  to allow people to check the status of a provisional voting ballot.</p>
+<p>I&#8217;ll even volunteer to bang out a prototype that Elections officials can use to test this approach, if there is any interest expressed by the State.  Just give me a call and I&#8217;ll get cracking.</p>
+<h3>A call for more ideas</h3>
+<p>I know that there are others in our state that have thoughts on how the current system could be improved.  In addition, there may be some who know of solutions working in other places across the country.  If you have an idea on how Delaware can improve it&#8217;s current system of reporting voting totals, leave a comment here or Tweet it with the #Delaware hashtag.</p>
+<p>Here&#8217;s hoping that Delaware officials start leveraging the crowd to fix this broken system.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1049" class="post-1049 post type-post status-publish format-standard hentry category-open-government category-twitter">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/07/29/ten-two-ways-to-make-twitter-useful-for-government/index.html" rel="bookmark">Ten Two Ways To Make Twitter Useful For&nbsp;Government</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/07/29/ten-two-ways-to-make-twitter-useful-for-government/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="July 29, 2009"><i class="fa fa-clock-o"></i>July 29, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>eWeek Europe has <a href="http://www.eweekeurope.co.uk/comment/ten-ways-to-make-twitter-useful-for-government--1499" target="_blank">an article up listing 10 ways to make Twitter useful</a> for governments.</p>
+<p>The time is ripe for such thinking &#8211; <a href="http://govtwit.com/" target="_blank">more and more governments are using Twitter</a> to interact with citizens, and its fitting that governments spend some time thinking about how this tool can be used most effectively. Still, the eWeek Europe article (and some other recent musing on this subject) have left me feeling that a lot of people (both inside and outside of government) are missing the point.</p>
+<p>In response, I offer my own list &#8211; 2 important steps to make Twitter more useful for governments:</p>
+<ol>
+<li style="margin-bottom:8px;"><strong>Clearly articulate the goal(s) your agency or government is trying to achieve by using Twitter.</strong> Link these goals directly back to the stated mission or objectives of your government agency.  If your agency&#8217;s mission is to fight crime, or protect the environment, or collect taxes clearly state how using Twitter will help you do this. Say these things out loud. Write them down. Distribute them to employees and policy makers.</li>
+<li><strong>Develop clear and quantifiable metrics that will be used to evaluate your progress toward the goals listed in step 1.</strong>  At least one metric should be developed for each goal. The same metric should not be used for more than one goal. The metrics used should measure outcomes (enhanced customer satisfaction), not inputs (number of DM&#8217;s responded to). Say these things out loud. Write them down. Distribute them to employees and policy makers.</li>
+</ol>
+<p>Don&#8217;t get me wrong, <a href="http://www.voiceingov.org/blog/?cat=20">I am a huge fan</a> of governments using Twitter &#8211; but use it for the right reasons.  Governments using Twitter (or any other technology for that matter) because it is currently in high fashion is just silly.</p>
+<p>If a government or agency can not follow the steps listed above then using Twitter should rank fairly low on the scale of importance.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1027" class="post-1027 post type-post status-publish format-standard hentry category-cell-phones category-open-government category-standards">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/07/07/open-gov-a-means-to-and-end/index.html" rel="bookmark">Open Gov: A Means to and&nbsp;End</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/07/07/open-gov-a-means-to-and-end/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="July 7, 2009"><i class="fa fa-clock-o"></i>July 7, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>With all of the activity and excitement taking place around the country focused on new Government 2.0 and open government initiatives, its easy for those involved to get lost in the technology.  Those of us that love technology and work with it for a living can get lost pretty quickly in the minutia of implementing an new solution.</p>
+<p>A perfect example of this in my mind is the recently released iPhone App <a href="http://www.boston.com/news/local/massachusetts/articles/2009/07/06/boston_to_debut_8216killer_app8217_for_municipal_complaints/" target="_blank">developed by the City of Boston</a> for submitting municipal complaints.  When asked why the city chose to develop an iPhone application, a senior advisor to the Mayor said:</p>
+<blockquote><p>&#8220;We chose the iPhone mostly because of its sex appeal &#8211; because it’s new and it&#8217;s hot.&#8221;</p></blockquote>
+<p>Don&#8217;t get me wrong, I love my iPhone and I think its exciting that state and local governments are developing applications for it, to make it easier for citizens to interact with their governments.  I salute the City of Boston&#8217;s initiative in developing an application that makes it easier to submit municipal service requests.  But most of the people that live in Boston don&#8217;t own iPhones.  Most of the cell phone owners in Boston don&#8217;t have an iPhone either &#8211; so why choose the iPhone as a platform for a publicly funded application?</p>
+<p>The city might have been better off developing an application that worked on more mobile devices.  This could have been a web-based application that worked in the micro browsers that come with older cell phones as well as the more powerful browser software that ships with iPhones, G1 phones and other advanced mobile devices.  They might have even developed a voice/<acronym title="Dual Tone Multi Frequency">DTMF</acronym> interface for people (like my Mom) that use their cell phones the old fashion way.  If they had, a lot more people might have been able to use the new service.</p>
+<p>The point is that the goal of Gov 2.0 initiatives should not be the deployment of the &#8220;hottest&#8221; applications on the platforms with the most &#8220;sex appeal.&#8221;  Gov 2.0 initiatives, and all of the exciting new technologies they bring to the table, are good for one thing &#8211; helping governments do their jobs more efficiently. That&#8217;s it.</p>
+<p>As more governments jump on the Gov 2.0 bandwagon, it will be important for public officials to remain focused on the goals of their governments, their agencies and their offices &#8211; this will require an intimate understanding of the mission of government and a <a href="http://www.voiceingov.org/blog/?p=972">well developed set of metrics</a> to help determine if Gov 2.0 technologies are helping governments more efficiently achieve their goals.</p>
+<p>With this in mind, it was extremely gratifying to see <a href="http://www.govtech.com/gt/articles/699280" target="_blank">Beth Noveck</a> (of <a href="http://www.democracyjournal.org/article.php?ID=6570" target="_blank">Wiki Government</a> fame, who leads President Barack Obama&#8217;s open-government initiative) say the following:</p>
+<blockquote><p>
+<em>Q: How will you measure the impact of these [open government] innovations?</em></p>
+<p>A: Developing recommendations on transparency and open government has to include a process for developing metrics. We can talk about the number of data feeds we&#8217;ve released, or the number of people who&#8217;ve participated in rule making [but] we really have to look at transparency and participation to a specific end. So if our goal is improving the quality of American education or increasing accessibility and affordability of health care, we really have to look at those as the metrics and ask ourselves, &#8220;How does driving innovation into the way the public sector works help us to ultimately do the job better of making those hard policy decisions?&#8221;
+</p></blockquote>
+<p>Here&#8217;s hoping that those involved in Gov 2.0 and open government initiatives around the country take the time needed at the inception of their projects to as the questions: &#8220;What exactly are we trying to achieve here?&#8221; and &#8220;How will we measure our performance so that we know we&#8217;re making progress toward our goal?&#8221;</p>
+<p>Or, when in doubt, ask &#8211; what would Beth Noveck do?</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1020" class="post-1020 post type-post status-publish format-standard hentry category-open-government category-twitter category-voip">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/06/29/nyc-311-gets-skyped-twittified/index.html" rel="bookmark">NYC 311 Gets Skyped,&nbsp;Twittified!</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/06/29/nyc-311-gets-skyped-twittified/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="June 29, 2009"><i class="fa fa-clock-o"></i>June 29, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>I&#8217;ve seen Tweets all morning coming out of the <a href="http://personaldemocracy.com/pdf-conference/personal-democracy-forum-conference" target="_blank">Personal Democracy Forum Conference</a> about New York City&#8217;s 311 service.  Looks like NYC 311, in addition to being <a href="http://www.nyc.gov/apps/311/" target="_blank">on the web</a>, is now also on Skype (user name is nyc311) and on <a href="http://twitter.com/311NYC" target="_blank">Twitter</a>.</p>
+<p>I&#8217;m following @311NYC on Twitter now, and I&#8217;ve also added it to my Skype contacts (not sure yet if they support voice/video calls, or chat).</p>
+<p>Now, if they&#8217;d open up their 311 service via an API (like <a href="http://api.dc.gov/" target="_blank">Washington DC is doing</a>), then they&#8217;d be cooking with gas.  Good stuff!  Hope to see more of this.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1005" class="post-1005 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/index.html" rel="bookmark">Building an IM Bot for the NY Senate OpenLeg&nbsp;API</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../2009/06/18/building-an-im-bot-for-the-ny-senate-openleg-api/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="June 18, 2009"><i class="fa fa-clock-o"></i>June 18, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>The NY Senate made an exciting announcement today &#8211; a host of new <a href="http://open.nysenate.gov/" target="_blank">open source software and services</a> are being deployed to enhance transparency in what the Senate does.</p>
+<p>This is big news, and a major tip of the hat goes to the NY Senate CIO, <a href="http://twitter.com/ahoppin" target="_blank">Andrew Hoppin</a>, and his staff.  They are doing amazing work in advancing transparency in the Senate &#8211; an organization that has traditionally been as closed as closed can get.</p>
+<p>The announcement by the NY Senate has many different components, but the one I find most exciting right out of the gate is the release of <a href="http://open.nysenate.gov/openleg/doc" target="_blank">an API to query the Senate bill tracking system</a>.  I&#8217;ve had an idea for a while now to do an Instant Messaging (IM) application that would let someone query the status of a bill, and get a bill summary, using an IM client.</p>
+<p>Because the bill tracking system is now exposed via an API, building this kind of application is easy &#8212; so I went ahead and did it. Alltogether it took about 2 hours to build, test and deploy.</p>
+<p>The code for my sample application can be <a href="https://civic.io/page/tutorials/imbills.zip">downloaded here</a>.  </p>
+<p>You can test this application out by adding <strong>opensenate@bot.im</strong> to your Jabber IM client (Google chat will work just fine). If you send an IM with a Senate Bill number (e.g., <strong>S2111</strong>) you will get a response with the bill sponsor, summary and the last action taken on the bill.</p>
+<p>Here is what I used to build this application:</p>
+<ul>
+<li>The<a href="http://open.nysenate.gov/openleg/doc" target="_blank"> NY Senate Open Leg Service API</a> (note &#8211; at the time of this writing, the API documentation appears to be offline. Hope this is restored soon.)</li>
+<li>PHP (however, since we&#8217;re justing hitting a REST API using HTTP, there are a host of different languages that will do).</li>
+<li>The <a href="http://www.imified.com/" target="_blank">IMified</a> platform &#8211; more on IMified <a href="http://blogs.voxeo.com/voxeotalks/2009/05/27/voxeo-acquires-imified-and-gains-ivr-type-self-service-for-im/" target="_blank">here</a>.</li>
+<li>A simple PHP class for building IM applications &#8211; more on this class, and a primer on building IM apps <a href="http://www.voiceingov.org/blog/?p=860">here</a>.</li>
+</ul>
+<p>That&#8217;s it!  Its admittedly simple, and there is no real error handling in the app just yet, but if you give it a live bill number it works just fine.  I&#8217;ll probably do some more work to build this example app out as the Open Leg Service API matures.</p>
+<p>Now you can get the status of a bill and summary information quickly and easily using an IM client.  This is just a quick example of what can be done when an organization like the NY Senate has forward thinking IT leadership, that embraces open standards, open source and open information.</p>
+<hr />
+<p><strong>UPDATE: Twitter support added to NY Senate Bill Status Bot.</strong></p>
+<p>Because of some awesome new functionality added to the <a href="http://blog.imified.com/index.php/2009/06/24/introducing-twitter-support/" target="_blank">IMified platform</a>, I&#8217;ve added Twitter support for the NY Senate bot.  Now you can get the bill sponsor and bill status by sending the bill ID (e.g., S2111) to <a href="http://twitter.com/opensenate" target="_blank">@opensenate</a>. </p>
+<blockquote><p>@opensenate S2111</p></blockquote>
+<p>I&#8217;ve also updated the code sample provided above to reflect the changes to the IMified API.  This significantly enhances the usefulness of the application, and allows you to turn inquiry into advocacy (can you say Retweet!).  I&#8217;ll be writing more about this shortly but for now I am working on some minor tweaks to the sample bot.</p>
+<p>Enjoy!</p>
+<p><strong>UPDATE II: New GitHub Repo</strong></p>
+<p>The latest code is now up on <a href="http://github.com/mheadd/nys-bill-bot/tree/master" target="_blank">GitHub</a>.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				<nav class="navigation paging-navigation" role="navigation">
+		<h1 class="screen-reader-text">Posts navigation</h1>
+		<div class="nav-links">
+
+						<div class="nav-previous"><a href="../20/index.html" >Older Posts</a></div>
+			
+						<div class="nav-next"><a href="../18/index.html" >Newer Posts</a></div>
+			
+		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+		
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/page/19/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+		<script type="text/javascript">
+		var infiniteScroll = {"settings":{"id":"main","ajaxurl":"https:\/\/civic.io\/?infinity=scrolling","type":"click","wrapper":false,"wrapper_class":"infinite-wrap","footer":"site-main","click_handle":"1","text":"Older posts","totop":"Scroll back to top","currentday":"18.06.09","order":"DESC","scripts":[],"styles":[],"google_analytics":false,"offset":19,"history":{"host":"civic.io","path":"\/page\/%d\/","use_trailing_slashes":true,"parameters":""},"query_args":{"paged":19,"error":"","m":"","p":0,"post_parent":"","subpost":"","subpost_id":"","attachment":"","attachment_id":0,"name":"","pagename":"","page_id":0,"second":"","minute":"","hour":"","day":0,"monthnum":0,"year":0,"w":0,"category_name":"","tag":"","cat":"","tag_id":"","author":"","author_name":"","feed":"","tb":"","meta_key":"","meta_value":"","preview":"","s":"","sentence":"","title":"","fields":"","menu_order":"","embed":"","category__in":[],"category__not_in":[],"category__and":[],"post__in":[],"post__not_in":[],"post_name__in":[],"tag__in":[],"tag__not_in":[],"tag__and":[],"tag_slug__in":[],"tag_slug__and":[],"post_parent__in":[],"post_parent__not_in":[],"author__in":[],"author__not_in":[],"lazy_load_term_meta":false,"posts_per_page":10,"ignore_sticky_posts":false,"suppress_filters":false,"cache_results":false,"update_post_term_cache":true,"update_post_meta_cache":true,"post_type":"","nopaging":false,"comments_per_page":"50","no_found_rows":false,"order":"DESC"},"query_before":"2022-09-02 19:10:20","last_post_date":"2009-06-18 00:04:12","body_class":"infinite-scroll","loading_text":"Loading new page","stats":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio&x_pagetype=infinite-click"}};
+		</script>
+		<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+<script id='highlander-comments-js-extra'>
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/civicio.wordpress.com\/public.api\/connect\/?action=request&domain=civic.io","logoutURL":"https:\/\/civicio.wordpress.com\/wp-login.php?action=logout&_wpnonce=125beba3f0","homeURL":"https:\/\/civic.io\/","postID":"1165","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??/wp-content/js/textarea-autosize.min.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1662027824j'></script>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/page/19/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2009%252F09%252F23%252Flongevity-for-open-data-and-gov-20%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2Fpage%2F19%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2009%252F09%252F23%252Flongevity-for-open-data-and-gov-20%252F">Log in</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/feeds/1432890">
+											View site in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="Write a Comment..."
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="Post Comment" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-3' href='https://s2.wp.com/_static/??-eJyljMEKwjAQRH/IuFQ00IP4LXGzlNTNJmQ3lP69Cu2hFy/e5g0zD5bqsIiRGOTuKvcpicJMVgO+NobaSuxoqQjkT2JSwNBKV2LQJVVq7tklMp1R9QR/O/fpXvzSWmKKbgrM1NYjfW+PfB/8zV8v4+iH+Q1JuFpU?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack-carousel-js-extra'>
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s2.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"1bf354b661","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/civicio.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fcivic.io%2F2009%2F06%2F18%2Fbuilding-an-im-bot-for-the-ny-senate-openleg-api%2F","blog_id":"31186386","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio","is_public":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s2.wp.com/_static/??-eJyVUNtOwzAM/SE8U2lMvCA+BeXitm5zU+Ks7O+XCTrBkLrxdk5yLrZxSWBiEAqCU0FLRzaUPndTecIfX75CcnXgUJBDz4HldAW3WhnJU8FUNRIPo3AjLVorMxfJJGZ80LHiB+Vl5gSOwwx9NLVAz3/WuFME2sXhv56RlKW8cbCJJLXd8YODQVlYhDIIe2qz0oZPWc8BtMroVWmehkDy5Yr3y745phxtNcIxfNXrys6iUTnWQu6qXh92rXEjXNiRhUE5R/n0m2241nBYkon+hjbfu3/rDodu370871+nM/Hw9u0='></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<script type="text/javascript">
+			(function() {
+				var extend = function(out) {
+					out = out || {};
+
+					for (var i = 1; i < arguments.length; i++) {
+						if (!arguments[i])
+						continue;
+
+						for (var key in arguments[i]) {
+						if (arguments[i].hasOwnProperty(key))
+							out[key] = arguments[i][key];
+						}
+					}
+
+					return out;
+				};
+				extend( window.infiniteScroll.settings.scripts, ["mobile-useragent-info","rlt-proxy","jquery-core","jquery-migrate","jquery","wpcom-actionbar-placeholder","grofiles-cards","wpgroho","textarea-autosize","highlander-comments","devicepx","the-neverending-homepage","backstretch","eighties","skip-link-focus-fix","eighties-blog","eighties-header","jetpack-twitter-timeline","wpcom-masterbar-tracks-js","jetpack-carousel","tiled-gallery","carousel-wpcom"] );
+				extend( window.infiniteScroll.settings.styles, ["wpcom-smileys","the-neverending-homepage","wp-block-library","mediaelement","wp-mediaelement","jetpack-layout-grid","jetpack-ratings","coblocks-frontend","wpcom-core-compat-playlist-styles","wpcom-text-widget-styles","wpcom-bbpress2-staff-css","eighties-font-awesome","eighties","geo-location-flair","reblogging","a8c-global-print","h4-global","global-styles","eighties-header","eighties-headings","eighties-body","jetpack-global-styles-frontend-style","highlander-comments","jetpack-carousel-swiper-css","jetpack-carousel","tiled-gallery"] );
+			})();
+		</script>
+				<span id="infinite-aria" aria-live="assertive"></span>
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelFpcEtpb2lwNkY9WFZJekt3MEtRaT14SWhFbHM9MVZvQ3NPTD1zVGczVDF2ZU9kR2Fhbn5QS0NffnZWMStXZ3hhLk41OXhrflNLWyY2bzJvVm5VK1hUJUt1SUlkeTh3N355c2NwfnJ1cHI9T0hlNVFhVldVYnVVQl1bUkI2RnRiZUtIaVtrKzQvTmI0OTJJ'}]);
+_stq.push([ 'clickTrackerInit', '31186386', '0' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

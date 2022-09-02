@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>IM &#8211; Civic Innovations</title>
+	<atom:link href="https://civic.io/tag/im/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Tue, 02 Nov 2010 19:55:59 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+<cloud domain='civic.io' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<image>
+		<url>https://s0.wp.com/i/buttonw-com.png</url>
+		<title>IM &#8211; Civic Innovations</title>
+		<link>https://civic.io</link>
+	</image>
+	<atom:link rel="search" type="application/opensearchdescription+xml" href="https://civic.io/osd.xml" title="Civic Innovations" />
+	<atom:link rel='hub' href='https://civic.io/?pushpress=hub'/>
+	<item>
+		<title>Building Multichannel Transit Apps with Tropo</title>
+		<link>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/</link>
+					<comments>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/#comments</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Tue, 02 Nov 2010 19:55:59 +0000</pubDate>
+				<category><![CDATA[Development Tools]]></category>
+		<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[Open Source]]></category>
+		<category><![CDATA[Tropo]]></category>
+		<category><![CDATA[Tutorials]]></category>
+		<category><![CDATA[IM]]></category>
+		<category><![CDATA[mysql]]></category>
+		<category><![CDATA[opengov]]></category>
+		<category><![CDATA[PHP]]></category>
+		<category><![CDATA[SMS]]></category>
+		<category><![CDATA[transit]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=2165</guid>
+
+					<description><![CDATA[This post is the third in a series about building an open source transit data application using GTFS data from the Delaware Transit Corporation. In the first post, I described how to download the State of Delaware&#8217;s transit data and populate a MySQL database with... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>This post is the third in a series about building an open source transit data application using <acronym title="General Transit Feed Specification">GTFS</acronym> data from the <a href="http://www.dartfirststate.com/" target="_blank">Delaware Transit Corporation</a>.</p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2073">the first post</a>, I described how to download the State of Delaware&#8217;s transit data and populate a MySQL database with it.  </p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2117">the previous post</a>, I walked through a process of setting up stored procedures for querying the transit data and setting up a LAMP application environment.</p>
+<p>Now we&#8217;re ready to write code for our transit app!</p>
+<h3>Choosing a Platform</h3>
+<p>One of the most under appreciated developments that has accompanied the increasing amount of government data that has become available in open formats is the vast array of new tools now available for developers to use.  I&#8217;ve <a href="http://www.voiceingov.org/blog/?p=1471">talked about this a lot</a> in the past but it bears repeating &#8211; it has never been easier to build sophisticated, multi-channel communication applications than it is now.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/tropo_logo.png" alt="Tropo" title="Tropo" style="margin:10px;padding:15px;float:right;" /><br />
+The number of options open to developers is truly exciting, but there are some platforms that rise above the rest in terms of ease of use and in what they enable developers to do.  For this project, I will use the <a href="https://www.tropo.com/docs/webapi/newhowitworks.htm" target="_blank">Tropo WebAPI platform</a>.</p>
+<p>The Tropo WebAPI has a number of advantage that will come in handy for our transit app project (and any other projects you&#8217;ve got in the works).  You can write a Tropo app in one of several popular scripting and web development languages &#8211; Ruby, Python, PHP, C# and JavaScript (Node.js).  There are <a href="https://www.tropo.com/docs/webapi/libraries.htm" target="_blank">libraries available for each language</a> that make it easy to build Tropo apps and to integrate with the Tropo API.  (Disclaimer &#8211; I&#8217;ve worked on several of these libraries.)</p>
+<p>In addition, the real magic that Tropo brings to the table is the ability to serve users on multiple communication channels (phone, IM, SMS, Twitter) from a single code base.  This is especially important for an application meant to service transit riders.  These users may not have the luxury of sitting in front of a desktop computer in order to look up information on a bus route or schedule.  They are much more likely to be traveling and using some sort of phone or mobile device.  The Tropo WebAPI is perfect for our needs.</p>
+<p>Vivek Kundra, the former CIO of the District of Columbia and current CIO of the United States, has described the effort by governments to release data in open formats as &#8220;the democratization of data&#8221; &#8211; these efforts make previously hard to get, or hard to use data available for everyone.</p>
+<p>I like to describe platforms like <a href="https://www.tropo.com/home.jsp" target="_blank">Tropo</a> and the various libraries that are available to use with it as &#8220;the democratization of application development&#8221; &#8211; these tools make building powerful communication apps simple for anyone who understands web development.</p>
+<h3>Building our Transit App</h3>
+<p>Before we can build our application, we need to decide what it will do.</p>
+<p>For our purposes, this has already been determined by the stored procedures we built <a href="http://www.voiceingov.org/blog/?p=2117">in the last post</a>.  Our <strong>transitdata</strong> database has 2 stored procedures &#8211; one to return the nearest bus stops to a specific address or location, and one to return the next bus departure times from a specific bus stop.</p>
+<p>However, this series of posts is meant to inspire readers to build their own applications &#8211; now that you have transit data in a powerful relational database like MySQL you can query it any way you like.  In addition, the SQL scripts and steps developed for this series of posts can certainly be used with the data from any other transit agency that uses the GTFS format.  <a href="http://code.google.com/p/googletransitdatafeed/wiki/PublicFeeds">There are lots</a>.  Use your imagination &#8211; build whatever you find useful.</p>
+<p>So now that we have some idea of what we want our application to do, we need to select a development language.  It will probably come as no surprise that for this example I&#8217;m going to use the <a href="http://php.net/" target="_blank">PHP scripting language</a> and the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>.  PHP is a good match for Linux, Apache and MySQL &#8211; all technologies we used in the previous entries in this series of blog posts.</p>
+<p>If you want some more detailed information on building PHP applications that run on the Tropo WebAPI platform, you can review a separate series of blog posts on this issue <a href="http://www.voiceingov.org/blog/?p=1918">here</a>.</p>
+<p>To get the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>, you can download it and unpack on your web server, or simply clone the Github repo.</p>
+<p>Once you do that, you can grab the code for our demo application from <a href="http://gist.github.com/659768" target="_blank">GitHub as well</a>.</p>
+<p>In order to test this application, you&#8217;ll need to sign up for a free Tropo account &#8211; you can <a href="https://www.tropo.com/" target="_blank">do that here</a>.  Once you are signed up, go to the Applications section in your Tropo account and set up a new WebAPI application that points to the location of our PHP script on your web server.  You can see more detailed information on setting up a Tropo account <a href="https://www.tropo.com/docs/webapi/newquickstart.htm" target="_blank">here</a>.</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/web-api.png" alt="web-api" title="web-api" width="412" height="240" /></p>
+<p>Note &#8211; You&#8217;ll also need an API key from Google Maps for geocoding addresses &#8211; <a href="http://code.google.com/apis/maps/signup.html" target="_blank">get one here</a>.  Change the following line in the application to include your Google API key:</p>
+<blockquote>
+<pre>
+define("MAPS_API_KEY", "your-api-key-goes-here");
+</pre>
+</blockquote>
+<p>Once your Tropo account and application are set up, you can add as many different contact methods as you like &#8211; your Tropo application is automatically provisioned a Skype number, a SIP number and an iNUM.  </p>
+<p>To illustrate how our transit app will work, I&#8217;ve gone ahead and assigned a Jabber IM name to my app &#8211; <strong>findthebus@tropo.im</strong>.  Add this to your friends/user list in Google chat and you can use the app I&#8217;ve set up.  Here&#8217;s what it looks like in my IM client:</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/transit-finder1.png" alt="transit-finder1" title="transit-finder1" /></p>
+<p>As you can see, my first IM to <strong>findthebus@tropo.im</strong> sends the address of a building in Downtown Wilmington (actually, a building I used to work in).  The app responds with the three closest bus stops and the distance (in miles) to each.</p>
+<p>I then send the number of the bus stop I am interested in.  The app responds with the next three buses to leave that stop, the route served by each and the number of minutes before each departs.</p>
+<p>How cools is that!</p>
+<p>I could very easily make this application more sophisticated, so that it it delivers content tailored to specific channels (i.e., IM vs. phone) but I want to keep things simple for now.</p>
+<p>In the next blog post of this series, we will introduce some additional tools, including Google Maps and the new hotness in cloud telephony &#8211; <a href="http://phono.com/" target="_blank">Phono</a>.</p>
+<p>Stay tuned!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/feed/</wfw:commentRss>
+			<slash:comments>2</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/tropo_logo.png" medium="image">
+			<media:title type="html">Tropo</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/web-api.png" medium="image">
+			<media:title type="html">web-api</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/transit-finder1.png" medium="image">
+			<media:title type="html">transit-finder1</media:title>
+		</media:content>
+	</item>
+	</channel>
+</rss>

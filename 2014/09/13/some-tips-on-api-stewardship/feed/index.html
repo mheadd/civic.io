@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	
+	>
+<channel>
+	<title>
+	Comments on: Some Tips on API Stewardship	</title>
+	<atom:link href="https://civic.io/2014/09/13/some-tips-on-api-stewardship/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Fri, 19 Sep 2014 17:15:44 +0000</lastBuildDate>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+	<item>
+		<title>
+		By: mheadd		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6692</link>
+
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Fri, 19 Sep 2014 17:15:44 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6692</guid>
+
+					<description><![CDATA[Stephane,
+
+Thanks for your comments. I agree that making things like ETags and throttling optional would be a good place to go, especially for standardized APIs like Open311.
+
+I&#039;ve often thought that ETags would be ideal for an API like Open311 where caching isn&#039;t really an option (because an update may occur to a service request making the cached version obsolete), and where semi-frequent polling is most likely used.
+
+Thinking about it a bit more, for cases like Open311 it might be useful to implement WebSockets or even allow a client to register a Webhook URL for updates. When I worked in Philly, we implemented a WebSocket endpoint for one of our APIs.  More on that &lt;a href=&quot;https://github.com/CityOfPhiladelphia/phl-airport-data/wiki/WebSocket-Endpoint&quot; rel=&quot;nofollow&quot;&gt;here&lt;/a&gt;.]]></description>
+			<content:encoded><![CDATA[<p>Stephane,</p>
+<p>Thanks for your comments. I agree that making things like ETags and throttling optional would be a good place to go, especially for standardized APIs like Open311.</p>
+<p>I&#8217;ve often thought that ETags would be ideal for an API like Open311 where caching isn&#8217;t really an option (because an update may occur to a service request making the cached version obsolete), and where semi-frequent polling is most likely used.</p>
+<p>Thinking about it a bit more, for cases like Open311 it might be useful to implement WebSockets or even allow a client to register a Webhook URL for updates. When I worked in Philly, we implemented a WebSocket endpoint for one of our APIs.  More on that <a href="https://github.com/CityOfPhiladelphia/phl-airport-data/wiki/WebSocket-Endpoint" rel="nofollow">here</a>.</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: Stephane Guidoin (@Hoedic)		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6690</link>
+
+		<dc:creator><![CDATA[Stephane Guidoin (@Hoedic)]]></dc:creator>
+		<pubDate>Fri, 19 Sep 2014 15:15:20 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6690</guid>
+
+					<description><![CDATA[Hi Mark,
+
+Thank you for this good post!
+
+If you have the opportunity, I would be curious to hear you on that topic when applied to &quot;standardized&quot; API (like Open311 for example): Do you think that the guidelines you are provided should be documented in a standard API documentation?
+
+Ideally, standardized APIs should be plug and play, so an existing clients should work on all the implementations. If not specified in the spec, the client won&#039;t necessarily know which features to use. But specifing things like Etags and other features that have an impact on the client tend to move toward overspecification, making the standard API heavy to implement (mainly for smaller players)
+
+The advantage of using well-known features (mainly based on HTTP like Etags or making throttling trigger HTTP errors) is that the API spec could make these features as optionnal (or best practice) and not mandatory, something like &quot;when implementating the standard, you can implement throttling, if the throlling is triggered, the API should return an HTTP error with code 429.]]></description>
+			<content:encoded><![CDATA[<p>Hi Mark,</p>
+<p>Thank you for this good post!</p>
+<p>If you have the opportunity, I would be curious to hear you on that topic when applied to &#8220;standardized&#8221; API (like Open311 for example): Do you think that the guidelines you are provided should be documented in a standard API documentation?</p>
+<p>Ideally, standardized APIs should be plug and play, so an existing clients should work on all the implementations. If not specified in the spec, the client won&#8217;t necessarily know which features to use. But specifing things like Etags and other features that have an impact on the client tend to move toward overspecification, making the standard API heavy to implement (mainly for smaller players)</p>
+<p>The advantage of using well-known features (mainly based on HTTP like Etags or making throttling trigger HTTP errors) is that the API spec could make these features as optionnal (or best practice) and not mandatory, something like &#8220;when implementating the standard, you can implement throttling, if the throlling is triggered, the API should return an HTTP error with code 429.</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: sean metrivk		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6629</link>
+
+		<dc:creator><![CDATA[sean metrivk]]></dc:creator>
+		<pubDate>Sun, 14 Sep 2014 00:57:04 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6629</guid>
+
+					<description><![CDATA[Mark. This is just the kind of information I need to be learning as a government employee interested in open data. Please help us learn]]></description>
+			<content:encoded><![CDATA[<p>Mark. This is just the kind of information I need to be learning as a government employee interested in open data. Please help us learn</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: mheadd		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6626</link>
+
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Sat, 13 Sep 2014 21:37:46 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6626</guid>
+
+					<description><![CDATA[Thanks, Kin. Appreciate the feedback - so much more to this issue and government API stewards need all the info they can get.]]></description>
+			<content:encoded><![CDATA[<p>Thanks, Kin. Appreciate the feedback &#8211; so much more to this issue and government API stewards need all the info they can get.</p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: mheadd		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6625</link>
+
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Sat, 13 Sep 2014 21:22:38 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6625</guid>
+
+					<description><![CDATA[Another good resource - White House API standards:
+
+https://github.com/WhiteHouse/api-standards]]></description>
+			<content:encoded><![CDATA[<p>Another good resource &#8211; White House API standards:</p>
+<p><a href="https://github.com/WhiteHouse/api-standards" rel="nofollow ugc">https://github.com/WhiteHouse/api-standards</a></p>
+]]></content:encoded>
+		
+			</item>
+		<item>
+		<title>
+		By: kinlaneKi nLane		</title>
+		<link>https://civic.io/2014/09/13/some-tips-on-api-stewardship/#comment-6624</link>
+
+		<dc:creator><![CDATA[kinlaneKi nLane]]></dc:creator>
+		<pubDate>Sat, 13 Sep 2014 19:21:25 +0000</pubDate>
+		<guid isPermaLink="false">http://civic.io/?p=3446#comment-6624</guid>
+
+					<description><![CDATA[Nice Post Mark. I like the ETag reference. Something I should explore more, and help folks understand. You are focusing on some interesting and important aspects of the technical layer of stewardship, and I would add the use of integration and monitoring tools like Runscope, API Tools or other to help you see your API from consumer side. 
+
+You can also extend these tools to your consumers, to help them understand how to make sense of integration. I think adding to your rate limiting, if you provide tools that give visibility into this for users it helps. I&#039;ve seen additional API endpoints that provide stats on your usage, all the way to dashboards and visualizations that help. 
+
+Overall, I think you provide some valuable stuff here for API stewards, and I like that title too. Makes it a much more meaningful process, and helps people take it seriously.]]></description>
+			<content:encoded><![CDATA[<p>Nice Post Mark. I like the ETag reference. Something I should explore more, and help folks understand. You are focusing on some interesting and important aspects of the technical layer of stewardship, and I would add the use of integration and monitoring tools like Runscope, API Tools or other to help you see your API from consumer side. </p>
+<p>You can also extend these tools to your consumers, to help them understand how to make sense of integration. I think adding to your rate limiting, if you provide tools that give visibility into this for users it helps. I&#8217;ve seen additional API endpoints that provide stats on your usage, all the way to dashboards and visualizations that help. </p>
+<p>Overall, I think you provide some valuable stuff here for API stewards, and I like that title too. Makes it a much more meaningful process, and helps people take it seriously.</p>
+]]></content:encoded>
+		
+			</item>
+	</channel>
+</rss>

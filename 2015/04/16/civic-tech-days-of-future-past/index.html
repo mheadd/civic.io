@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>Civic Tech: Days of Future Past | Civic Innovations</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=3788'
+					+ '&is_singular=1';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145276";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Civic Tech: Days of Future&nbsp;Past Comments Feed" href="feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s2.wp.com/_static/??-eJyNkt1uwyAMhV9ohLbK2qtpz8KPxdwagjA04+1H0TZl6ZrtBnGwP/tgkHMUZgoZQpa+iEjFYWA5RzN5wR4J6koNhvlJ/o4lIJXBijhxXqktjPACLM+QozIX0dVd+leuK01qSK5FEsjrfhx2w0HqgmSlpqkX0EmlKjlXgu9CGAwVe+vD0oNFBQS+G1mISKpCEgROmTp4DH/jLbbUP6DH5rvTxZ1VnUoWLqFd2f53iaQyBscP8MW0b3Nr5z6qe/Mb2IzWQXvVlvK5Fxnet5H+b7SOCZhFWz0WL/Jb69Uf+NW/7I/Hw24cn0+n8weNnvWZ?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s2.wp.com/_static/??-eJxti8sKgCAQAH8oW6KXHaJvMTE1Vldapd+PDh2iTsPADJxJaIrZxAyhiITF+siQiLPYUPkD2KnDR/uw1swV/F9M2isUSJbe8pmyM8EwuA4s0qrwDpYwN0PfymmUstsvZXo34g==?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack_related-posts-js-extra'>
+var related_posts_js_options = {"post_heading":"h4"};
+</script>
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","shortlink":"https:\/\/wp.me\/p26R0e-Z6","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/2015/04/16/civic-tech-days-of-future-past/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s2.wp.com/_static/??-eJyFjdEKwjAMRX/IrIpjxQfxW+aWlZQ2rUmL7u+tMEH24lO4OSe55plhSlyQi/FqYrpTQKiKMrq2A+IldV4P5seLFXKojliNYBgLzpCTll3aX7XvEgpkSa/1y4inUGfUD/SPirJuo4vEfyWI5KQVbvItXk/D2dpj31+sfwPadVA2'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s2.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1662027824h&cssminify=yes' type='text/css' media='all' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='https://wp.me/p26R0e-Z6' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Fcivic.io%2F2015%2F04%2F16%2Fcivic-tech-days-of-future-past%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Fcivic.io%2F2015%2F04%2F16%2Fcivic-tech-days-of-future-past%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Civic Tech: Days of Future Past" />
+<meta property="og:url" content="https://civic.io/2015/04/16/civic-tech-days-of-future-past/" />
+<meta property="og:description" content="A new focus on the user These days, in the world of civic technology, it’s all about the user. Digital government service redesign, with an enhanced focus on a higher quality user experience, is be…" />
+<meta property="article:published_time" content="2015-04-16T15:00:14+00:00" />
+<meta property="article:modified_time" content="2015-04-16T15:20:05+00:00" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="http://img.youtube.com/vi/vnJIzYBdcVI/0.jpg" />
+<meta property="og:image:secure_url" content="https://img.youtube.com/vi/vnJIzYBdcVI/0.jpg" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+<meta name="twitter:text:title" content="Civic Tech: Days of Future&nbsp;Past" />
+<meta name="twitter:card" content="summary" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="A new focus on the user These days, in the world of civic technology, it’s all about the user. Digital government service redesign, with an enhanced focus on a higher quality user experience, is being institutionalized in the federal governments of the U.K., U.S and Australia. The civic technology community is rallying around a new&hellip;" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="post-template-default single single-post postid-3788 single-format-standard customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/2015/04/16/civic-tech-days-of-future-past/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+							
+<article id="post-3788" class="post-3788 post type-post status-publish format-standard hentry category-gov20 category-open-government">
+	
+	<header class="entry-header">
+					<span class="entry-meta entry-meta-categories"><a href="../../../../tag/gov20/index.html" rel="category tag">gov20</a>, <a href="../../../../category/open-government/index.html" rel="category tag">Open Government</a></span>
+				<h1 class="entry-title">Civic Tech: Days of Future&nbsp;Past</h1>		<p class="entry-meta entry-meta-time">
+						<a href="index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="April 16, 2015"><i class="fa fa-clock-o"></i>April 16, 2015</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-content">
+		<p><b>A new focus on the user</b></p>
+<p>These days, in the world of civic technology, it’s all about the user.</p>
+<p>Digital government service redesign, with an enhanced focus on a higher quality user experience, is being institutionalized in the federal governments of the <a href="https://gds.blog.gov.uk/about/">U.K.</a>, <a href="https://18f.gsa.gov/">U.S</a> and <a href="http://www.seek.com.au/job/28428655">Australia</a>. The civic technology community is rallying around a new focus on building solutions that are <a href="http://www.smartchicagocollaborative.org/people-first-tech-second-5-criteria-for-community-driven-civic-tech/">needs-responsive and community-driven</a>.</p>
+<p>“Build with, not for” became the <a href="http://www.buildwith.org/">unofficial theme</a> of last year’s Code for America Summit, and the upcoming <a href="http://techpresident.com/news/25488/pdf15-theme-imagine-all-people-future-civic-tech">Personal Democracy Forum</a> in New York will feature a similar theme with talks and panels focused on broader engagement and inclusiveness in the development of civic technology.</p>
+<p>Organizations like Code for America have long been <a href="http://www.codeforamerica.org/blog/2013/11/08/whats-really-at-stake-in-better-interfaces-to-government/">focusing on redesigning government service interfaces</a>, but this idea now seems to have permeated every corner of the civic technology movement. This wider embrace of the need to enhance the user experience with government is coupled with a recognition that civic tech solutions are most effective when developed with the full participation of those that they are meant to benefit from them.</p>
+<p><span id="more-3788"></span></p>
+<p>In the words of <a href="https://medium.com/@elle_mccann/no-more-trickle-down-civictech-81341cf48a14">Laurenellen McCann</a>, who introduced the “build with, not for” mantra at last year’s Code for America Summit:</p>
+<blockquote><p>“To be used for social good&#8230;technology needs to be directed, and for its greatest, most transformative impact, it needs to be directed by those who will benefit the most from the creation of the social good.”</p></blockquote>
+<p>With investment in civic technology predicted in the <a href="http://www.techrepublic.com/article/civic-tech-in-2015-6-9-billion-to-connect-citizens-to-services-and-to-one-another/">billions of dollars</a> over the next few years, this feels like the right time to critically evaluate where we are in the civic tech movement. We should work to identify strategies that will help ensure that the work we are doing will be as impactful and lasting as it can be. This is the right time for new ideas on how we can do this work better.</p>
+<p>With that in mind, it is worth noting that the fundamental idea of inclusive, collaborative development of services &#8211; with the full participation of those being served &#8211; is not a new one. Ideals very similar to those articulated in the “build with, not for” approach to civic technology are encapsulated in a concept familiar to those from the world of public management &#8211; “<a href="http://en.wikipedia.org/wiki/Coproduction_%28public_services%29">coproduction</a>.”</p>
+<p>The idea of coproduction is focused on the collaborative development of public services &#8211; with those being served by government (or other public service providers) acting as empowered collaborators to help determine how these services are designed and delivered.</p>
+<p>In a <a href="http://www.jstor.org/stable/975300">1983 article</a> published in the journal <i>Public Administration Review</i>, Jeffrey Brudney and Robert England (from the University of Oklahoma and Oklahoma State University respectively) offer the following summary of coproduction, which could be used almost word-for-word to describe the modern civic technology movement:</p>
+<blockquote><p>“Coproduction is an emerging conception of the service delivery process which envisions direct citizen involvement in the design and delivery of city services with professional service agents. In this manner, coproduction proposes an answer to the more services-less cost dilemma: By supplementing &#8211; or perhaps supplanting &#8211; the labors of paid public officials with the service-directed activities of urban dwellers, coproduction has the potential to raise both the quality and the efficiency of municipal services.”</p></blockquote>
+<p>The idea that a journal article from 30 odd years ago could articulate some of the ideas underpinning recent thinking in the world of civic technology might seem surprising &#8211; I certainly found it so. But this is good news &#8211; there is a large body of both academic research and professional practice around coproduction over several decades that may hold valuable lessons for the world of civic technology.</p>
+<p>Additionally, for practitioners and researchers in the field of public management, the underpinnings of the modern open data, civic hacking and civic technology movements (which all developed in just the past few years) are actually well represented in the long history of research and practice that supports the field.</p>
+<p>There is much that both civic technologists focused on user-centric, community-driven service design and professionals in the field of public management can learn from each other. These two worlds are not so far apart &#8211; our objectives are more closely aligned than some might have thought.</p>
+<p><b>What is Civic Technology?</b></p>
+<blockquote><p>“One of the wonderful things about civic technology is that no one really knows what it means.”</p></blockquote>
+<p>&#8212; Forest Gregg, <a href="http://datamade.us/blog/what-are-civic-apps-for/">DataMade</a>.</p>
+<p>To understand what the literature on coproduction might teach those in the civic tech movement, I think its probably helpful to first clearly define what civic technology is. This term can seem nebulous, and may be defined to cover a fairly broad range of technology and activities.</p>
+<p>David Moore of Participatory Politics has <a href="http://www.participatorypolitics.org/civic-tech-inside-and-outside-of-government/">an interesting post describing the different kinds civic technology</a> where he makes specific note of those solutions focused on “responsive and open city services” &#8211; apps like SeeClickFix, Public Stuff and others.</p>
+<p>In another post, Micah Sifry of Tech President groups the different actors from the broad spectrum of activity in the world of civic technology into <a href="http://techpresident.com/news/25261/civic-tech-and-engagement-search-common-language">four general categories</a>. This is a useful approach to understanding the landscape of civic technology, and can help us zero in on the segment of most interest to this discussion.</p>
+<p>For the purposes of discussing user-centric, collaborative digital service design vis-à-vis the traditional idea of co-production, we can limit our analysis to the work being done in what Sifry describes as “digital government organizations” &#8211; these are organizations and individuals concerned with improving the access to and quality of government services from both inside and outside of government.</p>
+<p>Organizations like <a href="https://medium.com/@lippytak/people-not-data-47434acb50a8">Code for America</a> and <a href="http://www.smartchicagocollaborative.org/work/ecosystem/civic-user-testing-group/">civic hacking groups</a> in cities across the country are those most visibly embracing (and starting to use) the new user-centric, community-driven approach to civic technology. Inside government, new organizations like 18F and others are <a href="https://playbook.cio.gov/#play1">establishing methodologies</a> that focus on user needs as a prerequisite for building or acquiring new technology solutions.</p>
+<p>For the purposes of this discussion then, the term “civic technology” is taken to mean technology solutions that help governments do their job of delivering services to citizens more efficiently, enhancing the quality of public services or supplementing the services offered by governments or other public sector organizations.</p>
+<p>A good example of what I mean by using this definition is a civic technology solution called <a href="https://www.codeforamerica.org/apps/promptly/">Promptly</a>, built for the City of San Francisco by a Code for America Fellowship team in 2013. Promptly sends succinct, clear messages to <a href="http://www.calfresh.ca.gov/">CalFresh</a> recipients via SMS notifying them of upcoming due dates and providing other important information with the goal of preventing unnecessary benefit terminations (referred to as “churn” in the world of social services).</p>
+<p><div class="jetpack-video-wrapper"><span class="embed-youtube" style="text-align:center; display: block;"><iframe class="youtube-player" width="1000" height="563" src="https://www.youtube.com/embed/vnJIzYBdcVI?version=3&#038;rel=1&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;fs=1&#038;hl=en&#038;autohide=2&#038;wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"></iframe></span></div><br />
+<br /> <br />
+Its a great example</a> of civic technology enhancing the quality of a service already provided by government. It’s design embraces the user perspective &#8211; in fact, it was developed using stories from actual CalFresh recipients who were caught in a benefit churn cycle. It uses plain language in messages sent to CalFresh recipients &#8211; as opposed to the dense legalese in official letters from a city agency &#8211; and can provide information in multiple languages (something that official hard copy notices do not provide).</p>
+<p>In short, it was designed and built with both the user perspective and the user experience in mind.</p>
+<p><b>What is coproduction?</b></p>
+<p>The academic literature on coproduction goes back to at least the early 1980’s, and it is interesting to note that some of the early discussion around this concept is borne out of notable examples of municipal distress. In fact, I think these early attempts to define coproduction could be successfully used today to describe the civic technology &amp; civic hacking movement:</p>
+<p>In their 1983 article &#8220;<a href="http://www.jstor.org/stable/975300">Toward a Definition of the Coproduction Concept</a>,&#8221; Brudney and England make special note of the financial plight at the time in the City of Detroit where then Mayor Coleman Young proposed a new approach to city services that included the efforts of ordinary citizens. This approach was derided at the time by some as an example of “self-service government.” Brudney and England’s response could very well have been written as part of the lexicon of the contemporary civic tech movement:</p>
+<blockquote><p>“Government is a reflection of those who define the city &#8211; the local citizenry. The ‘self-service’ concept constitutes a redefinition of traditional service delivery patterns.”</p></blockquote>
+<p>The modern civic tech movement was largely born out of the experience of cities. <a href="http://istrategylabs.com/work/apps-for-democracy-contest/">Washington DC</a>, <a href="http://nycbigapps.com/">New York</a> and <a href="http://www.smartchicagocollaborative.org/list-of-apps-for-metro-chicago-applicants/">Chicago</a> were among the first governments to actively recruit outside software developers to build solutions on top of government open data. And the first governments to partner with Code for America &#8211; and the majority over the life of the organization’s history &#8211; have been <a href="https://www.codeforamerica.org/governments/alumni/">cities</a>.</p>
+<p>It makes sense that we would see cities as the places that gave rise to both the initial embrace of coproduction and later the civic  tech movement. Cities provide a more comprehensive and intimate range of services to citizens. And they are also extremely limited &#8211; far more so than states or the federal government &#8211; in their use of various revenue sources to fund their operations.</p>
+<p>If necessity is the mother of invention, it makes sense that cities are the birthplace of the the civic tech movement and the touchstone for our understanding of the concept of coproduction.</p>
+<p>The most broadly accepted definition of what coproduction is &#8211; at least as far as I could find &#8211; comes from a <a href="http://www.tandfonline.com/doi/abs/10.1080/00220380410001673184#.VSgebxPF9UM">2003 study in the Journal of Developmental Studies</a>:</p>
+<blockquote><p>&#8220;The provision of public services&#8230;through regular, long-term relationships between state agencies and organized groups of citizens, where both make substantial resource contributions.&#8221;</p></blockquote>
+<p>Though written in an entirely different context, I think its striking that this definition of coproduction could very accurately be applied to the modern civic technology movement in general, and the more recent community-driven, user-focused efforts of “build with, not for” in particular.</p>
+<p><b>What can we learn from coproduction to improve civic technology?</b></p>
+<p>I think there are some valuable lessons we can gain from looking at the academic literature on coproduction that can help guide and fortify the efforts of those advocating for user-centric, community-driven digital service design.</p>
+<p>The first, and most important is that some of the foundational ideas driving the modern civic tech movement are &#8211; in a way &#8211; a corollary to an idea that has several decades of familiarity to public managers and public administration researchers.</p>
+<p>One of the most significant hurdles facing advocates of open data and government collaboration with civic tech groups is the perceived “newness” of it. Anyone who has ever pitched the idea of “government as a platform” to a public official will know how hard conveying this idea to those outside the world of civic tech can be. But many of the ideas that the civic tech movement is built on are not new &#8211; they are well represented in decades of academic study and professional practice in the field of public management.</p>
+<p>Our job as advocates of open data and government collaboration with civic tech groups may not be so much to convince public officials that they should start doing these things, but to show them the ways that they already are.</p>
+<p>Additionally, the academic research on coproduction may offer a framework for how our modern view of “build with, not for” gets implemented. I think there are lessons we can take away from this large body of research that can inform how we reimagine they way we build 21st Century digital services.</p>
+<p>For example, a <a href="http://onlinelibrary.wiley.com/doi/10.1111/j.1540-6210.2007.00773.x/abstract">2007 study by Tony Boviard from the University of Birmingham</a> helps establish a matrix that we might use to distinguish between the different efforts to bring a user centric focus to digital services from inside government (through the work of organizations like 18F) and from outside government (through the work of civic hackers and organizations like Code for America and the <a href="http://www.smartchicagocollaborative.org/">Smart Chicago Collaborative</a>).</p>
+<p>Boviard constructs a continuum that weighs the relative level of involvement of the different actors in the coproduction process &#8211; service users and professional service providers. He distinguishes between coproduction that occurs with the community of users playing a mainly consultative role while the service itself is delivered by service professionals, and what he terms “full user-professional coproduction.”</p>
+<p>He uses the example of participatory budgeting as an example of the former state &#8211; where members of the community provide input that is used (or not) by budget professionals to make spending decisions. The later state &#8211; where community members are full partners in service delivery &#8211; are traditionally seen in things like neighborhood watch groups or community cleanup efforts, where community members actively participate themselves in the delivery of a service.</p>
+<p>When we think about user-centric digital service design in the context of this continuum, it can help us to distinguish some different approaches at work. The approach being taken by government organizations like the Government Digital Service (GDS) in the U.K. and 18F in the U.S seem to have adopted more of a “user consultation” approach to building government digital services. The people working in these organizations care deeply about the user’s perspective and the experience they have when consuming digital services, but the design and implementation of digital services remains the purview of government professionals.</p>
+<p>In contrast, the approach envisioned by proponents to the “build with, not for” philosophy seem more focused on achieving full user-professional coproduction. The <a href="http://www.smartchicagocollaborative.org/work/special-initiatives/deep-dive/experimental-modes-of-civic-engagement-in-civic-tech/">techniques being developed</a> for building this kind of civic technology are meant to better ensure the full participation of the communities that will use them. It seems to focus less on consulting the user community and using their input in the design and delivery of services by professionals, and more on empowering users to be an integral part of the civic tech lifecycle.</p>
+<p>This is not meant to suggest that one approach is necessarily better than the other (or any other approach that may be used), just that the focus is different. Groups like GDS and 18F are charged with helping government agencies achieve their mandated duty to provide specific services. Civic hacking groups may work on solutions that fall outside the traditional scope of a government agency, or that cross the boundaries of government agencies or different levels of government. This kind of inter-governmental collaboration on specific services may be difficult for governments themselves to achieve, so in this regard civic hacking groups may help fill crucial role in digital service delivery.</p>
+<p>Another important observation we may draw out of the existing literature on coproduction that has implications for digital service design is the role of the individual service consumer. A <a href="http://onlinelibrary.wiley.com/doi/10.1111/1467-8551.12010/abstract">2013 study by Stephen Osborne and Kirsty Strokosch</a> in the <i>British Journal of Management</i> uses the term “consumer coproduction” to describe the role that an individual consumer may play in the coproduction process:</p>
+<blockquote><p>“The users’ contribution as a co-producer during service production is not only unavoidable but is also crucial to the performance of a service and the impact of the service upon them.”</p></blockquote>
+<p>Brudney and England also make a distinction between <i>individual</i> and <i>collective</i> coproduction, and suggest that the benefit of individual coproduction &#8211; the activities of any one person &#8211; is minimal:</p>
+<blockquote><p>“&#8230;individual coproduction consists of active, voluntary behaviors that citizens undertake for their own consumption. Examples include turning in fire alarms, picking up litter from adjacent streets and informing officials of faulty traffic control equipment. While these activities involve active citizen participation, without organization and coordination, the aggregate benefits to the city are minimal.</p></blockquote>
+<p>I find it interesting to note that this criticism of the role of the individual in the coproduction process does not raise the issue that any one consumer’s viewpoint may not reflect the sentiments, desires or needs of other consumers but rather that the impact of any one individual may be limited in scope. And while this may have indeed been the case when Brudney and England set out to describe coproduction in the early eighties, it is far from the case now.</p>
+<p>An individual with the skills and tools to create an app can now have a significant impact on a community or even a city. The internet and the staggering array of tools we now have to cheaply and efficiently construct digital services make it possible for an individual to create an app or online service that unites and coordinates people, and magnifies the impact of individual activity.</p>
+<p>In fact, a single individual using an app may have an impact far beyond their own experience &#8211; consider services like <a href="http://en.seeclickfix.com/">SeeClickFix</a> or <a href="http://www.publicstuff.com/">Public Stuff</a> that empower individual users to report issues to their government that may impact an entire neighborhood or community. And while the ability to do this has probably always existed in some form, the level of immediacy and transparency that these apps provide has not been available before and <a href="https://www.mysociety.org/2015/04/13/boom-times-for-fixmystreet/">significantly strengthens the impact</a> an individual user may have.</p>
+<p>The potential impact of a single civic app developer, or a small group of like minded individuals can be seen in <a href="http://technical.ly/philly/2014/08/18/isepta-shuts-down-android-septa-launches/">a now retired app</a> that provided transit information for the Philadelphia area. This app was built by a small group of software developers that happened to be commuters using SEPTA’s regional rail service. Dissatisfied with the existing options they had for consuming schedule information, they built their own web-based tool called <a href="http://isepta.org/">iSEPTA</a>.</p>
+<p>Acting very much in their own self interest, and with little or no engagement of the broader transit rider community, this small group built an app that was eventually used by thousands of transit riders every day, inspired a cottage industry of transit apps in Philadelphia (as well as several transit-focused hackathons), and eventually prodded SEPTA itself to develop better transit apps for its riders.</p>
+<p>The motivations of the group behind iSEPTA are shared by many in the civic tech community. In the words of <a href="http://technical.ly/philly/2011/10/05/next-septa-developer-reed-lauber-launches-subway-bus-and-trolley-schedule-app/">another transit app developer from Philadelphia</a>:</p>
+<blockquote><p>“Like so many urban developers, I just want to provide resources that make my fellow citizens’ lives a little easier. Really, I made it for myself and hope that someone else out there will also find it useful.”</p></blockquote>
+<p>As we become more aware of the benefits of including the community in the development of civic apps, and in surveying a broad range of user perspectives in their design, it’s interesting to note the breadth of the impact a small group of developers &#8211; or even a single person, properly motivated and equipped &#8211; may have. These are sentiments we want to nurture, and as we embrace a community-driven approach to civic technology, we should keep in mind the power of the individual.</p>
+<p>Finally, the academic research on coproduction may help us to better understand the limitations of community-driven civic app development &#8211; or, more accurately &#8211; may help us avoid repeating the issues that have cropped up over the long history of coproduction.</p>
+<p>Osborne and Strokosch take pains to point out some of the limitations of coproduction, and make note of the important role played by service professions:</p>
+<blockquote><p>“<b>Service professionals and planners must trust that they will receive some return from co-production</b>, whilst service users must trust that their contributions will be recognized, valued and acted upon.” [Emphasis added]</p></blockquote>
+<p>It seems to me that this is a particularly relevant point for the civic technology community &#8211; as we build civic technology with a focus on users and community, we must be conscious of the fact that government employees are a part of the community and are potential users of civic technology solutions.</p>
+<p>Consider the example of <a href="http://www.nytimes.com/2012/04/22/us/smart-muni-app-for-san-francisco-transit-goes-unused.html">another transit app built several years ago</a> by a small team in San Francisco. The app was meant to replace an outdated, labor intensive process used by managers at San Francisco&#8217;s Municipal Transportation Agency with real time data on transit asset locations. But months after its creation it was largely unused by the agency because purchasing iPads for managers to use the app was deemed cost prohibitive.</p>
+<p>This response from SF Muni to an efforts to replace their outdated process strikes me as a typically bureaucratic response. Throwing up your hands and decrying a lack of funds is a reaction seen often in government &#8211; in this case it suggests that a key component of the user community for the app was not included in the process that led to its development. In a way, this underscores everything that the user and community-driven service design approach is meant to help fix.</p>
+<p>Research and experience on coproduction suggests, though that part of the community of users for civic technology are governments themselves.</p>
+<p><b>The Future is the User</b></p>
+<blockquote><p>“We must begin digital projects by exploring and pinpointing the needs of the people who will use the service, and the ways the service will fit into their lives.”</p></blockquote>
+<p>&#8212; <a href="https://playbook.cio.gov/#play1">U.S. Digital Services Playbook</a></p>
+<p>The world of civic technology is maturing, and the leaders of the civic tech movement are moving us to a place where the user is at the center of what we build.</p>
+<p>Investment in civic technology over the next few years is expected to be significant. This is the right time for us to embrace new ideas that will make our efforts more impactful and more durable. As we <a href="http://www.smartchicagocollaborative.org/work/special-initiatives/deep-dive/experimental-modes-of-civic-engagement-in-civic-tech/">develop new ways</a> to bring the user into the process of designing and implementing new digital services, we have opportunities to draw on the experience in other disciplines and enrich our understanding of what works and what doesn’t work.</p>
+<p>The decades-long academic and professional history around coproduction offers a unique opportunity to sharpen our understanding of how we can collaborate with users to build valuable services.</p>
+<p>There is much we can learn from the past, to help build a better future.</p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-3788" class="share-twitter sd-button share-icon" href="index.html%3Fshare=twitter.html" target="_blank" title="Click to share on Twitter" ><span>Twitter</span></a></li><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-3788" class="share-facebook sd-button share-icon" href="index.html%3Fshare=facebook.html" target="_blank" title="Click to share on Facebook" ><span>Facebook</span></a></li><li class="share-end"></li></ul></div></div></div><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-31186386-3788-631252fc27b4e' data-src='//widgets.wp.com/likes/index.html?ver=20220105#blog_id=31186386&amp;post_id=3788&amp;origin=civicio.wordpress.com&amp;obj_id=31186386-3788-631252fc27b4e&amp;domain=civic.io' data-name='like-post-frame-31186386-3788-631252fc27b4e' data-title='Like or Reblog'><h3 class='sd-title'>Like this:</h3><div class='likes-widget-placeholder post-likes-widget-placeholder' style='height: 55px;'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div></div>					</div><!-- .entry-content -->
+
+	</article><!-- #post-## -->
+			
+				<nav class="navigation post-navigation" role="navigation">
+		<h1 class="screen-reader-text">Post navigation</h1>
+		<div class="nav-links">
+			<div class="nav-previous"><a href="../../01/i-hate-open-data-portals/index.html" rel="prev">I Hate Open Data&nbsp;Portals</a></div><div class="nav-next"><a href="../../21/hearts-and-minds-and-open-data/index.html" rel="next">Hearts and Minds and Open&nbsp;Data</a></div>		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+			<div id="comments" class="discussion">
+
+			<div class="comments-area content-comments">
+			<h2 class="comments-header">
+				2 comments			</h2>
+			<ol class="commentlist">
+				
+		<li id="comment-9569" class="comment even thread-even depth-1 highlander-comment">
+			<img alt='' src='https://0.gravatar.com/avatar/062676311c965384452675198353ed10?s=180&#038;d=identicon&#038;r=G' class='avatar avatar-180' height='180' width='180' />			<div class="comment-wrap">
+				<div class="comment-top">
+					<span class="comment-author author vcard">
+						<cite class="fn">Joel Natividad</cite> 					</span>
+					<span class="comment-meta comment-time">
+						 &middot; April 17, 2015					</span>
+				</div>
+				<div id="comment-body-9569" class="comment-body">
+										<p>And with NYC&#8217;s City Council and NYC DoITT releasing their <a href="http://council.nyc.gov/html/pr/041315tp.shtml" rel="nofollow">technology</a> <a href="http://www.nyc.gov/html/doitt/html/about/strategic_plan_2015_2017.shtml" rel="nofollow">plans</a> in the same week &#8211; the Big Apple is <a href="https://talk.beta.nyc/t/ny-city-council-launches-its-technology-plan/810" rel="nofollow">encoding coproduction</a> into <a href="https://talk.beta.nyc/t/check-out-doitts-strategic-plan/877" rel="nofollow">its DNA.</a>.  #BetOnNYC</p>
+<p>Beyond these initiatives, what else can NYC do to engage citizens, with <a href="http://www.nytimes.com/2014/11/12/opinion/the-worst-voter-turnout-in-72-years.html?_r=0" rel="nofollow">Citizen Apathy and Participation at an all-time low</a>? Is the next election cycle a #CivicTech golden opportunity or will it just deepen cynicism as citizens conflate the micro-targeting done by both parties with the space?</p>
+<p>Is there anything that can be co-produced to win back trust?  Or will that trust have to be won the hard way, over time?</p>
+				</div>
+				<div class="reply">
+														</div>
+			</div>
+	</li><!-- #comment-## -->
+
+		<li id="comment-9577" class="comment odd alt thread-odd thread-alt depth-1 highlander-comment">
+			<img alt='' src='https://0.gravatar.com/avatar/93c5e7525998c1a99556da24374faeab?s=180&#038;d=identicon&#038;r=G' class='avatar avatar-180' height='180' width='180' />			<div class="comment-wrap">
+				<div class="comment-top">
+					<span class="comment-author author vcard">
+						<cite class="fn">Andrew</cite> 					</span>
+					<span class="comment-meta comment-time">
+						 &middot; April 19, 2015					</span>
+				</div>
+				<div id="comment-body-9577" class="comment-body">
+										<p>These ideas go back further than the articulation of coproduction you&#8217;ve cited. See Sherry Arnstein&#8217;s 1968 article on the ladder of participation.</p>
+				</div>
+				<div class="reply">
+														</div>
+			</div>
+	</li><!-- #comment-## -->
+			</ol>
+
+					</div>
+	
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply</h3><form action="https://civic.io/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate><input type="hidden" id="highlander_comment_nonce" name="highlander_comment_nonce" value="cf90dc640f" /><input type="hidden" name="_wp_http_referer" value="/2015/04/16/civic-tech-days-of-future-past/" />
+<input type="hidden" name="hc_post_as" id="hc_post_as" value="guest" />
+
+<div class="comment-form-field comment-textarea">
+	<label for="comment">Enter your comment here...</label>
+	<div id="comment-form-comment"><textarea id="comment" name="comment" title="Enter your comment here..."></textarea></div>
+</div>
+
+<div id="comment-form-identity">
+	<div id="comment-form-nascar">
+		<p>Fill in your details below or click an icon to log in:</p>
+		<ul>
+			<li class="selected" style="display:none;">
+				<a href="index.html#comment-form-guest" id="postas-guest" class="nascar-signin-link"
+				 title="Login via Guest" 				>
+									</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:WordPress.com" id="postas-wordpress" class="nascar-signin-link"
+				 title="Login via WordPress.com" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></g></svg>				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Twitter" id="postas-twitter" class="nascar-signin-link"
+				 title="Login via Twitter" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"/></g></svg>				</a>
+			</li>
+			<li>
+				<a href="index.html#comment-form-load-service:Facebook" id="postas-facebook" class="nascar-signin-link"
+				 title="Login via Facebook" 				>
+					<svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"/></g></svg>				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="comment-form-guest" class="comment-form-service selected">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+<a href="https://gravatar.com/site/signup/" target="_blank">				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Gravatar" width="25" class="no-grav" />
+</a>			</div>
+
+				<div class="comment-form-fields">
+				<div class="comment-form-field comment-form-email">
+					<label for="email">Email <span class="required">(required)</span> <span class="nopublish">(Address never made public)</span></label>
+					<div class="comment-form-input"><input id="email" name="email" type="email" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-author">
+					<label for="author">Name <span class="required">(required)</span></label>
+					<div class="comment-form-input"><input id="author" name="author" type="text" value="" /></div>
+				</div>
+				<div class="comment-form-field comment-form-url">
+					<label for="url">Website</label>
+					<div class="comment-form-input"><input id="url" name="url" type="url" value="" /></div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div id="comment-form-wordpress" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="WordPress.com Logo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="wp_avatar" id="wordpress-avatar" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_user_id" id="wordpress-user_id" class="comment-meta-wordpress" value="" />
+				<input type="hidden" name="wp_access_token" id="wordpress-access_token" class="comment-meta-wordpress" value="" />
+						<p class="comment-form-posting-as pa-wordpress">
+			<strong></strong>
+			You are commenting using your WordPress.com account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'wordpress' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#0087be" d="M12.158 12.786l-2.698 7.84c.806.236 1.657.365 2.54.365 1.047 0 2.05-.18 2.986-.51-.024-.037-.046-.078-.065-.123l-2.762-7.57zM3.008 12c0 3.56 2.07 6.634 5.068 8.092L3.788 8.342c-.5 1.117-.78 2.354-.78 3.658zm15.06-.454c0-1.112-.398-1.88-.74-2.48-.456-.74-.883-1.368-.883-2.11 0-.825.627-1.595 1.51-1.595.04 0 .078.006.116.008-1.598-1.464-3.73-2.36-6.07-2.36-3.14 0-5.904 1.613-7.512 4.053.21.008.41.012.58.012.94 0 2.395-.114 2.395-.114.484-.028.54.684.057.74 0 0-.487.058-1.03.086l3.275 9.74 1.968-5.902-1.4-3.838c-.485-.028-.944-.085-.944-.085-.486-.03-.43-.77.056-.742 0 0 1.484.114 2.368.114.94 0 2.397-.114 2.397-.114.486-.028.543.684.058.74 0 0-.488.058-1.03.086l3.25 9.665.897-2.997c.456-1.17.684-2.137.684-2.907zm1.82-3.86c.04.286.06.593.06.924 0 .912-.17 1.938-.683 3.22l-2.746 7.94c2.672-1.558 4.47-4.454 4.47-7.77 0-1.564-.4-3.033-1.1-4.314zM12 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-twitter" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="https://1.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=25&amp;d=identicon&amp;forcedefault=y&amp;r=G" alt="Twitter picture" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="twitter_avatar" id="twitter-avatar" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_user_id" id="twitter-user_id" class="comment-meta-twitter" value="" />
+				<input type="hidden" name="twitter_access_token" id="twitter-access_token" class="comment-meta-twitter" value="" />
+						<p class="comment-form-posting-as pa-twitter">
+			<strong></strong>
+			You are commenting using your Twitter account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'twitter' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#1DA1F2" d="M22.23 5.924c-.736.326-1.527.547-2.357.646.847-.508 1.498-1.312 1.804-2.27-.793.47-1.67.812-2.606.996C18.325 4.498 17.258 4 16.078 4c-2.266 0-4.103 1.837-4.103 4.103 0 .322.036.635.106.935-3.41-.17-6.433-1.804-8.457-4.287-.353.607-.556 1.312-.556 2.064 0 1.424.724 2.68 1.825 3.415-.673-.022-1.305-.207-1.86-.514v.052c0 1.988 1.415 3.647 3.293 4.023-.344.095-.707.145-1.08.145-.265 0-.522-.026-.773-.074.522 1.63 2.038 2.817 3.833 2.85-1.404 1.1-3.174 1.757-5.096 1.757-.332 0-.66-.02-.98-.057 1.816 1.164 3.973 1.843 6.29 1.843 7.547 0 11.675-6.252 11.675-11.675 0-.178-.004-.355-.012-.53.802-.578 1.497-1.3 2.047-2.124z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+	<div id="comment-form-facebook" class="comment-form-service">
+		<div class="comment-form-padder">
+			<div class="comment-form-avatar">
+				<img src="index.html" alt="Facebook photo" width="25" class="no-grav" />
+			</div>
+
+				<div class="comment-form-fields">
+				<input type="hidden" name="fb_avatar" id="facebook-avatar" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_user_id" id="facebook-user_id" class="comment-meta-facebook" value="" />
+				<input type="hidden" name="fb_access_token" id="facebook-access_token" class="comment-meta-facebook" value="" />
+						<p class="comment-form-posting-as pa-facebook">
+			<strong></strong>
+			You are commenting using your Facebook account.			<span class="comment-form-log-out">
+				(&nbsp;<a href="javascript:HighlanderComments.doExternalLogout( 'facebook' );">Log&nbsp;Out</a>&nbsp;/&nbsp;
+				<a href="index.html#" onclick="javascript:HighlanderComments.switchAccount();return false;">Change</a>&nbsp;)
+			</span>
+			<span class="pa-icon"><svg xmlns="http://www.w3.org/2000/svg" role="presentation" viewBox="0 0 24 24" ><rect x="0" fill="none" width="24" height="24"/><g><path fill="#3B5998" d="M20.007 3H3.993C3.445 3 3 3.445 3 3.993v16.013c0 .55.445.994.993.994h8.62v-6.97H10.27V11.31h2.346V9.31c0-2.325 1.42-3.59 3.494-3.59.993 0 1.847.073 2.096.106v2.43h-1.438c-1.128 0-1.346.537-1.346 1.324v1.734h2.69l-.35 2.717h-2.34V21h4.587c.548 0 .993-.445.993-.993V3.993c0-.548-.445-.993-.993-.993z"/></g></svg></span>
+		</p>
+					</div>
+	
+		</div>
+	</div>
+
+
+	<div id="comment-form-load-service" class="comment-form-service">
+		<div class="comment-form-posting-as-cancel"><a href="javascript:HighlanderComments.cancelExternalWindow();">Cancel</a></div>
+		<p>Connecting to %s</p>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var highlander_expando_javascript = function () {
+
+	function hide( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.setProperty( 'display', 'none' );
+		}
+	}
+
+	function show( sel ) {
+		var el = document.querySelector( sel );
+		if ( el ) {
+			el.style.removeProperty( 'display' );
+		}
+	}
+
+	var input = document.createElement( 'input' );
+	var comment = document.querySelector( '#comment' );
+
+	if ( input && comment && 'placeholder' in input ) {
+		var label = document.querySelector( '.comment-textarea label' );
+		if ( label ) {
+			var text = label.textContent;
+			label.parentNode.removeChild( label );
+			comment.setAttribute( 'placeholder', text );
+		}
+	}
+
+	// Expando Mode: start small, then auto-resize on first click + text length
+	hide( '#comment-form-identity' );
+	hide( '#comment-form-subscribe' );
+	hide( '#commentform .form-submit' );
+
+	if ( comment ) {
+		comment.style.height = '10px';
+
+		var handler = function () {
+			comment.style.height = HighlanderComments.initialHeight + 'px';
+			show( '#comment-form-identity' );
+			show( '#comment-form-subscribe' );
+			show( '#commentform .form-submit' );
+			HighlanderComments.resizeCallback();
+
+			comment.removeEventListener( 'focus', handler );
+		};
+
+		comment.addEventListener( 'focus', handler );
+	}
+}
+
+if ( document.readyState !== 'loading' ) {
+	highlander_expando_javascript();
+} else {
+	document.addEventListener( 'DOMContentLoaded', highlander_expando_javascript );
+}
+
+</script>
+
+<div id="comment-form-subscribe">
+	<p class="comment-subscription-form"><input type="checkbox" name="subscribe" id="subscribe" value="subscribe" style="width: auto;"/> <label class="subscribe-label" id="subscribe-label" for="subscribe" style="display: inline;">Notify me of new comments via email.</label></p><p class="post-subscription-form"><input type="checkbox" name="subscribe_blog" id="subscribe_blog" value="subscribe" style="width: auto;"/> <label class="subscribe-label" id="subscribe-blog-label" for="subscribe_blog"  style="display: inline;">Notify me of new posts via email.</label></p></div>
+
+
+
+
+<p class="form-submit"><input name="submit" type="submit" id="comment-submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='3788' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="c80895baa4" /></p>
+<input type="hidden" name="genseq" value="1662145276" />
+<p style="display: none !important;"><label>&#916;<textarea name="ak_hp_textarea" cols="45" rows="8" maxlength="100"></textarea></label><input type="hidden" id="ak_js_1" name="ak_js" value="70"/><script>document.getElementById( "ak_js_1" ).setAttribute( "value", ( new Date() ).getTime() );</script></p></form>	</div><!-- #respond -->
+	<div style="clear: both"></div></div>
+
+		
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/2015/04/16/civic-tech-days-of-future-past/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"post_id":3788,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1,"reason_post_null":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	<div class="grofile-hash-map-062676311c965384452675198353ed10">
+	</div>
+	<div class="grofile-hash-map-93c5e7525998c1a99556da24374faeab">
+	</div>
+	</div>
+<script id='highlander-comments-js-extra'>
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"https:\/\/civicio.wordpress.com\/public.api\/connect\/?action=request&domain=civic.io","logoutURL":"https:\/\/civicio.wordpress.com\/wp-login.php?action=logout&_wpnonce=125beba3f0","homeURL":"https:\/\/civic.io\/","postID":"3788","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"","userIsLoggedIn":"","isJetpack":"","text_direction":"ltr"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??/wp-content/js/textarea-autosize.min.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1662027824j'></script>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/2015/04/16/civic-tech-days-of-future-past/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2015%252F04%252F16%252Fcivic-tech-days-of-future-past%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2F2015%2F04%2F16%2Fcivic-tech-days-of-future-past%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2015%252F04%252F16%252Fcivic-tech-days-of-future-past%252F">Log in</a></li>
+																	<li class="actnbr-shortlink"><a href="https://wp.me/p26R0e-Z6">Copy shortlink</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/blogs/31186386/posts/3788">
+											View post in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+	
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"https:\/\/civic.io\/2015\/04\/16\/civic-tech-days-of-future-past\/":3788};
+	</script>
+				<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-3' href='https://s1.wp.com/wp-content/mu-plugins/responsive-videos/responsive-videos.css?m=1445367997h&cssminify=yes' type='text/css' media='all' />
+<script id='sharing-js-js-extra'>
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/_static/??-eJyNkFFOxDAMRC+Ea1ABqR+Io6A0cRu3TRpip8vxyS6qtGJR2a84zjyPJ3hKYNeoFBUnQUcbW0pfzSQPePUUCqSljBwFF55J8LNQIW+iWyj/FqunUCWp9Eg8euV6qbN7Y2fRTGr9ncRe3ymXmRMsHGcYVlsEBr7J8Y8ReDLuNtBV+ok01Rz4wdGinliVMigHqr50wBkXOEJvMgYjlakVaD7/yAGUSdIahTeCjR2tf3SaOvbIdmYJpNA2jz8r740hX8TugE2rVN1iOKN4kzmO+1mh9/D29PrStW3XPbfTNyZW2fE='></script>
+<script type='text/javascript'>
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-twitter' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-twitter' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+						return false;
+					}
+				} );
+			} )();
+var windowOpen;
+			( function () {
+				function matches( el, sel ) {
+					return !! (
+						el.matches && el.matches( sel ) ||
+						el.msMatchesSelector && el.msMatchesSelector( sel )
+					);
+				}
+
+				document.body.addEventListener( 'click', function ( event ) {
+					if ( ! event.target ) {
+						return;
+					}
+
+					var el;
+					if ( matches( event.target, 'a.share-facebook' ) ) {
+						el = event.target;
+					} else if ( event.target.parentNode && matches( event.target.parentNode, 'a.share-facebook' ) ) {
+						el = event.target.parentNode;
+					}
+
+					if ( el ) {
+						event.preventDefault();
+
+						// If there's another sharing window open, close it.
+						if ( typeof windowOpen !== 'undefined' ) {
+							windowOpen.close();
+						}
+						windowOpen = window.open( el.getAttribute( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+						return false;
+					}
+				} );
+			} )();
+</script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>	<iframe src='https://widgets.wp.com/likes/master.html?ver=20220105#ver=20220105&amp;origin=https://civic.io' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+	<div id='likes-other-gravatars'>
+		<div class="likes-text">
+			<span>%d</span> bloggers like this:		</div>
+		<ul class="wpl-avatars sd-like-gravatars"></ul>
+	</div>
+
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','post':'3788','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelF2Q3V3R2xdb3hQJS1PfkF4eUNZVmJxfGM1d100Py1yS0lkWXBnRksrQ3o1bi1bYmEtNldZdWYzdTVwS0UlZS5qNVEya2lqd1RRLHFbJUxVSlVrN084fkxpXURZYz9hUUVZJnUwMX5xMlNwOC55cW03TGEzclJMUEJzclMvUi03SD1NT1ZsTkZlVFtFSGVoQ0JvME9NMW5fMjBCJkw0OWUvb0N4Lzg='}]);
+_stq.push([ 'clickTrackerInit', '31186386', '3788' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

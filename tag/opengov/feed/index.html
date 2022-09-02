@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:media="http://search.yahoo.com/mrss/"
+	>
+
+<channel>
+	<title>opengov &#8211; Civic Innovations</title>
+	<atom:link href="https://civic.io/tag/opengov/feed/" rel="self" type="application/rss+xml" />
+	<link>https://civic.io</link>
+	<description>The Future is Open</description>
+	<lastBuildDate>Tue, 02 Nov 2010 19:55:59 +0000</lastBuildDate>
+	<language>en</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>http://wordpress.com/</generator>
+<cloud domain='civic.io' port='80' path='/?rsscloud=notify' registerProcedure='' protocol='http-post' />
+<image>
+		<url>https://s0.wp.com/i/buttonw-com.png</url>
+		<title>opengov &#8211; Civic Innovations</title>
+		<link>https://civic.io</link>
+	</image>
+	<atom:link rel="search" type="application/opensearchdescription+xml" href="https://civic.io/osd.xml" title="Civic Innovations" />
+	<atom:link rel='hub' href='https://civic.io/?pushpress=hub'/>
+	<item>
+		<title>Building Multichannel Transit Apps with Tropo</title>
+		<link>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/</link>
+					<comments>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/#comments</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Tue, 02 Nov 2010 19:55:59 +0000</pubDate>
+				<category><![CDATA[Development Tools]]></category>
+		<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[Open Source]]></category>
+		<category><![CDATA[Tropo]]></category>
+		<category><![CDATA[Tutorials]]></category>
+		<category><![CDATA[IM]]></category>
+		<category><![CDATA[mysql]]></category>
+		<category><![CDATA[opengov]]></category>
+		<category><![CDATA[PHP]]></category>
+		<category><![CDATA[SMS]]></category>
+		<category><![CDATA[transit]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=2165</guid>
+
+					<description><![CDATA[This post is the third in a series about building an open source transit data application using GTFS data from the Delaware Transit Corporation. In the first post, I described how to download the State of Delaware&#8217;s transit data and populate a MySQL database with... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>This post is the third in a series about building an open source transit data application using <acronym title="General Transit Feed Specification">GTFS</acronym> data from the <a href="http://www.dartfirststate.com/" target="_blank">Delaware Transit Corporation</a>.</p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2073">the first post</a>, I described how to download the State of Delaware&#8217;s transit data and populate a MySQL database with it.  </p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2117">the previous post</a>, I walked through a process of setting up stored procedures for querying the transit data and setting up a LAMP application environment.</p>
+<p>Now we&#8217;re ready to write code for our transit app!</p>
+<h3>Choosing a Platform</h3>
+<p>One of the most under appreciated developments that has accompanied the increasing amount of government data that has become available in open formats is the vast array of new tools now available for developers to use.  I&#8217;ve <a href="http://www.voiceingov.org/blog/?p=1471">talked about this a lot</a> in the past but it bears repeating &#8211; it has never been easier to build sophisticated, multi-channel communication applications than it is now.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/tropo_logo.png" alt="Tropo" title="Tropo" style="margin:10px;padding:15px;float:right;" /><br />
+The number of options open to developers is truly exciting, but there are some platforms that rise above the rest in terms of ease of use and in what they enable developers to do.  For this project, I will use the <a href="https://www.tropo.com/docs/webapi/newhowitworks.htm" target="_blank">Tropo WebAPI platform</a>.</p>
+<p>The Tropo WebAPI has a number of advantage that will come in handy for our transit app project (and any other projects you&#8217;ve got in the works).  You can write a Tropo app in one of several popular scripting and web development languages &#8211; Ruby, Python, PHP, C# and JavaScript (Node.js).  There are <a href="https://www.tropo.com/docs/webapi/libraries.htm" target="_blank">libraries available for each language</a> that make it easy to build Tropo apps and to integrate with the Tropo API.  (Disclaimer &#8211; I&#8217;ve worked on several of these libraries.)</p>
+<p>In addition, the real magic that Tropo brings to the table is the ability to serve users on multiple communication channels (phone, IM, SMS, Twitter) from a single code base.  This is especially important for an application meant to service transit riders.  These users may not have the luxury of sitting in front of a desktop computer in order to look up information on a bus route or schedule.  They are much more likely to be traveling and using some sort of phone or mobile device.  The Tropo WebAPI is perfect for our needs.</p>
+<p>Vivek Kundra, the former CIO of the District of Columbia and current CIO of the United States, has described the effort by governments to release data in open formats as &#8220;the democratization of data&#8221; &#8211; these efforts make previously hard to get, or hard to use data available for everyone.</p>
+<p>I like to describe platforms like <a href="https://www.tropo.com/home.jsp" target="_blank">Tropo</a> and the various libraries that are available to use with it as &#8220;the democratization of application development&#8221; &#8211; these tools make building powerful communication apps simple for anyone who understands web development.</p>
+<h3>Building our Transit App</h3>
+<p>Before we can build our application, we need to decide what it will do.</p>
+<p>For our purposes, this has already been determined by the stored procedures we built <a href="http://www.voiceingov.org/blog/?p=2117">in the last post</a>.  Our <strong>transitdata</strong> database has 2 stored procedures &#8211; one to return the nearest bus stops to a specific address or location, and one to return the next bus departure times from a specific bus stop.</p>
+<p>However, this series of posts is meant to inspire readers to build their own applications &#8211; now that you have transit data in a powerful relational database like MySQL you can query it any way you like.  In addition, the SQL scripts and steps developed for this series of posts can certainly be used with the data from any other transit agency that uses the GTFS format.  <a href="http://code.google.com/p/googletransitdatafeed/wiki/PublicFeeds">There are lots</a>.  Use your imagination &#8211; build whatever you find useful.</p>
+<p>So now that we have some idea of what we want our application to do, we need to select a development language.  It will probably come as no surprise that for this example I&#8217;m going to use the <a href="http://php.net/" target="_blank">PHP scripting language</a> and the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>.  PHP is a good match for Linux, Apache and MySQL &#8211; all technologies we used in the previous entries in this series of blog posts.</p>
+<p>If you want some more detailed information on building PHP applications that run on the Tropo WebAPI platform, you can review a separate series of blog posts on this issue <a href="http://www.voiceingov.org/blog/?p=1918">here</a>.</p>
+<p>To get the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>, you can download it and unpack on your web server, or simply clone the Github repo.</p>
+<p>Once you do that, you can grab the code for our demo application from <a href="http://gist.github.com/659768" target="_blank">GitHub as well</a>.</p>
+<p>In order to test this application, you&#8217;ll need to sign up for a free Tropo account &#8211; you can <a href="https://www.tropo.com/" target="_blank">do that here</a>.  Once you are signed up, go to the Applications section in your Tropo account and set up a new WebAPI application that points to the location of our PHP script on your web server.  You can see more detailed information on setting up a Tropo account <a href="https://www.tropo.com/docs/webapi/newquickstart.htm" target="_blank">here</a>.</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/web-api.png" alt="web-api" title="web-api" width="412" height="240" /></p>
+<p>Note &#8211; You&#8217;ll also need an API key from Google Maps for geocoding addresses &#8211; <a href="http://code.google.com/apis/maps/signup.html" target="_blank">get one here</a>.  Change the following line in the application to include your Google API key:</p>
+<blockquote>
+<pre>
+define("MAPS_API_KEY", "your-api-key-goes-here");
+</pre>
+</blockquote>
+<p>Once your Tropo account and application are set up, you can add as many different contact methods as you like &#8211; your Tropo application is automatically provisioned a Skype number, a SIP number and an iNUM.  </p>
+<p>To illustrate how our transit app will work, I&#8217;ve gone ahead and assigned a Jabber IM name to my app &#8211; <strong>findthebus@tropo.im</strong>.  Add this to your friends/user list in Google chat and you can use the app I&#8217;ve set up.  Here&#8217;s what it looks like in my IM client:</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/transit-finder1.png" alt="transit-finder1" title="transit-finder1" /></p>
+<p>As you can see, my first IM to <strong>findthebus@tropo.im</strong> sends the address of a building in Downtown Wilmington (actually, a building I used to work in).  The app responds with the three closest bus stops and the distance (in miles) to each.</p>
+<p>I then send the number of the bus stop I am interested in.  The app responds with the next three buses to leave that stop, the route served by each and the number of minutes before each departs.</p>
+<p>How cools is that!</p>
+<p>I could very easily make this application more sophisticated, so that it it delivers content tailored to specific channels (i.e., IM vs. phone) but I want to keep things simple for now.</p>
+<p>In the next blog post of this series, we will introduce some additional tools, including Google Maps and the new hotness in cloud telephony &#8211; <a href="http://phono.com/" target="_blank">Phono</a>.</p>
+<p>Stay tuned!</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/11/02/building-multichannel-transit-apps-with-tropo/feed/</wfw:commentRss>
+			<slash:comments>2</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/tropo_logo.png" medium="image">
+			<media:title type="html">Tropo</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/web-api.png" medium="image">
+			<media:title type="html">web-api</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/transit-finder1.png" medium="image">
+			<media:title type="html">transit-finder1</media:title>
+		</media:content>
+	</item>
+		<item>
+		<title>A &#8216;Glass Half Full&#8217; View of Government App Contests</title>
+		<link>https://civic.io/2010/06/08/a-glass-half-full-view-of-government-app-contests/</link>
+					<comments>https://civic.io/2010/06/08/a-glass-half-full-view-of-government-app-contests/#comments</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Tue, 08 Jun 2010 20:14:11 +0000</pubDate>
+				<category><![CDATA[Development Tools]]></category>
+		<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[apps09]]></category>
+		<category><![CDATA[opengov]]></category>
+		<category><![CDATA[sunlight]]></category>
+		<category><![CDATA[transparency]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1850</guid>
+
+					<description><![CDATA[An increasing number of people are starting to suggest that the concept of the &#8220;app contest&#8221; (where governments challenge developers to build civic applications) is getting a bit long in the tooth. There have been lots of musings lately about the payoff for governments that... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/06/08/a-glass-half-full-view-of-government-app-contests/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>An increasing number of people are starting to suggest that the concept of the &#8220;app contest&#8221; (where governments challenge developers to build civic applications) is getting a bit long in the tooth.</p>
+<p>There have been <a href="http://fcw.com/articles/2010/06/07/buzz-army-apps-contest.aspx">lots of musings lately</a> about the payoff for governments that hold such contests and the long term viability of individual entries developed for these contests.  Even Washington DC &#8211; the birthplace of the current government app contest craze &#8211; seems the be <a href="http://www.governing.com/columns/tech-talk/Government-Apps-Move-from.html">moving beyond the framework it has employed</a> not once, but twice to engage local developers:</p>
+<blockquote><p>&#8220;I don&#8217;t think we&#8217;re going to be running any more Apps for Democracy competitions quite in that way,&#8221; says Bryan Sivak, who became the district&#8217;s chief technology officer in 2009. Sivak calls Apps for Democracy a &#8220;great idea&#8221; for getting citizen software developers involved with government, but he also hints that the applications spun up by these contests tend to be more &#8220;cool&#8221; than useful to the average city resident.</p></blockquote>
+<p><strong>App Contests Abound</strong></p>
+<p>This view is starting to crystallize against the backdrop of an ever greater number of app contests being held.  At the recent Gov 2.0 Expo in Washington DC, Peter Corbett of iStrategy Labs (who helped launch the first government app contest in DC) <a href="http://www.scribd.com/doc/32025918/Beyond-Apps-Contests-Building-Sustainable-Civic-Innovation-Projects" target="_blank">gave a presentation</a> that listed several dozen governments around the globe that had recently completed an app contest or were scheduled to soon start one. </p>
+<p>And the biggest app contest to date &#8211; being <a href="http://radar.oreilly.com/2010/05/apps-for-california-unlocking.html">sponsored by the State of California</a> &#8211; is slated to begin soon.  (Two fringe technology companies that you&#8217;ve probably never heard of &#8211; Google and Microsoft &#8211; are set to partner with the Golden State for this 800 pound gorilla of government app contests.)</p>
+<p>So if app contests are being used in more and more places, and the size and scope of these contests keeps growing, what&#8217;s with all the hand wringing of late?</p>
+<p><strong>Lessons Learned from App Contests</strong></p>
+<p>My take on app contests is not an unbiased one.  I&#8217;ve been a competitor in three different app contests (the original Apps for Democracy, the original Apps for America, and the NYC Big Apps competition) and was recognized for my work in them.  Outside of contests, I&#8217;ve build applications using open government data and APIs for the cities of Toronto and San Francisco, and for the New York State Senate.</p>
+<p>Clearly <a href="http://www.voiceingov.org/blog/?page_id=825">I am a supporter</a> of the concept of the government app contest.</p>
+<p>Having said that, though, I do think that those taking a more skeptical view of app contests are asking some important questions.  The  government app contest has come a long way since Vivek Kundra was in the driver&#8217;s seat in the DC technology office.  It&#8217;s time to start asking how app contests can be improved.</p>
+<p>But before we move on to that discussion, it is worth noting the lessons that have been learned over the last two years or so from government app contests.</p>
+<p>First, governments and citizens benefit when high value, high quality data sets are released by governments that are in machine readable formats, easily consumed by third party applications.  Believe it or not, there is still debate in many places on this point.  App contests prove the theory that publishing open government data provides tangible benefits.</p>
+<p>Second, app contests prove that it is possible to engage and excite <a href="http://www.voiceingov.org/blog/?p=1643">both developers and high level elected officials</a> about open government data.  The cause of open government can&#8217;t be anything but well served when these two groups are excited about it, and appealing to both successfully in equal measure is usually very challenging.</p>
+<p>Third, and maybe most importantly, government app contests provide sort of a &#8220;petri dish&#8221; for government officials to see how government data might be used.  They let governments solicit ideas from the private sector about the different ways that open data can be used in a manner that is low risk and low cost.  Some of the proposed uses of government data that emerge from these contests – whether its <a href="http://hearmesaythis.org/">tweeting a recorded message</a> to your Congressman, or using an <a href="http://sunlightlabs.com/contests/appsforamerica/apps/buddy/">IM client to browse campaign finance data</a> – might never be considered by governments but for them running an app contest.</p>
+<p>These lessons aside, there are those who contend that the existence of app contest entries that have languished (or even been abandoned altogether) after a contest is over suggests that an app contest didn&#8217;t work well (or as well as it should have).  I don&#8217;t think this is necessarily the case.</p>
+<p>Look at it this way; once a government has decided to publish open data sets and enable the development of one single app by an outside developer, the marginal cost of the next app (from the perspective of government) is essentially zero.</p>
+<p>Once a data set has been put into a machine readable format and staged for download so that it can be used by a developer or third party, what is the cost of the next download? Or the next 50, or 100? Essentially nothing.</p>
+<p>The road to tech startup profitability and success is a long and hard one, and it&#8217;s littered with the hollowed out husks of ideas (some very bad, some very good) that for one reason or another just don&#8217;t make it. </p>
+<p>Should we be overly concerned that the dynamic of government app contest entries is essentially the same as it is for any other sort of technology startup project?  Personally, I don&#8217;t think so.</p>
+<p><strong>Making App Contests Better</strong></p>
+<p>I do however, think there are some things that government app contests organizers can do a better job on.  </p>
+<p>Most notably, government engagement with app developers over the long-term has proved to be somewhat challenging.  Gunnar Hellekson of Red Hat has <a href="http://govfresh.com/2010/03/developers-for-glory/">observed the same phenomenon</a>:</p>
+<blockquote><p>&#8220;..I would think that one of the desired outcomes [of an app contest] was an ongoing community of developers that are producing and maintaining applications like this — whether it’s for love, money, or fame. It would be a shame to see hard work like this die on the vine because we’ve lost the carrot of a cash prize.&#8221;</p></blockquote>
+<p>I don&#8217;t think this is an issue with developers necessarily – I know there is still lots of excitement around the data sets that have served as the foundation for app contents that are now over. I think the issue is that governments do not always have a plan for post-contest developer engagement.  </p>
+<p>Once the prizes are given out, and the award ceremony is over, there are no plans or strategies in place to keep developers engaged over the long haul.  I do not believe this is an issue of money – not every developer is looking for a cash prize, and there are some good examples of government agencies (<a href="http://www.eot.state.ma.us/developers/">MassDOT</a> and <a href="http://www.bart.gov/schedules/developers/index.aspx">BART</a> among them) who do a pretty good job of keeping developers engaged without contests.</p>
+<p>I also think that a greater emphasis could be placed in app contests on developing reusable components (as opposed to user-facing solutions) that can be released as open source software and used by anyone to consume data or interact with a government API.  I&#8217;m talking specifically about things like <a href="http://github.com/mheadd/PHPOpen311">open source libraries for interacting with the Open311 API</a> – tools and libraries specifically designed to make it easier to use open government data.</p>
+<p>The easier it is to use government data and APIs the more people will do it, and the more development of reusable components as a by product of app contest, the less angst there will be about projects that don&#8217;t remain viable long-term.  If one of the requirements of entry is the use (or reuse) of common components, even contest entries that fizzle out down the road will have made a tangible contribution to the open data effort.</p>
+<p>I think with a few simple changes, app contests can continue to be used as an effective tool by governments to encourage the development of cutting edge applications powered by &#8220;democratized&#8221; government data.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/06/08/a-glass-half-full-view-of-government-app-contests/feed/</wfw:commentRss>
+			<slash:comments>2</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+	</item>
+		<item>
+		<title>The Economic Promise of Open Government Data</title>
+		<link>https://civic.io/2010/06/07/the-economic-promise-of-open-government-data/</link>
+					<comments>https://civic.io/2010/06/07/the-economic-promise-of-open-government-data/#respond</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Mon, 07 Jun 2010 20:20:22 +0000</pubDate>
+				<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[economic development]]></category>
+		<category><![CDATA[opengov]]></category>
+		<category><![CDATA[transparency]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1840</guid>
+
+					<description><![CDATA[It&#8217;s been a few weeks since I suggested that by embracing open government data, the State of Delaware (and other states and localities) could encourage the development of nimble software companies and spur entrepreneurship. Since then, it&#8217;s been very gratifying to see lots of other... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/06/07/the-economic-promise-of-open-government-data/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>It&#8217;s been a few weeks since I suggested that by embracing open government data, the State of Delaware (and other states and localities) could <a href="http://www.voiceingov.org/blog/?p=1782">encourage the development of nimble software companies and spur entrepreneurship</a>. </p>
+<p>Since then, it&#8217;s been very gratifying to see lots of other people come to the same conclusion:</p>
+<ul>
+<li><a href="http://techcrunch.com/2010/05/22/the-open-government-initiative-enabling-techies-to-solve-problems/" target="_blank">The Open Gov Initiative: Enabling Techies to Solve Government Problems</a> (TechCrunch)</li>
+<li><a href="http://blog.sunlightfoundation.com/2010/06/07/accountability-better-services-and-economic-opportuniy/" target="_blank">Accountability, Better Services, and Economic Opportunity</a> (Sunlight Foundation)</li>
+<li><a href="http://www.businessweek.com/smallbiz/content/may2010/sb20100526_721134.htm" target="_blank">Gov 2.0: The Next Internet Boom</a> (Business Week)</li>
+</ul>
+<p>I particularly like this statement from <a href="http://twitter.com/jakebrewer" target="_blank">Jake Brewer</a> of the Sunlight Foundation:</p>
+<blockquote><p>
+Perhaps the greatest by-product of creating a more transparent, accountable government through freely available open government data, is that in so doing, we will simultaneously create one of the most vast opportunities for new enterprise in recent history.
+</p></blockquote>
+<p>I couldn&#8217;t have said it any better myself&#8230;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/06/07/the-economic-promise-of-open-government-data/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+	</item>
+		<item>
+		<title>OpenGov APIs: Interfacing with Open Government</title>
+		<link>https://civic.io/2010/04/01/opengov-apis-interfacing-with-open-government/</link>
+					<comments>https://civic.io/2010/04/01/opengov-apis-interfacing-with-open-government/#comments</comments>
+		
+		<dc:creator><![CDATA[mheadd]]></dc:creator>
+		<pubDate>Thu, 01 Apr 2010 21:47:19 +0000</pubDate>
+				<category><![CDATA[Development Tools]]></category>
+		<category><![CDATA[Open Government]]></category>
+		<category><![CDATA[Open Source]]></category>
+		<category><![CDATA[API]]></category>
+		<category><![CDATA[opengov]]></category>
+		<category><![CDATA[Standards]]></category>
+		<guid isPermaLink="false">http://www.voiceingov.org/blog/?p=1683</guid>
+
+					<description><![CDATA[There has been lots of good talk (and a good deal of action) lately around open government APIs at events like Transparency Camp, Where 2.0 and on the Twitters. So, as a prelude to a talk I&#8217;ll be giving at eComm next month, I wanted... <div class="excerpt-more"><a class="read-more" href="https://civic.io/2010/04/01/opengov-apis-interfacing-with-open-government/">Read More <i class="fa fa-caret-right"></i></a></div>]]></description>
+										<content:encoded><![CDATA[<p>There has been lots of good talk (and a good deal of action) lately around open government <acronym title="Application Programming Interface">APIs</acronym><acronym> at events like <a href="http://www.transparencycamp.org/" target="_blank">Transparency Camp</a>, <a href="http://en.oreilly.com/where2010" target="_blank">Where 2.0</a> and <a href="http://search.twitter.com/search?q=open+gov+API" target="_blank">on the Twitters</a>. </p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/plug.jpg" alt="" title="Interfacing with Open Government" style="float:right;padding:5px;margin:5px;" /></p>
+<p>So, as a prelude to a talk I&#8217;ll be giving at <a href="http://america.ecomm.ec/2010/gov20-communications.php" target="_blank">eComm next month</a>, I wanted to write a post  surveying the landscape of recent government API developments, and also to describe evolving efforts to construct standards for government APIs.</p>
+<h3>A Rundown of Recent State and Local API Developments</h3>
+<p>At Transparency Camp in DC last weekend, <a href="socrata.com" target="_blank">Socrata</a> &#8211; a firm that hosts open data sets for governments &#8211; open sourced their API for accessing and querying public data.  The <a href="http://www.socrata.com/api/docs" target="_blank">Socrata Open Data API</a> (or SODA) is a specification for running queries against public data sets.  Currently, Socrata hosts data sets for the <a href="http://data.seattle.gov/" target="_blank">City of Seattle</a> and others &#8211; code samples for working with the SODA spec can be found on <a href="http://github.com/socrata" target="_blank">Github</a>.</p>
+<p>The <a href="http://www.voiceingov.org/blog/?p=1643">Open311 API</a> recently implemented by the City of San Francisco (and being implemented by others) got some well deserved attention at the recent <a href="http://en.oreilly.com/where2010/public/schedule/detail/14105" target="_blank">Where 2.0 conference</a>.  Other cities are starting to take note, and some (like <a href="http://www.canadaviews.ca/2010/03/09/edmonton-to-launch-iphone-application/" target="_blank">Edmonton</a> and <a href="http://americancityandcounty.com/technology/311-open-api-20100305/" target="_blank">Boston</a>) look set to be next in line.</p>
+<p>One of the early adopters of government APIs &#8211; the NY Senate &#8211; recently announced <a href="http://www.nysenate.gov/blogs/2010/mar/31/open-legislation-v15-dusty-daedalus" target="_blank">a new release</a> for their OpenLeg API, which includes some important new changes.  Today the NY Senate remains one of the few (if not the only) state legislative body to adopt an API to open up access to legislative information and proceedings, but other will hopeful soon follow.  (Certainly the work done in Albany by NY Senate CIO <a href="http://twitter.com/ahoppin" target="_blank">Andrew Hoppin</a> and his team has opened the door for work on other government APIs.)</p>
+<p>That&#8217;s a lot of good stuff in just the last few weeks &#8211; I&#8217;ve probably missed some stuff, but I&#8217;m sure there is more to come in the weeks and months ahead.</p>
+<h3>Towards API Standards</h3>
+<p>The work being done on the Open311 API, the <a href="http://www.openmuni.org/" target="_blank">OpenMuni Project</a>, and certainly the move by Socrata to open source the SODA spec will have significant implications for the open government data movement.</p>
+<p>Standards for open data and APIs will make it easier for developers to build things &#8211; an app that works for one municipality can work for others if both adhere to a common standard that the app can run against.  But they&#8217;ll also make it easier for governments to open up their data &#8211; standards will offer governments assurance that the time and effort they expend to maintain and publish data or stand up APIs will provide the most return on investment.</p>
+<p>The move towards open data and government API standards is an important one that may influence the long-term success of the open government movement.</p>
+<h3>What&#8217;s Next?</h3>
+<p>As these standards develop, and as more and more municipalities<a href="http://www.networkworld.com/news/2010/031010-edmonton-takes-five-steps-towards.html" target="_blank"> start to embrace open data</a>, we&#8217;ll move closer to the idea of <a href="http://techcrunch.com/2009/09/04/gov-20-its-all-about-the-platform/" target="_blank">government as a platform</a>.</p>
+<p>More and more open data will be published by governments in this country and others.  These newly opened data sets may be hosted on infrastructure maintained by governments, or by third parties like Socrata.  Enterprising governments in different regions or states may decide to team up and jointly host data that is of interest or value to constituents served by multiple governments or jurisdictions.</p>
+<p>The applications that allow citizens to communicate with governments and consume public services will increasingly be built outside of government.  (By outside, I mean outside the control of government and the government procurement framework.)  Governments will increasingly become the collectors and maintainers of data and information and will focus less on building applications that use such data (or contracting for such applications to be built).</p>
+<p>The applications built to consume public data and communicate with government will increasingly be designed as multitenant applications, able to service constituents in multiple jurisdictions that adhere to common data or API standards.  They will also be built using more open source components and Web 2.0 technologies. </p>
+<p>And (hopefully) the ranks of civic coders will continue to swell, as technologists looking to &#8220;scratch their own itch&#8221; are empowered to make a difference far beyond their own wants or needs.</p>
+<p>All hail the transformative power of standards!</acronym></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://civic.io/2010/04/01/opengov-apis-interfacing-with-open-government/feed/</wfw:commentRss>
+			<slash:comments>1</slash:comments>
+		
+		
+		
+		<media:content url="https://1.gravatar.com/avatar/19b2495d5cf389639a704807f4e62fcf?s=96&#38;d=identicon&#38;r=G" medium="image">
+			<media:title type="html">mheadd</media:title>
+		</media:content>
+
+		<media:content url="http://www.voiceingov.org/blog/wp-content/plug.jpg" medium="image">
+			<media:title type="html">Interfacing with Open Government</media:title>
+		</media:content>
+	</item>
+	</channel>
+</rss>

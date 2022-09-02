@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0001, minimum-scale=1.0001"/>
+	<title>Open Source | Civic Innovations | Page 3</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://civic.io/xmlrpc.php">
+
+	<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>
+<meta name='robots' content='max-image-preview:large' />
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.parentNode.removeChild( dom_node ); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[ i ].parentNode.removeChild( dom_nodes[ i ] );
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+					+ '//' + window.location.hostname
+					+ '&postid=2220'
+					+ '&is_singular=';
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9jaXZpYy5pbw%3D%3D"
+		+ "&wpcomid=31186386"
+		+ "&time=1662145385";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='https://s1.wp.com/' />
+<link rel='dns-prefetch' href='https://s2.wp.com/' />
+<link rel='dns-prefetch' href='https://civicio.wordpress.com/' />
+<link rel='dns-prefetch' href='https://s0.wp.com/' />
+<link rel='dns-prefetch' href='https://fonts.googleapis.com/' />
+<link href='https://fonts.gstatic.com' crossorigin rel='preconnect' />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Feed" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Comments Feed" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Civic Innovations &raquo; Open Source Category Feed" href="../../feed/index.html" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+	<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1652185836h&ver=6.0.2"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode,e=(p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0),i.toDataURL());return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([129777,127995,8205,129778,127999],[129777,127995,8203,129778,127999])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(e=t.source||{}).concatemoji?c(e.concatemoji):e.wpemoji&&e.twemoji&&(c(e.twemoji),c(e.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJyNkt1uwyAMhV9oDk2VtbuZ9iz8eMwdEIShGW8/Gq1R1nbtbpCN/R2ObMQUQY8hY8jCF4iuWAospqhHD+zJYb3IOs38JG5jFN4pUK5LcNV87rSlpQqTbZWE4tgP3abbClXIGaHcqD/BkUoyVcG5OlyEKGhXDLI4sPBoSKJDP9tYJdHJigkcWqlr5yk8xlttnf+C/jY/O21imKM8WZZ1LBlsInNh+98SSWYKlh/gevzBtl3/0vXA5KNDSHhsQzTEeemA20KrpZ0W0O59lNdTuINNZCzmhvM5hoxf95H5HykVEzJDOz0VD/mjvTV/qzf/2u92280wPO/3h29CRvpa?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+.wp-block-cover__image-background.has-parallax {
+	background-size: cover;
+}
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('index.html');--wp--preset--duotone--grayscale: url('index.html');--wp--preset--duotone--purple-yellow: url('index.html');--wp--preset--duotone--blue-red: url('index.html');--wp--preset--duotone--midnight: url('index.html');--wp--preset--duotone--magenta-yellow: url('index.html');--wp--preset--duotone--purple-green: url('index.html');--wp--preset--duotone--blue-orange: url('index.html');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;}:where(.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.is-layout-constrained > * + *){margin-block-start: 0.5em;margin-block-end: 0;}:where(.is-layout-flex){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;}body .is-layout-flow > .alignright{float: right;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;}body .is-layout-constrained > .alignright{float: right;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-audio{margin: 0 0 1em 0;}
+:where(.wp-block-columns.is-layout-constrained > *){margin-block-start: 0;margin-block-end: 0;}:where(.wp-block-columns.is-layout-constrained > * + *){margin-block-start: 2em;margin-block-end: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+.wp-block-table > table{margin: 0 0 1em 0;}
+.wp-block-video{margin: 0 0 1em 0;}
+.wp-block-embed{margin: 0 0 1em 0;}
+.wp-block-image{margin: 0 0 1em 0;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+</style>
+<link rel='stylesheet' id='eighties-header-css'  href='https://fonts.googleapis.com/css?family=Righteous' media='all' />
+<link rel='stylesheet' id='eighties-headings-css'  href='https://fonts.googleapis.com/css?family=Varela+Round' media='all' />
+<link rel='stylesheet' id='eighties-body-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C700italic%2C400%2C700' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-8-1' href='https://s2.wp.com/_static/??-eJyFi8EKwjAQRH/IuFak2IP4LWnYppFNNnQ3FP/etaeKoJdhHjMP1uoCF8WioDNmFKhtBExx1mQw2Wbpt+L8isIZj0HkAH9M0Sd9P3NzlVpMRSAiO+LgNXH5ADeRT8svdcGROFqNYK8dvqV7vnWX4dqfzkPfPV6GO1N2?cssminify=yes' type='text/css' media='all' />
+<link crossorigin='anonymous' rel='stylesheet' id='print-css-9-1' href='https://s2.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1465851035h&cssminify=yes' type='text/css' media='print' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link crossorigin='anonymous' rel='stylesheet' id='all-css-12-1' href='https://s0.wp.com/wp-content/themes/h4/global.css?m=1420737423h&cssminify=yes' type='text/css' media='all' />
+<script id='wpcom-actionbar-placeholder-js-extra'>
+var actionbardata = {"siteID":"31186386","siteURL":"https:\/\/civic.io","xhrURL":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"97e3653557","isLoggedIn":"","statusMessage":"","subsEmailDefault":"instantly","proxyScriptUrl":"https:\/\/s0.wp.com\/wp-content\/js\/wpcom-proxy-request.js?ver=20211021","i18n":{"followedText":"New posts from this site will now appear in your <a href="https://civic.io/category/open-source/page/3/\&quot;https:\/\/wordpress.com\/read\&quot;">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar"}};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/_static/??-eJzTLy/QTc7PK0nNK9HPKtbPzU/KzEnVLS1OLUpMB4rpZual5etlFevoo6oryinRLSjKr6iEyWXmJeeUpqQWgySzCktTiyqhlF5uZh5BRbq5melFiSWpUMX2ubaGZsbm5gYmJpbmWQCPUzuV'></script>
+<script type='text/javascript'>
+	window.addEventListener( 'DOMContentLoaded', function() {
+		rltInitialize( {"token":null,"iframeOrigins":["https:\/\/widgets.wp.com"]} );
+	} );
+</script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://civicio.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Open Source &#8211; Page 3 &#8211; Civic Innovations" />
+<meta property="og:url" content="https://civic.io/category/open-source/" />
+<meta property="og:site_name" content="Civic Innovations" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta property="og:image:alt" content="" />
+<meta property="og:locale" content="en_US" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="shortcut icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="https://s1.wp.com/i/favicon.ico" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon" href="https://s2.wp.com/i/webclip.png" />
+<link rel='openid.server' href='../../../../index.html%3Fopenidserver=1.html' />
+<link rel='openid.delegate' href='../../../../index.html' />
+<link rel="search" type="application/opensearchdescription+xml" href="../../../../osd.xml" title="Civic Innovations" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+<meta name="theme-color" content="#2d2d2d" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+		<meta name="application-name" content="Civic Innovations" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="The Future is Open" /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://civic.io/feed/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s1.wp.com/i/favicon.ico" /><meta name="description" content="Posts about Open Source written by mheadd" />
+	<style type="text/css">
+			.site-title a,
+		.site-description {
+			color: #ffffff;
+		}
+	
+			#masthead {
+			background-image: url('https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg');
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+	
+				
+	</style>
+	</head>
+
+<body class="archive paged category category-open-source category-25 paged-3 category-paged-3 customizer-styles-applied widgets-hidden highlander-enabled highlander-light">
+	<div id="page" class="hfeed site">
+		<div class="site-toggles">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-bars"></i></a>
+							<a "https://civic.io/category/open-source/page/3/href" class="widget-area-toggle"><i class="fa fa-align-right"></i></a>
+					</div>
+
+		<nav id="site-navigation" class="main-navigation" role="navigation">
+			<a href="index.html#" class="main-navigation-toggle"><i class="fa fa-times"></i></a>
+			<h4 class="main-navigation-title">Menu</h4>
+			<div class="menu"><ul>
+<li ><a href="../../../../index.html">Home</a></li><li class="page_item page-item-2"><a href="../../../../about/index.html">About</a></li>
+<li class="page_item page-item-2673"><a href="../../../../hacks-and-tutorials/index.html">Hacks &amp; Tutorials</a></li>
+<li class="page_item page-item-2983"><a href="../../../../interviews-presentations/index.html">Interviews &amp; Presentations</a></li>
+</ul></div>
+			<div class="menu-item menu-item-search">
+				<a href="index.html#"><i class="fa fa-search"></i></a>
+				
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+			</div>
+					</nav><!-- #site-navigation -->
+
+					<header id="masthead" class="site-header" role="banner">
+				<a class="skip-link screen-reader-text" href="index.html#content" data-backstretch="https://s2.wp.com/wp-content/themes/pub/eighties/images/header-default.jpg">Skip to content</a>
+				<div class="site-branding">
+					<h1 class="site-title"><a href="../../../../index.html" rel="home">Civic Innovations</a></h1>
+					<h2 class="site-description">The Future is Open</h2>
+				</div>
+									<a href="../../../../index.html" rel="home" class="home-link"></a>
+							</header><!-- #masthead -->
+		
+		<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
+
+		
+			<header class="page-header">
+				<h1 class="page-title">
+					Open Source				</h1>
+							</header><!-- .page-header -->
+
+						
+				
+<article id="post-2220" class="post-2220 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2011/01/04/echoes-of-manorgovfresh/index.html" rel="bookmark">Echoes of Manor.GovFresh</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2011/01/04/echoes-of-manorgovfresh/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="January 4, 2011"><i class="fa fa-clock-o"></i>January 4, 2011</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A new year means retrospection and resolutions.</p>
+<p>For me, looking back on 2010, one of the most memorable events I participated in was <a href="http://www.voiceingov.org/blog/?p=2017">an event held in Manor, TX</a>. that focused on the use of new technologies by local governments.<br />
+<img style="margin:10px;padding:10px;float:right;" /><br />
+The Manor.GovFresh event &#8211; organized by <a href="http://govfresh.com/">GovFresh</a> founder <a href="http://twitter.com/lukefretwell">Luke Fretwell</a> &#8211; cast a long shadow on open government efforts in 2010 and made many <a href="http://techpresident.com/blog-entry/look-back-techpres-year-was-2010-edition">year-end lists</a> of most significant happenings for the year.</p>
+<p>I led to sessions at the Manor.GovFresh event &#8211; one on <a href="http://www.voiceingov.org/blog/?p=2028">citizen service and 311</a>, and the other on open government data.</p>
+<p>The event itself was a great experience for me &#8211; the chance to meet and network with other open government advocates, developers, and municipal officials (some of whom I had &#8220;Twitter-only&#8221; relationships with before) was a real treat.</p>
+<p>I also had a couple of important personal take aways from this event.</p>
+<p>First, in advance of the event I worked on a cloud-based telephony solution for local governments called <a href="http://www.munivox.org/about/">MuniVox</a>. My goal with this project was to provide an easy to use solution for small local governments that want the benefits of a sophisticated (and often expensive) telephony system, making it cheap and easy to implement and a snap to manage.  And while I&#8217;m happy with the work I did on this project, I have some grand plans for it going forward.</p>
+<p>In addition, coming out of the open government data session at Manor.GovFresh I had the idea to craft an &#8220;open government playbook&#8221; &#8211; something that local governments can use to quickly get started with an open data program.  I drew a lot of my inspiration for this idea from the awesome presentations given by <a href="http://twitter.com/chrismetcalf">Chris Metcalf</a>, Developer Evangelist at <a href="http://www.socrata.com/">Socrata</a>, during the open government data session.</p>
+<p>Chris gave two presentations at the event that really distilled a ton of great inforamtion on how to get started using open data into clear and simple slides.  I thought they would be a great foundation for a more widely distributed document.  Chris was kind enough to furnish me with his materials, and I have the first draft of the document started.</p>
+<p>However, toward the end of 2010 both personal and professional changes conspired to take my attention  away from these projects.  But the echoes of Manor.GovFresh are ringing loudly in my ears now, and I&#8217;ve resolved to push both of these projects forward early in the new year.</p>
+<p>Stay tuned for some cool stuff on both of these fronts. </p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2197" class="post-2197 post type-post status-publish format-standard hentry category-couchdb category-open-government category-open-source category-twitter">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/12/06/tapping-into-open-government/index.html" rel="bookmark">Tapping into Open&nbsp;Government</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/12/06/tapping-into-open-government/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="December 6, 2010"><i class="fa fa-clock-o"></i>December 6, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>This past weekend, I had the pleasure of hanging out with a bunch of fellow geeks for the better part of a day in Philly at <a href="http://neomindlabs.com/">Neomind Labs</a> to work on an open government / open data project as part of the <a href="http://www.opendataday.org/">Open Data Hackathon</a>.</p>
+<p><a href="http://www.flickr.com/photos/thoughtmerchants/5232925268/in/set-72157625404311883/"><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/5232925268_ab72f4d6bc_m.jpg" alt="Hacking on Open Data" title="Hacking on Open Data" style="float:right;padding:10px;margin:5px;" /></a></p>
+<p>Though most of us had just met, we were able to quickly identify a project that we all thought was worth spending some time on &#8211; a more user friendly way of submitting reports of potholes to the City of Philadelphia. (The <a href="http://potholes.phila.gov/">current interface</a> for doing this is not especially user friendly.)</p>
+<p>Once we had decided what we wanted to do, we got down to talking about how to do it &#8211; after some coffee and doughnuts (graciously supplied by the guys at Neomind) we began a productive brainstorming session that included lots of talk about the <a href="http://dev.twitter.com/">Twitter API</a>, <a href="http://couchdb.apache.org/">CouchDB</a>, <a href="http://www.sinatrarb.com/">Sinatra</a> and <a href="http://heroku.com/">Heroku</a>. Shortly thereafter, we committed some tasks to a large whiteboard in the office and began working on our project.</p>
+<p>As the day progressed, I couldn&#8217;t help but be struck by how much untapped potential there is in the developer community for open government initiatives.  There is so much potential benefit for municipalities if they would just reach out to the developers that live there and engage them to help solve problems and make their communities better.  </p>
+<p>There are lots of smart, civic-minded people out there that want to help.  They&#8217;re just waiting to be asked.  Sometimes, like this past weekend, an opportunity comes around that provides a glimpse of how significant this untapped potential.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/twitter.jpeg" alt="Twitter" title="Twitter" style="float:left;padding:10px;margin:5px;" /><br />
+The guys at Neomind are a perfect example of this.</p>
+<p>The City of Philadelphia is working towards releasing open data sets and engaging developers to use them to build civic apps. But right now opportunities to build open data apps are not always that obvious.  (There is a lot of progress being made on this front and I hope to blog more about the good work being done by Philadelphia very soon.)</p>
+<p>But if developers are coming together to build open government apps in cities that aren&#8217;t doing all that much yet with open data or developer outreach &#8211; like they did this past weekend &#8211; imagine what will happen when they do.</p>
+<p>Cities like <a href="http://twitter.com/#!/opendataphilly">Philadelphia</a> and <a href="http://twitter.com/#!/BmoreApps">Baltimore</a> that are moving rapidly toward releasing open government data sets will reap significant benefits as developers in those cities start to use them to build useful applications.</p>
+<p>These cities stand to reap the benefits of all of the civic-minded geeks that are out there waiting to be engaged to help make their communities better.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2165" class="post-2165 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source category-tropo category-tutorials tag-im tag-mysql tag-open-source tag-opengov tag-php tag-sms tag-transit">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/11/02/building-multichannel-transit-apps-with-tropo/index.html" rel="bookmark">Building Multichannel Transit Apps with&nbsp;Tropo</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/11/02/building-multichannel-transit-apps-with-tropo/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="November 2, 2010"><i class="fa fa-clock-o"></i>November 2, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>This post is the third in a series about building an open source transit data application using <acronym title="General Transit Feed Specification">GTFS</acronym> data from the <a href="http://www.dartfirststate.com/" target="_blank">Delaware Transit Corporation</a>.</p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2073">the first post</a>, I described how to download the State of Delaware&#8217;s transit data and populate a MySQL database with it.  </p>
+<p>In <a href="http://www.voiceingov.org/blog/?p=2117">the previous post</a>, I walked through a process of setting up stored procedures for querying the transit data and setting up a LAMP application environment.</p>
+<p>Now we&#8217;re ready to write code for our transit app!</p>
+<h3>Choosing a Platform</h3>
+<p>One of the most under appreciated developments that has accompanied the increasing amount of government data that has become available in open formats is the vast array of new tools now available for developers to use.  I&#8217;ve <a href="http://www.voiceingov.org/blog/?p=1471">talked about this a lot</a> in the past but it bears repeating &#8211; it has never been easier to build sophisticated, multi-channel communication applications than it is now.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/tropo_logo.png" alt="Tropo" title="Tropo" style="margin:10px;padding:15px;float:right;" /><br />
+The number of options open to developers is truly exciting, but there are some platforms that rise above the rest in terms of ease of use and in what they enable developers to do.  For this project, I will use the <a href="https://www.tropo.com/docs/webapi/newhowitworks.htm" target="_blank">Tropo WebAPI platform</a>.</p>
+<p>The Tropo WebAPI has a number of advantage that will come in handy for our transit app project (and any other projects you&#8217;ve got in the works).  You can write a Tropo app in one of several popular scripting and web development languages &#8211; Ruby, Python, PHP, C# and JavaScript (Node.js).  There are <a href="https://www.tropo.com/docs/webapi/libraries.htm" target="_blank">libraries available for each language</a> that make it easy to build Tropo apps and to integrate with the Tropo API.  (Disclaimer &#8211; I&#8217;ve worked on several of these libraries.)</p>
+<p>In addition, the real magic that Tropo brings to the table is the ability to serve users on multiple communication channels (phone, IM, SMS, Twitter) from a single code base.  This is especially important for an application meant to service transit riders.  These users may not have the luxury of sitting in front of a desktop computer in order to look up information on a bus route or schedule.  They are much more likely to be traveling and using some sort of phone or mobile device.  The Tropo WebAPI is perfect for our needs.</p>
+<p>Vivek Kundra, the former CIO of the District of Columbia and current CIO of the United States, has described the effort by governments to release data in open formats as &#8220;the democratization of data&#8221; &#8211; these efforts make previously hard to get, or hard to use data available for everyone.</p>
+<p>I like to describe platforms like <a href="https://www.tropo.com/home.jsp" target="_blank">Tropo</a> and the various libraries that are available to use with it as &#8220;the democratization of application development&#8221; &#8211; these tools make building powerful communication apps simple for anyone who understands web development.</p>
+<h3>Building our Transit App</h3>
+<p>Before we can build our application, we need to decide what it will do.</p>
+<p>For our purposes, this has already been determined by the stored procedures we built <a href="http://www.voiceingov.org/blog/?p=2117">in the last post</a>.  Our <strong>transitdata</strong> database has 2 stored procedures &#8211; one to return the nearest bus stops to a specific address or location, and one to return the next bus departure times from a specific bus stop.</p>
+<p>However, this series of posts is meant to inspire readers to build their own applications &#8211; now that you have transit data in a powerful relational database like MySQL you can query it any way you like.  In addition, the SQL scripts and steps developed for this series of posts can certainly be used with the data from any other transit agency that uses the GTFS format.  <a href="http://code.google.com/p/googletransitdatafeed/wiki/PublicFeeds">There are lots</a>.  Use your imagination &#8211; build whatever you find useful.</p>
+<p>So now that we have some idea of what we want our application to do, we need to select a development language.  It will probably come as no surprise that for this example I&#8217;m going to use the <a href="http://php.net/" target="_blank">PHP scripting language</a> and the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>.  PHP is a good match for Linux, Apache and MySQL &#8211; all technologies we used in the previous entries in this series of blog posts.</p>
+<p>If you want some more detailed information on building PHP applications that run on the Tropo WebAPI platform, you can review a separate series of blog posts on this issue <a href="http://www.voiceingov.org/blog/?p=1918">here</a>.</p>
+<p>To get the <a href="http://github.com/tropo/tropo-webapi-php" target="_blank">PHP Library for the Tropo WebAPI</a>, you can download it and unpack on your web server, or simply clone the Github repo.</p>
+<p>Once you do that, you can grab the code for our demo application from <a href="http://gist.github.com/659768" target="_blank">GitHub as well</a>.</p>
+<p>In order to test this application, you&#8217;ll need to sign up for a free Tropo account &#8211; you can <a href="https://www.tropo.com/" target="_blank">do that here</a>.  Once you are signed up, go to the Applications section in your Tropo account and set up a new WebAPI application that points to the location of our PHP script on your web server.  You can see more detailed information on setting up a Tropo account <a href="https://www.tropo.com/docs/webapi/newquickstart.htm" target="_blank">here</a>.</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/web-api.png" alt="web-api" title="web-api" width="412" height="240" /></p>
+<p>Note &#8211; You&#8217;ll also need an API key from Google Maps for geocoding addresses &#8211; <a href="http://code.google.com/apis/maps/signup.html" target="_blank">get one here</a>.  Change the following line in the application to include your Google API key:</p>
+<blockquote>
+<pre>
+define("MAPS_API_KEY", "your-api-key-goes-here");
+</pre>
+</blockquote>
+<p>Once your Tropo account and application are set up, you can add as many different contact methods as you like &#8211; your Tropo application is automatically provisioned a Skype number, a SIP number and an iNUM.  </p>
+<p>To illustrate how our transit app will work, I&#8217;ve gone ahead and assigned a Jabber IM name to my app &#8211; <strong>findthebus@tropo.im</strong>.  Add this to your friends/user list in Google chat and you can use the app I&#8217;ve set up.  Here&#8217;s what it looks like in my IM client:</p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/transit-finder1.png" alt="transit-finder1" title="transit-finder1" /></p>
+<p>As you can see, my first IM to <strong>findthebus@tropo.im</strong> sends the address of a building in Downtown Wilmington (actually, a building I used to work in).  The app responds with the three closest bus stops and the distance (in miles) to each.</p>
+<p>I then send the number of the bus stop I am interested in.  The app responds with the next three buses to leave that stop, the route served by each and the number of minutes before each departs.</p>
+<p>How cools is that!</p>
+<p>I could very easily make this application more sophisticated, so that it it delivers content tailored to specific channels (i.e., IM vs. phone) but I want to keep things simple for now.</p>
+<p>In the next blog post of this series, we will introduce some additional tools, including Google Maps and the new hotness in cloud telephony &#8211; <a href="http://phono.com/" target="_blank">Phono</a>.</p>
+<p>Stay tuned!</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2117" class="post-2117 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source category-tutorials tag-mysql tag-open-source tag-php tag-sms tag-transit">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/10/20/democratizing-transit-data-with-open-source-software/index.html" rel="bookmark">Democratizing Transit Data with Open Source&nbsp;Software</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/10/20/democratizing-transit-data-with-open-source-software/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="October 20, 2010"><i class="fa fa-clock-o"></i>October 20, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<blockquote><p>
+Democratizing government data will help change how government operates—and give citizens the ability to participate in making government services more effective, accessible, and transparent.</p>
+<p>&#8212; <a href="http://www.whitehouse.gov/blog/Democratizing-Data/" target="_blank">Peter Orszag</a>, OMB Director
+</p></blockquote>
+<p>This post is a continuation in a series on building a transit data application using <a href="http://code.google.com/transit/spec/transit_feed_specification.html">GTFS</a> data recently released by the State of Delaware.</p>
+<p>If you missed my first post, <a href="http://www.voiceingov.org/blog/?p=2073">go back and check it out</a>.  You can get a <a href="http://www.mysql.com/">MySQL</a> database loaded up with all of the Delaware GTFS data in just a couple of minutes.  Once you do that, you&#8217;ll be ready to follow along.<br />
+<img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/mysql.png" alt="MySQL Database" title="MySQL Database" style="float:right;padding:10px;margin:10px;" /><br />
+Continuing our work from the last post, in this post we&#8217;ll finish building out our database and set up an environment to run a web application &#8211; for the purposes of the demo app I&#8217;m building for this series, I&#8217;ll assume you have a standard <acronym title="Linux, Apache, MySQL, PHP">LAMP</acronym> set up to work with.</p>
+<h3>Finish the Database Setup</h3>
+<p>In the last post, we downloaded the GTFS data from the State of Delaware, unzipped it and loaded it into a MySQL database.  Now, we need to set up some stored procedures so that we can extract data from our MySQL database and present it to an end user.</p>
+<p>You can see the stored procedures I created for this demo application <a href="http://gist.github.com/632306">on GitHub</a>.  To load them into our shiny new database, simply run:</p>
+<blockquote>
+<pre>  ~$ wget http://gist.github.com/raw/632306/
+	    9860651ba2a61cd5af1c18529cdbab5f8c6f8e97/dartfirststate_de_us_procs.sql </pre>
+<pre>  ~$ mysql -u user_name -p transitdata &lt; dartfirststate_de_us_procs.sql</pre>
+</blockquote>
+<p>Thats it!</p>
+<p>If you look at these procedures, you&#8217;ll see that they are set up to answer two different questions from users.  The first one &#8211; <code>getDepartureTimesAndRoutesByStopID</code> &#8211; will query our database and get a set of routes and departure times by the ID of a transit stop.  The other &#8211; <code>GetClosestStopsByLocation</code> &#8211;  accepts a lat/lon and returns the stop ID and name of the transit stops closest the the requesting location.</p>
+<p>In practice, you can see these two procedures working in tandem &#8211; the later procedure would be used by someone wishing to find the transit stop closest to their present location.  The former would provide information on the next buses to reach that stop, the routes they serve and the scheduled departure time from that location.</p>
+<p>There are certainly many more potential queries that could be used to extract valuable information from the GTFS data in our database, but these two should suffice for our demo application.  Also, both are pretty well suited for use from a text messaging (<acronym title="Short Message Service">SMS</acronym>) application, which is what we&#8217;ll build in the last post in this series.</p>
+<h3>Setting up the Application Environment</h3>
+<p>I assume for this series of posts that you have access to a LAMP server.  This server should be hosted somewhere where it can receive HTTP posts from a third party platform (this is required in order to build an SMS application).</p>
+<p>While it is not a requirement that you code your transit application in PHP, I will do so in this series.  Feel free to use the development language of your choice in building your own application &#8211; just about every web development language can work with MySQL.</p>
+<p>Before we start writing code, lets finish a few last items.  First, lets create a user for our web application &#8211; remember to give this user only the privileges they need.  For our demo application, the web app user only needs to <code>EXECUTE</code> stored procedures.  So, we want to do this at the MySQL shell:</p>
+<blockquote>
+<pre>mysql&gt; GRANT EXECUTE ON transitdata.* TO username@'localhost' IDENTIFIED BY 'password'; </pre>
+<pre>mysql&gt; FLUSH PRIVILEGES;</pre>
+</blockquote>
+<p>Be sure to replace the &#8216;username&#8217; and &#8216;password&#8217; above with values of your choosing.  Now, let&#8217;s put our database access credentials in a safe and convenient place.</p>
+<p>When writing a web application, I prefer not to store this inforamtion in my code (as a config item or declared constant).  Instead, I like to keep this information in my Apache configuration.</p>
+<p>If you&#8217;re using Apache on Ubuntu, you can typically just store this inforamtion in your VirtualHost file (located in <code>/etc/apache2/sites-available/</code>).  Use the Apache <strong>SetEnv</strong> directive to set the values you want to store:</p>
+<blockquote>
+<pre>
+SetEnv TRANSIT_DB_HOST localhost
+SetEnv TRANSIT_DB_USER username
+SetEnv TRANSIT_DB_PASS password
+SetEnv TRANSIT_DB_NAME transitdata
+SetEnv TRANSIT_DB_PORT 3306
+</pre>
+</blockquote>
+<p>Again,  be sure to replace the ‘username’ and ‘password’ above with the values used when creating your MySQL user.  Once you have entered these values into your VirtualHost file, save it and reload Apache:</p>
+<blockquote>
+<pre> ~$ sudo /etc/init.d/apache2 reload</pre>
+</blockquote>
+<p>Now we&#8217;re all set to start writing code! </p>
+<p>In the next post we&#8217;ll build a simple, yet powerful PHP-based SMS application that anyone with a cell phone can use to find a transit location nearest to them in the State of Delaware, and find out the departure times / routes from that location.</p>
+<p>Stay tuned!</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2073" class="post-2073 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source category-tutorials">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/10/08/how-to-build-an-open-transit-data-application/index.html" rel="bookmark">How to Build an Open Transit Data&nbsp;Application</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/10/08/how-to-build-an-open-transit-data-application/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="October 8, 2010"><i class="fa fa-clock-o"></i>October 8, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>Earlier this year, I had the chance to work with <a href="http://twitter.com/bethanyhalllong">one of my state&#8217;s Senators</a> to draft and pass a bill requiring the state&#8217;s transit agency to publish all of it&#8217;s route, schedule and fare information in an open format for use by third parties.  </p>
+<p>This bill was <a href="http://legis.delaware.gov/LIS/LIS145.NSF/vwLegislation/SB+242?Opendocument">signed into law by the Governor</a> a few months ago, and the data is now available (in GTFS format) on the <a href="http://www.dartfirststate.com/information/routes/index.shtml" target="_blank">Delaware Transit Agency&#8217;s web site</a>.</p>
+<p>My primary goal in working to get this law enacted was to raise awareness within my state about the potential for open government data to spur civic coding and the development of useful applications at little or no cost to the government.  Now that my state actually publishes some open data (Hells to the yeah!), I think the next step for me is to provide some guidance on how to get started using it to build civic applications.  </p>
+<p>Hopefully, this will show others how easy it is and get them to try their hand at building a civic application.</p>
+<p>(Note, transit data is an especially rich source for developing civic applications.  For some background and more detail on this, <a href="http://www.voiceingov.org/blog/?p=1947">see this post</a>.)</p>
+<p>In the next several posts, I&#8217;ll document one process for developing an open source transit data application using GTFS data from the Delaware Transit Agency.  I&#8217;ll be sharing code and some examples that will help you get started if you feel like trying your hand at building a civic application.</p>
+<p>Let&#8217;s get started!</p>
+<h3>Getting the Data</h3>
+<p>Now that the Delaware Transit Agency has published all of their route and schedule information, anyone that wants to use it can simply<a href="http://www.dartfirststate.com/information/routes/gtfs_data/dartfirststate_de_us.zip"> download it</a>.</p>
+<p>This zip file contains a collection of text files that conform to the GTFS specification &#8211; for a detailed description of file contents, <a href="http://code.google.com/transit/spec/transit_feed_specification.html" target="_blank">go here</a>.  If you want to build a transit app with GTFS data, I recommend spending a little time becoming familiar with the layout of these files, and getting a sense of what the data represents. </p>
+<h3>Setting up a Database</h3>
+<p>In order to use this data as part of an application, we&#8217;re probably going to need to get it into a database so that we can manipulate it and run queries against it.  An easy way to do this is to import it into a MySQL database instance.</p>
+<p><a href="http://www.mysql.com/downloads/" target="_blank">MySQL</a> is a powerful open source database that is used in scores of different web applications and its a solid choice for building a transit data application.  In addition, the MySQL <a href="http://dev.mysql.com/doc/refman/5.1/en/load-data.html" target="_blank">LOAD DATA INFILE</a> statement is a powerful and easy way to populate a database with information from a text file (or multiple files).</p>
+<p>I&#8217;ve created a SQL script to load Delaware transit data into a MySQL database.  You can <a href="http://gist.github.com/615470">get this script from GitHub</a> &#8211; it&#8217;s pretty simple, and you should feel free to modify it as your own personal preferences or requirements dictate.  Just fork the Gist.</p>
+<p>Combining this script with a couple of minutes on the command line will give you a MySQL database with all of the transit data loaded up and ready to use.  The steps below assume that you have MySQL installed and running.</p>
+<p>To install MySQL:<br />
+<code>  ~$ sudo apt-get install mysql-server</code></p>
+<p>To see if MySQL is running:<br />
+<code>  ~$ pgrep mysql</code></p>
+<p>Create a temporary location for the GTFS files:<br />
+<code>  ~$ mkdir /tmp/dartfirst_de_us</code></p>
+<p>Download the GTFS files from the Delaware Transit Agency website:<br />
+<code>  ~$ wget http://www.dartfirststate.com/information/routes/<br />
+	gtfs_data/dartfirststate_de_us.zip</code></p>
+<p>Unzip the individual text files to our temporary location:<br />
+<code>  ~$ unzip dartfirststate_de_us.zip -d /tmp/dartfirst_de_us/</code></p>
+<p>Get the SQL script for loading GTFS files into MySQL from GitHub:<br />
+<code>  ~$ wget http://gist.github.com/raw/<br />
+	615470/7f62e8354d680011f7eea5f9afcfd0ae93a6fedb/dartfirststate_de_us.sql</code></p>
+<p>Invoke MySQL and pass in the SQL script (make sure you change &#8216;user_name&#8217; to a valid MySQL user name):<br />
+<code>  ~$ mysql -u user_name -p &lt; dartfirststate_de_us.sql</code></p>
+<p>That&#8217;s it!</p>
+<p>Now, all of the data from the original text files has been loaded into a MySQL database called <strong>transitdata</strong>.  You can start to construct queries to retrieve information from these tables to support the functionality for your application.</p>
+<p>In the next post, I&#8217;ll walk through a few basic queries that can extract useful information from these tables.  We&#8217;ll also lay the groundwork for a really cool mobile application that I will deploy for use by the public when this series of posts is complete.</p>
+<p>Stay tuned!</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-2006" class="post-2006 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/08/31/gov-20-is-open-source/index.html" rel="bookmark">Gov 2.0 is Open&nbsp;Source</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/08/31/gov-20-is-open-source/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="August 31, 2010"><i class="fa fa-clock-o"></i>August 31, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>It&#8217;s interesting to reflect back on the not too distant past and think about how governments have used open source software.</p>
+<p>For many state and local governments &#8211; as recently as a few years ago &#8211; the use of open source software was something of a foreign concept.  Many a government IT worker made an impassioned and well reasoned plea to bosses and co-workers to consider using open source software to capitalize on a range of different benefits. (And yes, in case you&#8217;re wondering, when I was a state government IT worker I made many such pleas to bosses and co-workers.)</p>
+<p>For a long time, those pleas usually went unheeded.  How far we&#8217;ve now come.  </p>
+<p>Not only are more and more state and local governments starting to <a href="http://icma.org/en/icma/knowledge_network/documents/kn/Document/301522/Using_Free_OpenSource_Software_in_Local_Governments_Streamlined_Internal_Computing_for_Better_Perfor">realize the benefits of using open source software</a>, some of them are actually starting to become developers of open source solutions. </p>
+<p>The notion of government-sponsored open source software development isn&#8217;t necessarily new &#8211; it&#8217;s how we got <a href="http://www.nsa.gov/research/selinux/">SE Linux</a> for example.  But it is still a relatively new concept for state and local governments.  I can think of two government entities that are leading the charge.</p>
+<p>First, the New York State Senate. Under CIO Andrew Hoppin, the New York legislature&#8217;s upper chamber has become a leader in the public sector for its use of open source software.  Not only does the Senate use <a href="http://www.nysenate.gov/">Drupal for its public website</a>, they also <a href="http://drupal.org/project/nyss">contribute Drupal modules</a> back to the community.</p>
+<p>After becoming the first legislative body in the country to develop iPhone and iPad apps, they not only <a href="http://github.com/nysenatecio/NYSenateMobileApp">released the code for these apps on GitHub</a>, they actually did a code walk through for developers at a <a href="http://blog.capitolcamp.org/">recent event in Albany</a>.</p>
+<p>And now, the State of Washington has <a href="http://github.com/WSDOT">released the code for its own mobile apps</a> on GitHub. They are actively encouraging people to submit ideas to help further develop the software and to identify bugs.</p>
+<p>Both of these governments (and others who are out there doing the same thing) will realize more benefits by open sourcing the code for their apps than they would have had they kept the source code a secret.  By making the code for their apps visible and reusable, they&#8217;ll attract more developer interest and help ensure that bugs or security issues get identified quickly.</p>
+<p>Other governments will benefit as well &#8211; these two organizations are clearly ahead of the curve in developing mobile apps, and other governments will benefit from their experience and expertise.  Since&#8217;s governments generally don&#8217;t compete directly with each other, this type of sharing makes perfect sense.  </p>
+<p>Improvements or enhancements to these open source applications will in turn provide benefits for the governments that created them &#8211; this is one of the driving dynamics of Gov 2.0.</p>
+<p>I&#8217;m wondering if there are other state and local governments out there doing this same thing.  Do you know of a government agency or entity with a GitHub repo or other open source code repository?  </p>
+<p>Leave a comment below with the details. </p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1683" class="post-1683 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source tag-api tag-opengov tag-standards">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/04/01/opengov-apis-interfacing-with-open-government/index.html" rel="bookmark">OpenGov APIs: Interfacing with Open&nbsp;Government</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/04/01/opengov-apis-interfacing-with-open-government/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="April 1, 2010"><i class="fa fa-clock-o"></i>April 1, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>There has been lots of good talk (and a good deal of action) lately around open government <acronym title="Application Programming Interface">APIs</acronym><acronym> at events like <a href="http://www.transparencycamp.org/" target="_blank">Transparency Camp</a>, <a href="http://en.oreilly.com/where2010" target="_blank">Where 2.0</a> and <a href="http://search.twitter.com/search?q=open+gov+API" target="_blank">on the Twitters</a>. </p>
+<p><img src="https://i0.wp.com/www.voiceingov.org/blog/wp-content/plug.jpg" alt="" title="Interfacing with Open Government" style="float:right;padding:5px;margin:5px;" /></p>
+<p>So, as a prelude to a talk I&#8217;ll be giving at <a href="http://america.ecomm.ec/2010/gov20-communications.php" target="_blank">eComm next month</a>, I wanted to write a post  surveying the landscape of recent government API developments, and also to describe evolving efforts to construct standards for government APIs.</p>
+<h3>A Rundown of Recent State and Local API Developments</h3>
+<p>At Transparency Camp in DC last weekend, <a href="https://civic.io/category/open-source/page/3/socrata.com" target="_blank">Socrata</a> &#8211; a firm that hosts open data sets for governments &#8211; open sourced their API for accessing and querying public data.  The <a href="http://www.socrata.com/api/docs" target="_blank">Socrata Open Data API</a> (or SODA) is a specification for running queries against public data sets.  Currently, Socrata hosts data sets for the <a href="http://data.seattle.gov/" target="_blank">City of Seattle</a> and others &#8211; code samples for working with the SODA spec can be found on <a href="http://github.com/socrata" target="_blank">Github</a>.</p>
+<p>The <a href="http://www.voiceingov.org/blog/?p=1643">Open311 API</a> recently implemented by the City of San Francisco (and being implemented by others) got some well deserved attention at the recent <a href="http://en.oreilly.com/where2010/public/schedule/detail/14105" target="_blank">Where 2.0 conference</a>.  Other cities are starting to take note, and some (like <a href="http://www.canadaviews.ca/2010/03/09/edmonton-to-launch-iphone-application/" target="_blank">Edmonton</a> and <a href="http://americancityandcounty.com/technology/311-open-api-20100305/" target="_blank">Boston</a>) look set to be next in line.</p>
+<p>One of the early adopters of government APIs &#8211; the NY Senate &#8211; recently announced <a href="http://www.nysenate.gov/blogs/2010/mar/31/open-legislation-v15-dusty-daedalus" target="_blank">a new release</a> for their OpenLeg API, which includes some important new changes.  Today the NY Senate remains one of the few (if not the only) state legislative body to adopt an API to open up access to legislative information and proceedings, but other will hopeful soon follow.  (Certainly the work done in Albany by NY Senate CIO <a href="http://twitter.com/ahoppin" target="_blank">Andrew Hoppin</a> and his team has opened the door for work on other government APIs.)</p>
+<p>That&#8217;s a lot of good stuff in just the last few weeks &#8211; I&#8217;ve probably missed some stuff, but I&#8217;m sure there is more to come in the weeks and months ahead.</p>
+<h3>Towards API Standards</h3>
+<p>The work being done on the Open311 API, the <a href="http://www.openmuni.org/" target="_blank">OpenMuni Project</a>, and certainly the move by Socrata to open source the SODA spec will have significant implications for the open government data movement.</p>
+<p>Standards for open data and APIs will make it easier for developers to build things &#8211; an app that works for one municipality can work for others if both adhere to a common standard that the app can run against.  But they&#8217;ll also make it easier for governments to open up their data &#8211; standards will offer governments assurance that the time and effort they expend to maintain and publish data or stand up APIs will provide the most return on investment.</p>
+<p>The move towards open data and government API standards is an important one that may influence the long-term success of the open government movement.</p>
+<h3>What&#8217;s Next?</h3>
+<p>As these standards develop, and as more and more municipalities<a href="http://www.networkworld.com/news/2010/031010-edmonton-takes-five-steps-towards.html" target="_blank"> start to embrace open data</a>, we&#8217;ll move closer to the idea of <a href="http://techcrunch.com/2009/09/04/gov-20-its-all-about-the-platform/" target="_blank">government as a platform</a>.</p>
+<p>More and more open data will be published by governments in this country and others.  These newly opened data sets may be hosted on infrastructure maintained by governments, or by third parties like Socrata.  Enterprising governments in different regions or states may decide to team up and jointly host data that is of interest or value to constituents served by multiple governments or jurisdictions.</p>
+<p>The applications that allow citizens to communicate with governments and consume public services will increasingly be built outside of government.  (By outside, I mean outside the control of government and the government procurement framework.)  Governments will increasingly become the collectors and maintainers of data and information and will focus less on building applications that use such data (or contracting for such applications to be built).</p>
+<p>The applications built to consume public data and communicate with government will increasingly be designed as multitenant applications, able to service constituents in multiple jurisdictions that adhere to common data or API standards.  They will also be built using more open source components and Web 2.0 technologies. </p>
+<p>And (hopefully) the ranks of civic coders will continue to swell, as technologists looking to &#8220;scratch their own itch&#8221; are empowered to make a difference far beyond their own wants or needs.</p>
+<p>All hail the transformative power of standards!</acronym></p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1643" class="post-1643 post type-post status-publish format-standard hentry category-open-government category-open-source category-standards">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2010/03/04/open311-goes-big-time/index.html" rel="bookmark">Open311 Goes Big&nbsp;Time</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2010/03/04/open311-goes-big-time/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="March 4, 2010"><i class="fa fa-clock-o"></i>March 4, 2010</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>This was a big week for the Open311 initiative.  Federal CIO Vivek Kundra joined Gov 2.0 rock star <a href="http://twitter.com/gavinNewsom" target="_blank">Mayor Gavin Newsom</a> from the City of San Francisco to <a href="http://mashable.com/2010/03/03/open311-national-api/" target="_blank">announce a national initiative</a> to adopt a common standard for a 311 API.</p>
+<div class="jetpack-video-wrapper"><span class="embed-youtube" style="text-align:center; display: block;"><iframe class="youtube-player" width="1000" height="563" src="https://www.youtube.com/embed/S-QQ7kCjIGE?version=3&#038;rel=1&#038;showsearch=0&#038;showinfo=1&#038;iv_load_policy=1&#038;fs=1&#038;hl=en&#038;autohide=2&#038;wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"></iframe></span></div>
+<p>The <a href="http://open311.org/pledge/" target="_blank">number of supporters</a> for the initiative is growing, and I think it&#8217;s high time that developers started getting in on the act.</p>
+<p>There isn&#8217;t a publicly available sandbox (that I am aware of) for developers to use to develop Open311 applications.  The Open311 website, however, has some <a href="http://wiki.open311.org/San_Francisco#SF_Open_311_API" target="_blank">detailed information on the API standard</a> as well as some sample XML responses that the API will provide.</p>
+<p>Based on this information, I&#8217;ve <a href="http://github.com/mheadd/PHPOpen311" target="_blank">started working on a set of PHP classes</a> for interacting with the Open311 API.  It&#8217;s still rough, and it will obviously undergo many changes as more information on the API is developed, and public test  infrastructure is set up.</p>
+<p>Still, its a start (and it was fun to write!) &#8211; I&#8217;m hopeful that others will help develop this set of classes.  Hit me up at mheadd [at] voiceingov.org if interested.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1447" class="post-1447 post type-post status-publish format-standard hentry category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2009/12/16/the-growth-of-civic-apps/index.html" rel="bookmark">The Growth of Civic&nbsp;Apps</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2009/12/16/the-growth-of-civic-apps/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="December 16, 2009"><i class="fa fa-clock-o"></i>December 16, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>A pretty good indicator of the growth in the number of &#8220;civic applications&#8221; can be seen in the creation of some new application directories.</p>
+<p><a href="http://www.citygoround.org/" target="_blank">City-Go-Round</a> is a really nice site that pulls together dozens of applications that relate to travel and transit systems.  It lets users enter a zip code so they can identify apps created specifically for their area (if any exist).  I really like that this site focuses not only on the use of publicly released transit data, but also encourages users to advocate for more public transit data.  You can view a list of agencies and sort by those that make their transit data public and those that don&#8217;t &#8211; it also lists contact information so that users can advocate with transit agency officials that don&#8217;t yet make their data public and get them to wise up.</p>
+<p>Another site (still in the alpha stage) that lists applications specifically tailored to a particular geographic area is <a href="http://appify.com/" target="_blank">Appify</a>.  One of the brains behind this site is <a href="http://radar.oreilly.com/jgeraci/" target="_blank">John Geraci</a> (of <a href="http://diycity.org/" target="_blank">DIYCity.org</a> fame).  While this app directory doesn&#8217;t look to be focused exclusively on civic applications, there are several prominent ones represented in the alpha release &#8211; <a href="http://appify.com/thenexttrain-12-agencies" target="_blank">theNextTrain</a>, <a href="http://appify.com/subwaydelay" target="_blank">SubwayDelay</a> and <a href="http://appify.com/seeclickfix" target="_blank">SeeClickFix</a> among them.</p>
+<p>The civic application ecosystem is healthy and growing, and I think we&#8217;ll start to see more application directories like these as more and more governments and transit agencies start to make their data public.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				
+<article id="post-1333" class="post-1333 post type-post status-publish format-standard hentry category-development-tools category-open-government category-open-source">
+	<!-- .entry-image -->
+
+	<header class="entry-header">
+		<h2 class="entry-title"><a href="../../../../2009/11/04/toronto-opens-government-data/index.html" rel="bookmark">Toronto Opens Government&nbsp;Data</a></h2>		<p class="entry-meta entry-meta-time">
+						<a href="../../../../2009/11/04/toronto-opens-government-data/index.html"><span class="posted-on"><span class="screen-reader-text">Posted on </span><time class="entry-date published" datetime="November 4, 2009"><i class="fa fa-clock-o"></i>November 4, 2009</time></span></a> <span class="byline">by <span class="author vcard"><a class="url fn n" href="../../../../author/mheadd/index.html">mheadd</a></span></span>		</p>
+	</header><!-- .entry-header -->
+
+	<div class="entry-summary">
+		<p>The City of Toronto recently joined a growing fraternity of governments to <a href="http://www.toronto.ca/open/" target="_blank">release public data sets</a> for developers and other interested parties to use to create interesting and useful mashups.</p>
+<p>It&#8217;s gratifying to see more and more cities place an emphasis on releasing open data sets to the public.  Toronto&#8217;s open data web site is still new, and while there aren&#8217;t a ton of data sets yet some of those that are available are very interesting.</p>
+<p>One data set provides the <a href="http://www.toronto.ca/open/datasets/child-care/" target="_blank">location of licensed child care centers</a> and provides information on the number of spaces available for children of different ages.  Since I recently joined the ranks of child care consumers in my own city, I thought it would be interesting to build a small app that lets a person search for child care centers within a specific postal code.</p>
+<p>The app is quite simple, and is still rough in many ways, but it was completed within several hours and demonstrates how governments that release interesting and valuable information empower developers to build useful things.  All of the source code for the app is up on <a href="http://github.com/mheadd/toronto-childcare-finder" target="_blank">GitHub</a>.</p>
+<p>The app can (currently) be accessed in any one of three ways:</p>
+<ul>
+<li>Jabber Instant Message client (you can use GTalk for this) &#8211; simply add <strong>childcareto@bot.im</strong> to your contacts list.</li>
+<li>SMS &#8211; you can text a search request to <strong>(773) 273-9982</strong>.</li>
+<li><a href="http://twitter.com/childcareto" target="_blank">Twitter</a> &#8211; you can tweet a search request by sending a @reply to childcareto (e.g., <strong>@childcareto</strong>).</li>
+</ul>
+<p>In order to use the app, you have to search using the 3 character forward sortation area (FSA) prefix from <a href="http://en.wikipedia.org/wiki/List_of_M_postal_codes_of_Canada" target="_blank">Toronto postal codes</a>.</p>
+<p>For example, if you send a tweet like this:</p>
+<blockquote><p>
+@childcareto M1N
+</p></blockquote>
+<p>You&#8217;ll get back the location of the first child care provider found, along with some instructions.  If you send another tweet with the hashtag <em>#next</em>, you&#8217;ll get the next listing (if there is one).  You can start a new search by simply tweeting <em>#reset</em></p>
+<p>Same thing works with a Jabber IM client or SMS &#8211; just send the 3 character FSA you want to search in the body to start the search, and then use <em>#next</em> or <em>#reset</em> as needed.</p>
+<p>I&#8217;m admittadly a little ignorant about Canadian Postal Codes, so if anyone up north checks this out and thinks there is a better way to do it I would love to chat.</p>
+<p>When I built this app I imagined someone who might be moving to a new job or a new house in Toronto, and being interested in nearby child care services.  If you know the FSA of the new home or job location, its easy to do with this nifty little app.</p>
+<p>While this first iteration is relatively simple, there are a lot of possibilities because the information in the data set is very compact.  Compact data lends itself to a range of different user agents &#8211; I have <a href="http://www.voiceingov.org/blog/?p=1136">phone enabled similar types of information</a> on other projects and provided multilingual support.  If there is any interest expressed in taking this farther, I may pursue other communication channels for this app.</p>
+<p>Once again, hats off to the City of Toronto for making this data set (and others) available.  Any <a href="http://www.voiceingov.org/blog/?page_id=14">feedback</a> on this app is welcome.</p>
+			</div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+			
+				<nav class="navigation paging-navigation" role="navigation">
+		<h1 class="screen-reader-text">Posts navigation</h1>
+		<div class="nav-links">
+
+						<div class="nav-previous"><a href="../4/index.html" >Older Posts</a></div>
+			
+						<div class="nav-next"><a href="../2/index.html" >Newer Posts</a></div>
+			
+		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	
+		
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+	<div id="secondary" class="widget-area" role="complementary">
+		<a "https://civic.io/category/open-source/page/3/href" class="widget-area-toggle"><i class="fa fa-times"></i></a>
+		<div class="widgets-wrapper">
+			<aside id="search-2" class="widget widget_search">
+<form role="search" method="get" class="search-form" action="../../../../index.html">
+	<label>
+		<span class="screen-reader-text">Search for:</span>
+		<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s">
+	</label>
+</form>
+</aside><aside id="meta-2" class="widget widget_meta"><h4 class="widget-title">Meta</h4>
+		<ul>
+			<li><a href="https://wordpress.com/start?ref=wplogin">Register</a></li>			<li><a href="https://civicio.wordpress.com/wp-login.php">Log in</a></li>
+			<li><a href="../../../../feed/index.html">Entries feed</a></li>
+			<li><a href="../../../../comments/feed/index.html">Comments feed</a></li>
+
+			<li><a href="https://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress.com</a></li>
+		</ul>
+
+		</aside><aside id="twitter_timeline-2" class="widget widget_twitter_timeline"><h4 class="widget-title">Follow me on Twitter</h4><a class="twitter-timeline" data-width="255" data-height="400" data-theme="light" data-border-color="#e8e8e8" data-tweet-limit="5" data-lang="EN" data-partner="jetpack" data-chrome="noheader nofooter" data-widget-id="380061328783593472" href="https://twitter.com/380061328783593472">My Tweets</a></aside>		</div>
+	</div><!-- #secondary -->
+
+	</div><!-- #content -->
+
+	<footer id="colophon" class="site-footer" role="contentinfo">
+			<div id="site-supplementary" class="widget-area column-wrapper" role="complementary">
+			<div class="widget-area-content column">
+			<aside id="text-2" class="widget widget_text"><h4 class="widget-title">License</h4>			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This content of this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.</div>
+		</aside>		</div><!-- .widget-area-content -->
+				</div>
+
+		<div class="site-info">
+			<a href="https://wordpress.com/?ref=footer_blog" rel="nofollow">Blog at WordPress.com.</a>
+			
+					</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+</div><!-- #page -->
+
+		<script type="text/javascript">
+		var infiniteScroll = {"settings":{"id":"main","ajaxurl":"https:\/\/civic.io\/?infinity=scrolling","type":"click","wrapper":false,"wrapper_class":"infinite-wrap","footer":"site-main","click_handle":"1","text":"Older posts","totop":"Scroll back to top","currentday":"04.11.09","order":"DESC","scripts":[],"styles":[],"google_analytics":false,"offset":3,"history":{"host":"civic.io","path":"\/category\/open-source\/page\/%d\/","use_trailing_slashes":true,"parameters":""},"query_args":{"paged":3,"category_name":"open-source","error":"","m":"","p":0,"post_parent":"","subpost":"","subpost_id":"","attachment":"","attachment_id":0,"name":"","pagename":"","page_id":0,"second":"","minute":"","hour":"","day":0,"monthnum":0,"year":0,"w":0,"tag":"","cat":25,"tag_id":"","author":"","author_name":"","feed":"","tb":"","meta_key":"","meta_value":"","preview":"","s":"","sentence":"","title":"","fields":"","menu_order":"","embed":"","category__in":[],"category__not_in":[],"category__and":[],"post__in":[],"post__not_in":[],"post_name__in":[],"tag__in":[],"tag__not_in":[],"tag__and":[],"tag_slug__in":[],"tag_slug__and":[],"post_parent__in":[],"post_parent__not_in":[],"author__in":[],"author__not_in":[],"lazy_load_term_meta":false,"posts_per_page":10,"ignore_sticky_posts":false,"suppress_filters":false,"cache_results":false,"update_post_term_cache":true,"update_post_meta_cache":true,"post_type":"","nopaging":false,"comments_per_page":"50","no_found_rows":false,"order":"DESC"},"query_before":"2022-09-02 19:03:05","last_post_date":"2009-11-04 13:40:47","body_class":"infinite-scroll","loading_text":"Loading new page","stats":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio&x_pagetype=infinite-click"}};
+		</script>
+		<!--  -->
+<script type="text/javascript">
+	window._tkq = window._tkq || [];
+	if ( Math.random() < 0.01 ) {
+		window._tkq.push( [
+			'recordEvent',
+			'wpcom_wordads_noad',
+			{"theme":"pub\/eighties","blog_id":31186386,"reason_noadverts_plugin":1,"reason_upgrade":1,"reason_blog_unsafe":1}
+		] );
+	}
+</script><script src='https://0.gravatar.com/js/gprofiles.js?ver=202235z' id='grofiles-cards-js'></script>
+<script id='wpgroho-js-extra'>
+var WPGroHo = {"my_hash":""};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s1.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1610363240h'></script>
+
+	<script>
+		// Initialize and attach hovercards to all gravatars
+		( function() {
+			function init() {
+				if ( typeof Gravatar === 'undefined' ) {
+					return;
+				}
+
+				if ( typeof Gravatar.init !== 'function' ) {
+					return;
+				}
+
+				Gravatar.profile_cb = function ( hash, id ) {
+					WPGroHo.syncProfileData( hash, id );
+				};
+
+				Gravatar.my_hash = WPGroHo.my_hash;
+				Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+			}
+
+			if ( document.readyState !== 'loading' ) {
+				init();
+			} else {
+				document.addEventListener( 'DOMContentLoaded', init );
+			}
+		} )();
+	</script>
+
+		<div style="display:none">
+	</div>
+	<div id="actionbar" style="display: none;"
+			class="actnbr-pub-eighties actnbr-has-follow">
+		<ul>
+								<li class="actnbr-btn actnbr-hidden">
+								<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+							<div class="actnbr-popover tip tip-top-left actnbr-notice" id="follow-bubble">
+							<div class="tip-arrow"></div>
+							<div class="tip-inner actnbr-follow-bubble">
+															<ul>
+											<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+										<form method="post" action="https://subscribe.wordpress.com" accept-charset="utf-8" style="display: none;">
+																						<div class="actnbr-follow-count">Join 76 other followers</div>
+																					<div>
+										<input type="email" name="email" placeholder="Enter your email address" class="actnbr-email-field" aria-label="Enter your email address" />
+										</div>
+										<input type="hidden" name="action" value="subscribe" />
+										<input type="hidden" name="blog_id" value="31186386" />
+										<input type="hidden" name="source" value="https://civic.io/category/open-source/page/3/" />
+										<input type="hidden" name="sub-type" value="actionbar-follow" />
+										<input type="hidden" id="_wpnonce" name="_wpnonce" value="f349328b5b" />										<div class="actnbr-button-wrap">
+											<button type="submit" value="Sign me up">
+												Sign me up											</button>
+										</div>
+									</form>
+									<li class="actnbr-login-nudge">
+										<div>
+											Already have a WordPress.com account? <a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2011%252F01%252F04%252Fechoes-of-manorgovfresh%252F">Log in now.</a>										</div>
+									</li>
+								</ul>
+															</div>
+						</div>
+					</li>
+							<li class="actnbr-ellipsis actnbr-hidden">
+				<svg class="gridicon gridicons-ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M7 12c0 1.104-.896 2-2 2s-2-.896-2-2 .896-2 2-2 2 .896 2 2zm12-2c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-7 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2z"/></g></svg>				<div class="actnbr-popover tip tip-top-left actnbr-more">
+					<div class="tip-arrow"></div>
+					<div class="tip-inner">
+						<ul>
+									<li class="actnbr-sitename">
+			<a href="../../../../index.html">
+				<img alt='' src='https://s2.wp.com/i/logo/wpcom-gray-white.png' class='avatar avatar-50' height='50' width='50' />				Civic Innovations			</a>
+		</li>
+								<li class="actnbr-folded-customize">
+								<a href="https://civicio.wordpress.com/wp-admin/customize.php?url=https%3A%2F%2Fcivicio.wordpress.com%2Fcategory%2Fopen-source%2Fpage%2F3%2F">
+									<svg class="gridicon gridicons-customize" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M2 6c0-1.505.78-3.08 2-4 0 .845.69 2 2 2 1.657 0 3 1.343 3 3 0 .386-.08.752-.212 1.09.74.594 1.476 1.19 2.19 1.81L8.9 11.98c-.62-.716-1.214-1.454-1.807-2.192C6.753 9.92 6.387 10 6 10c-2.21 0-4-1.79-4-4zm12.152 6.848l1.34-1.34c.607.304 1.283.492 2.008.492 2.485 0 4.5-2.015 4.5-4.5 0-.725-.188-1.4-.493-2.007L18 9l-2-2 3.507-3.507C18.9 3.188 18.225 3 17.5 3 15.015 3 13 5.015 13 7.5c0 .725.188 1.4.493 2.007L3 20l2 2 6.848-6.848c1.885 1.928 3.874 3.753 5.977 5.45l1.425 1.148 1.5-1.5-1.15-1.425c-1.695-2.103-3.52-4.092-5.448-5.977z"/></g></svg>									<span>Customize</span>
+								</a>
+							</li>
+																<li class="actnbr-folded-follow">
+												<a class="actnbr-action actnbr-actn-follow " href="index.html">
+			<svg class="gridicon gridicons-reader-follow" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z"/></g></svg><span>Follow</span>
+		</a>
+		<a class="actnbr-action actnbr-actn-following  no-display" href="index.html">
+			<svg class="gridicon gridicons-reader-following" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z"/></g></svg><span>Following</span>
+		</a>
+										</li>
+																	<li class="actnbr-signup"><a href="https://wordpress.com/start/">Sign up</a></li>
+									<li class="actnbr-login"><a href="https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fr-login.wordpress.com%2Fremote-login.php%3Faction%3Dlink%26back%3Dhttps%253A%252F%252Fcivic.io%252F2011%252F01%252F04%252Fechoes-of-manorgovfresh%252F">Log in</a></li>
+																	<li class="flb-report"><a href="http://en.wordpress.com/abuse/">Report this content</a></li>
+																	<li class="actnbr-reader">
+										<a href="https://wordpress.com/read/feeds/1432890">
+											View site in Reader										</a>
+									</li>
+																	<li class="actnbr-subs">
+										<a href="https://subscribe.wordpress.com/">Manage subscriptions</a>
+									</li>
+																		<li class="actnbr-fold"><a href="index.html">Collapse this bar</a></li>
+															</ul>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+<script>
+window.addEventListener( "load", function( event ) {
+	var link = document.createElement( "link" );
+	link.href = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.css?v=20210915";
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	document.head.appendChild( link );
+
+	var script = document.createElement( "script" );
+	script.src = "https://s0.wp.com/wp-content/mu-plugins/actionbar/actionbar.js?v=20220329";
+	script.defer = true;
+	document.body.appendChild( script );
+} );
+</script>
+
+			<div id="jp-carousel-loading-overlay">
+			<div id="jp-carousel-loading-wrapper">
+				<span id="jp-carousel-library-loading">&nbsp;</span>
+			</div>
+		</div>
+		<div class="jp-carousel-overlay" style="display: none;">
+
+		<div class="jp-carousel-container">
+			<!-- The Carousel Swiper -->
+			<div
+				class="jp-carousel-wrap swiper-container jp-carousel-swiper-container jp-carousel-transitions"
+				itemscope
+				itemtype="https://schema.org/ImageGallery">
+				<div class="jp-carousel swiper-wrapper"></div>
+				<div class="jp-swiper-button-prev swiper-button-prev">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskPrev" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="9" height="12">
+							<path d="M16.2072 16.59L11.6496 12L16.2072 7.41L14.8041 6L8.8335 12L14.8041 18L16.2072 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskPrev)">
+							<rect x="0.579102" width="23.8823" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+				<div class="jp-swiper-button-next swiper-button-next">
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<mask id="maskNext" mask-type="alpha" maskUnits="userSpaceOnUse" x="8" y="6" width="8" height="12">
+							<path d="M8.59814 16.59L13.1557 12L8.59814 7.41L10.0012 6L15.9718 12L10.0012 18L8.59814 16.59Z" fill="white"/>
+						</mask>
+						<g mask="url(#maskNext)">
+							<rect x="0.34375" width="23.8822" height="24" fill="#FFFFFF"/>
+						</g>
+					</svg>
+				</div>
+			</div>
+			<!-- The main close buton -->
+			<div class="jp-carousel-close-hint">
+				<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<mask id="maskClose" mask-type="alpha" maskUnits="userSpaceOnUse" x="5" y="5" width="15" height="14">
+						<path d="M19.3166 6.41L17.9135 5L12.3509 10.59L6.78834 5L5.38525 6.41L10.9478 12L5.38525 17.59L6.78834 19L12.3509 13.41L17.9135 19L19.3166 17.59L13.754 12L19.3166 6.41Z" fill="white"/>
+					</mask>
+					<g mask="url(#maskClose)">
+						<rect x="0.409668" width="23.8823" height="24" fill="#FFFFFF"/>
+					</g>
+				</svg>
+			</div>
+			<!-- Image info, comments and meta -->
+			<div class="jp-carousel-info">
+				<div class="jp-carousel-info-footer">
+					<div class="jp-carousel-pagination-container">
+						<div class="jp-swiper-pagination swiper-pagination"></div>
+						<div class="jp-carousel-pagination"></div>
+					</div>
+					<div class="jp-carousel-photo-title-container">
+						<h2 class="jp-carousel-photo-caption"></h2>
+					</div>
+					<div class="jp-carousel-photo-icons-container">
+						<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-info" aria-label="Toggle photo metadata visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskInfo" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2C7.26076 2 2.80273 6.48 2.80273 12C2.80273 17.52 7.26076 22 12.7537 22C18.2466 22 22.7046 17.52 22.7046 12C22.7046 6.48 18.2466 2 12.7537 2ZM11.7586 7V9H13.7488V7H11.7586ZM11.7586 11V17H13.7488V11H11.7586ZM4.79292 12C4.79292 16.41 8.36531 20 12.7537 20C17.142 20 20.7144 16.41 20.7144 12C20.7144 7.59 17.142 4 12.7537 4C8.36531 4 4.79292 7.59 4.79292 12Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskInfo)">
+										<rect x="0.8125" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+							</span>
+						</a>
+												<a href="index.html#" class="jp-carousel-icon-btn jp-carousel-icon-comments" aria-label="Toggle photo comments visibility">
+							<span class="jp-carousel-icon">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="maskComments" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="20">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M4.3271 2H20.2486C21.3432 2 22.2388 2.9 22.2388 4V16C22.2388 17.1 21.3432 18 20.2486 18H6.31729L2.33691 22V4C2.33691 2.9 3.2325 2 4.3271 2ZM6.31729 16H20.2486V4H4.3271V18L6.31729 16Z" fill="white"/>
+									</mask>
+									<g mask="url(#maskComments)">
+										<rect x="0.34668" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+
+								<span class="jp-carousel-has-comments-indicator" aria-label="This image has comments."></span>
+							</span>
+						</a>
+											</div>
+				</div>
+				<div class="jp-carousel-info-extra">
+					<div class="jp-carousel-info-content-wrapper">
+						<div class="jp-carousel-photo-title-container">
+							<h2 class="jp-carousel-photo-title"></h2>
+						</div>
+						<div class="jp-carousel-comments-wrapper">
+															<div id="jp-carousel-comments-loading">
+									<span>Loading Comments...</span>
+								</div>
+								<div class="jp-carousel-comments"></div>
+								<div id="jp-carousel-comment-form-container">
+									<span id="jp-carousel-comment-form-spinner">&nbsp;</span>
+									<div id="jp-carousel-comment-post-results"></div>
+																														<form id="jp-carousel-comment-form">
+												<label for="jp-carousel-comment-form-comment-field" class="screen-reader-text">Write a Comment...</label>
+												<textarea
+													name="comment"
+													class="jp-carousel-comment-form-field jp-carousel-comment-form-textarea"
+													id="jp-carousel-comment-form-comment-field"
+													placeholder="Write a Comment..."
+												></textarea>
+												<div id="jp-carousel-comment-form-submit-and-info-wrapper">
+													<div id="jp-carousel-comment-form-commenting-as">
+																													<fieldset>
+																<label for="jp-carousel-comment-form-email-field">Email (Required)</label>
+																<input type="text" name="email" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-email-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-author-field">Name (Required)</label>
+																<input type="text" name="author" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-author-field" />
+															</fieldset>
+															<fieldset>
+																<label for="jp-carousel-comment-form-url-field">Website</label>
+																<input type="text" name="url" class="jp-carousel-comment-form-field jp-carousel-comment-form-text-field" id="jp-carousel-comment-form-url-field" />
+															</fieldset>
+																											</div>
+													<input
+														type="submit"
+														name="submit"
+														class="jp-carousel-comment-form-button"
+														id="jp-carousel-comment-form-button-submit"
+														value="Post Comment" />
+												</div>
+											</form>
+																											</div>
+													</div>
+						<div class="jp-carousel-image-meta">
+							<div class="jp-carousel-title-and-caption">
+								<div class="jp-carousel-photo-info">
+									<h3 class="jp-carousel-caption" itemprop="caption description"></h3>
+								</div>
+
+								<div class="jp-carousel-photo-description"></div>
+							</div>
+							<ul class="jp-carousel-image-exif" style="display: none;"></ul>
+							<a class="jp-carousel-image-download" target="_blank" style="display: none;">
+								<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="3" y="3" width="19" height="18">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M5.84615 5V19H19.7775V12H21.7677V19C21.7677 20.1 20.8721 21 19.7775 21H5.84615C4.74159 21 3.85596 20.1 3.85596 19V5C3.85596 3.9 4.74159 3 5.84615 3H12.8118V5H5.84615ZM14.802 5V3H21.7677V10H19.7775V6.41L9.99569 16.24L8.59261 14.83L18.3744 5H14.802Z" fill="white"/>
+									</mask>
+									<g mask="url(#mask0)">
+										<rect x="0.870605" width="23.8823" height="24" fill="#FFFFFF"/>
+									</g>
+								</svg>
+								<span class="jp-carousel-download-text"></span>
+							</a>
+							<div class="jp-carousel-image-map" style="display: none;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<link crossorigin='anonymous' rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/_static/??-eJytjMEKwjAQRH/IuFS00IP4LTFZytZNdskmLf17FexBKJ68zTzmDSzqguSKuUJqTrmNlA0Kmko2mtHNFFF2yDGYHWBfn7CqD49PBy0SW6gkGdIrMRoEX6QZMthCisXdW46Mf/rcphv4dVuJMbrRM2NZv9tbu6Vr11/682kY+m56AkL9ct0=?cssminify=yes' type='text/css' media='all' />
+<script id='jetpack-carousel-js-extra'>
+var jetpackSwiperLibraryPath = {"url":"https:\/\/s2.wp.com\/wp-content\/mu-plugins\/jetpack-plugin\/production\/_inc\/build\/carousel\/swiper-bundle.min.js"};
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/civic.io\/wp-admin\/admin-ajax.php","nonce":"1bf354b661","display_exif":"1","display_comments":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"1","login_url":"https:\/\/civicio.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Fcivic.io%2F2009%2F11%2F04%2Ftoronto-opens-government-data%2F","blog_id":"31186386","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"stats_query_args":"blog=31186386&v=wpcom&tz=0&user_id=0&subd=civicio","is_public":"1"};
+</script>
+<script crossorigin='anonymous' type='text/javascript' src='https://s0.wp.com/_static/??-eJyVkN1OwzAMhV8Iz1TaJm4Qj4LSxG3d5k+J07K3Jwg6wUDtuPNx/J34GJcIOnghLzhmNDSzpvh2GPMDfntyBaItPfuM7Dv2LJdrcTsrAznKGEuLxP0gXEW1bpWesiQSPdxJrPWd43niCJb9BF3QJUPHv2LsfAStDf1/mYGUobRxsJEk1uz4yl6jLCxCCYQd1V1pg1PGsYdWJXQqV6ZWIOnjihtQohyDzzwTzGwo/NE5VNv9db80xhRM0cLBfwZoC1uDWqVQMtnr9NrYMRe2ZKBX1lK6/FQb1GoOS9TB3cjKvbjn5nxujs3p8fg0vgO/FRCL'></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<script type="text/javascript">
+			(function() {
+				var extend = function(out) {
+					out = out || {};
+
+					for (var i = 1; i < arguments.length; i++) {
+						if (!arguments[i])
+						continue;
+
+						for (var key in arguments[i]) {
+						if (arguments[i].hasOwnProperty(key))
+							out[key] = arguments[i][key];
+						}
+					}
+
+					return out;
+				};
+				extend( window.infiniteScroll.settings.scripts, ["mobile-useragent-info","rlt-proxy","jquery-core","jquery-migrate","jquery","wpcom-actionbar-placeholder","grofiles-cards","wpgroho","devicepx","the-neverending-homepage","backstretch","eighties","skip-link-focus-fix","eighties-blog","eighties-header","jetpack-twitter-timeline","wpcom-masterbar-tracks-js","jetpack-responsive-videos-min-script","jetpack-carousel","tiled-gallery","carousel-wpcom"] );
+				extend( window.infiniteScroll.settings.styles, ["wpcom-smileys","the-neverending-homepage","wp-block-library","mediaelement","wp-mediaelement","jetpack-layout-grid","jetpack-ratings","coblocks-frontend","wpcom-core-compat-playlist-styles","wpcom-text-widget-styles","wpcom-bbpress2-staff-css","eighties-font-awesome","eighties","geo-location-flair","reblogging","a8c-global-print","h4-global","global-styles","eighties-header","eighties-headings","eighties-body","jetpack-global-styles-frontend-style","jetpack-responsive-videos-style","jetpack-carousel-swiper-css","jetpack-carousel","tiled-gallery"] );
+			})();
+		</script>
+				<span id="infinite-aria" aria-live="assertive"></span>
+		<script src="https://stats.wp.com/w.js?63" defer></script> <script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'31186386','blog_tz':'0','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'31186386','v':'wpcom','tz':'0','user_id':'0','subd':'civicio'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1mNzc2NTVTamdsd0xoLz9RQkM2K298TXY9bERQMXc2MjhEaVZfb2wwakRoSj0mUkp1THptM1NdbkV1WjZIcU9mVWQmPUIvMlN6Jk8wW3NYVEJ3dWZOWExuWD8rc2M1UmNNdkEwOUdxWndiW3hTNFh8L2gxZUZKVXRNPU5JeCV0W2VqViVob1hIRzhYT3FDN3JWelE4YWZidXorUWhneDd0NH5mSTFuUyZYMWpnTDdyZDdBWHpHRk9QV19RUklnZU1BWFBaPWdPcHI9YS4uQ3VoLlkudDklaG10JXNzfmw0LDZsdHk2K0hoNDhSeW9OMS9FeEU5VTksQzVrZjNFbWk/dTZ8ZzlZPzhfYTJPaFo1XXJXenotRzNWPWZRaDMvQTA2YSZIZQ=='}]);
+_stq.push([ 'clickTrackerInit', '31186386', '0' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:1px;width:1px;overflow:hidden;position:absolute;bottom:1px;" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>

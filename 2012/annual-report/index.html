@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="robots" content="noindex">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>2012 year in blogging | Civic Innovations</title>
+	  <meta name="description" content="See the fireworks Civic Innovations created by blogging on WordPress.com. Check out their 2012 annual report. ">
+	  <meta property="og:image" content="http://s1.wordpress.com/wp-content/mu-plugins/annual-reports/img/2012-emailteaser.png" />
+	  	  <meta name="twitter:card" content="photo" />
+	  <meta name="twitter:image" content="http://s1.wordpress.com/wp-content/mu-plugins/annual-reports/img/2012-emailteaser.png" />
+
+    <script src="../../wp-includes/js/jquery/jquery.js"></script>
+    <script src="../../wp-content/mu-plugins/annual-reports/js/jquery.cycle.lite.js"></script>
+    <script src="../../wp-content/mu-plugins/annual-reports/js/canvas.js%3F1"></script>
+    <script src="../../wp-content/mu-plugins/subscriptions/follow.js"></script>
+    <script src="../../wp-content/js/jquery/jquery.wpcom-proxy-request.js%3Fver=20140528"></script>
+        <link rel="stylesheet" href="../../wp-content/mu-plugins/subscriptions/follow.css" type="text/css" />
+    <link rel="stylesheet" href="../../wp-content/mu-plugins/hover-bubbles/style.css" type="text/css" />
+</head>
+
+
+<body >
+
+	<div class="wpcom-bubble action-bubble">
+		<div class="bubble-txt"></div>
+	</div>
+	<script type="text/javascript">function hideBubble() { jQuery('body').append( jQuery( 'div.wpcom-bubble' ).removeClass( 'fadein' ) ).off( 'click.bubble touchstart.bubble' ); jQuery(document).off( 'scroll.bubble' ); };</script>
+
+<div id="wrapper">
+
+<link href='https://s0.wordpress.com/i/noticons/noticons.css' rel='stylesheet' type='text/css'>
+<style type="text/css" media="screen">@import url('../../wp-content/mu-plugins/annual-reports/css/2012-style.css%3F20141219.css');</style>
+<style type="text/css" media="screen">@import url('../../wp-content/mu-plugins/post-flair/sharing/sharing.css%3F1.css');</style>
+<style type="text/css" media="screen">@import url('https://civic.io/wp-content/mu-plugins/genericons/genericons/genericons.css?1');</style>
+<style type="text/css" media="screen">@import url('https://civic.io/wp-content/mu-plugins/carousel/jetpack-carousel.css?1');</style>
+<style type="text/css" media="screen">@import url('https://fonts.googleapis.com/css?family=Lato:400,900|Grand+Hotel&subset=latin,latin-ext');</style>
+<div id="curtain"></div>
+<div id="static">
+	<div id="city"></div>
+	<canvas id="fireworks" class="withcanvas"></canvas>
+	<div id="dates" class="withcanvas"></div>
+	<div id="debug" class="withcanvas"></div>
+	<div id="fallback" class="withoutcanvas"></div>
+</div>
+
+<script type="text/javascript">
+	(function($){$(function(){
+		//Stats tracking for mini-site
+		var stat_base = 'recap_2012';
+		var stat_map_hovered = false;
+		var stat_user_info = 'wpcom-logged-out';
+
+		function bumpStat(group, names) {
+			if ( '' == group )
+				group = stat_base;
+			else
+				group = stat_base + '_' + group;
+			new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv&x_' +
+				group + '=' + names + '&baba=' + Math.random();
+		}
+
+		//recap_2012/click_to_wpcom
+		$('a#try_this_out').click( function(e) {
+			bumpStat('', 'click_to_wpcom');
+		} );
+
+		//recap_2012/click_to_jetpack
+		$('#jetpack a').click( function(e) {
+			bumpStat('', 'click_to_jetpack');
+		} );
+
+		//recap_2012/tweet
+		$('a#twitter-button').click( function(e) {
+			bumpStat('', 'tweet');
+		} );
+
+		//recap_2012/fb_share
+		$('a#fb-button').click( function(e) {
+			bumpStat('', 'fb_share');
+		} );
+
+		//recap_2012/open_carousel
+		$('div.gallery').click( function(e){
+			bumpStat('', 'open_carousel');
+		} );
+
+		//recap_2012/map_hover
+		$('#div_where_map').hover( function(e){
+			if ( !stat_map_hovered )
+				bumpStat('', 'map_hover');
+			stat_map_hovered = true;
+		} );
+
+		//recap_2012_click_content/{logged-in-jp, logged-out-jp, ... }
+		$('#attractions span.post a').click( function(e) {
+			bumpStat('click_content', stat_user_info);
+		} );
+		$('#comments span.name a').click( function(e) {
+			bumpStat('click_content', stat_user_info);
+		} );
+		$('a#busiest-post').click( function(e) {
+			bumpStat('click_content', stat_user_info);
+		} );
+
+		//recap_2012_follow/{logged-in-jp, logged-out-jp, ... }
+		$('a.wpcom-follow').click( function(e) {
+			bumpStat('follow', stat_user_info);
+		} );
+
+		$('#metaButton').bind("click", function() {
+			var f = $("#fireworks").data("fireworks");
+			if ( f ) {
+				f.debug = true;
+				$("#quality").html( parseInt(f.renderQualityAvg) + "%" );
+				setInterval( function() {
+					$("#quality").html( parseInt(f.renderQualityAvg) + "%" );
+				}, 2000 );
+			}
+			$("#meta").slideToggle();
+		});
+
+		if (  typeof document.createElement("canvas").getContext != "function" ) {
+			// No canvas support
+			bumpStat( '', 'no_canvas_support' );
+			$("#fireworks, .withcanvas").remove();
+			$("#curtain").fadeOut(500);
+			var backgrounds = [], loaded = 0;
+			for ( var b = 1; b < 6; ++b ) {
+				backgrounds[b] = new Image;
+				backgrounds[b].src = "/wp-content/mu-plugins/annual-reports/img/2012-bg"+b+".jpg";
+				backgrounds[b].onload = function(){
+					$(this).appendTo("#fallback");
+					if ( ++loaded > 1 )
+						$("#fallback").cycle();
+				};
+			}
+			$("#city").show();
+			$("#fallback").fadeIn(1000, function() {
+				$("#intro").fadeIn(1000, function() {
+					$("#body").fadeIn(1000, function() {
+						$(window)
+							.trigger( 'drawMap' )
+							.on( 'resize', function(){ $(window).trigger( 'drawMap' ); } )
+						;
+					})
+				});
+			});
+			return;
+		}
+
+		$(".withoutcanvas").remove();
+
+		$(window).scroll(function(e){
+			if ( window.scrollY > 20 )
+				$("#dates").fadeOut("fast");
+			else
+				$("#dates").fadeIn("fast");
+		});
+
+		var orange = "#FA5600",
+		    tan    = "#DBC170",
+		    red    = "#E01309",
+		    green  = "#A0AF28",
+		    moss   = "#003D04",
+		    sky    = "#0A6C87",
+		    blue   = "#083757",
+		    yellow = "#FFDA22",
+		    faint  = "#083757",
+		    white  = "#FFFFFF",
+		    black  = "#0A6C87";
+
+		$('#fireworks').fireworks({
+			preload : ["img/bg-city.png"],
+			bgFillColor : false,
+			bgImage : "img/2012-bg-landscape.png",
+			spriteColors : {
+				rocket    : [faint],
+				explosion : [yellow, white],
+				core      : [orange, yellow, blue, white, moss],
+				shell     : [green, red, orange, tan, green, white, white, white, sky, blue],
+				ring      : [red, orange, white, sky, tan],
+				logo      : [blue, green, orange, sky]
+			},
+			spotlightColors : [
+				"#020D1F",
+				"#020D1F",
+				"#020D1F"
+			],
+			debug : false,
+			delayTimeline : 5000,
+			baseHref : "/wp-content/mu-plugins/annual-reports/",
+			timeline : [["January 6",[0,18,70]],["January 10",[0,18,30],[55,0,14]],["January 16",[12,0,0],[0,0,11]],["January 18",[26,26,0]],["January 23",[0,26,38]],["January 25",[0,22,0],[0,12,0]],["January 30",[30,0,29]],["February 1",[0,0,32]],["February 7",[10,0,15]],["February 15",[14,0,16]],["February 17",[14,28,0]],["February 23",[39,22,0]],["February 28",[34,0,10]],["March 8",[0,12,0]],["March 21",[0,0,10],[22,0,0]],["April 3",[0,31,18],[0,18,25]],["April 16",[0,0,13]],["April 19",[0,0,18]],["April 26",[0,0,24]],["May 2",[20,18,0]],["May 25",[18,0,0]],["June 8",[0,0,13]],["June 20",[0,14,22]],["July 9",[18,53,30]],["August 28",[0,11,0],[0,25,30]],["August 29",[0,19,0]],["September 12",[0,16,14]],["October 1",[0,0,18]],["October 18",[0,30,0]],["November 4",[10,0,16]],["November 18",[0,14,57]],["December 6",[10,0,19]],["December 20",[31,18,0]]],
+			// Keep the page black until the fireworks are ready to start
+			startCallback : function() {
+				var fireworks = this;
+				// Fade in the setting and start the show with a bang
+				$("#curtain").fadeOut(500);
+				setTimeout( function() { fireworks.explodeShell({x:0, y:-20, z:0}, 15, {x:false, y:false}); }, 700 );
+				setTimeout( function() { fireworks.explodeShell({x:-100, y:-40, z:0}, 20, {x:false, y:false}); }, 800 );
+				setTimeout( function() { fireworks.explodeShell({x:100, y:-80, z:0}, 30, {x:false, y:false}); }, 930 );
+				setTimeout( function() { fireworks.explodeRaster("logo", {x:0, y:-130, z:0}, 70); }, 1500 );
+				// Let it play for a bit and then fade in the intro text
+				setTimeout( function() {
+					//always start at the beginning
+					$(window).scrollTop(0);
+					$("#intro").fadeIn(1500, function() {
+						setTimeout(function() {
+							$("#fixedButtons").fadeIn(1500);
+							$("#body").fadeIn(1500, function() {
+								$(window)
+									.trigger( 'drawMap' )
+									.on( 'resize', function(){ $(window).trigger( 'drawMap' ); } )
+								;
+							});
+						}, 1000 );
+					} );
+				}, 3500 );
+				return; // delay spotlights while city fades in
+			},
+			stepCallback : function(step) {
+				var fireworks = this;
+				if ( step > 0 && step % 12 == 0 )
+					this.explodeRaster("logo", {x:0, y:-130, z:0}, 70);
+				var title = this.timeline[step][0];
+				if ( !!title ) setTimeout( function() {
+					$("#dates p").animate({top:"-2em",opacity:0}, "fast", function(){$(this).remove()});
+					$("<p>"+title+"</p>").css({opacity:0}).appendTo("#dates").animate({top:0,opacity:1}, "fast");
+				}, 200 );
+			}
+		}).fireworks("start");
+		$('#pause').bind("click", function(){
+			$("#fireworks").fireworks("pause");
+			$(this).toggleClass('paused');
+		});
+		$('#debugButton').bind("click", function(){ $("#debug").toggle(); });
+	})})(jQuery);
+
+</script>
+
+<div id="intro">
+	<h3 class="presents">WordPress.com presents</h3>
+	<h3 class="blogname">Civic Innovations</h3>
+	<h1>2012 in blogging</h1>
+	<h3 class="banner">Annual Report</h3>
+	<p>Happy New Year from WordPress.com!</p>
+</div>
+<div id="fixedButtons">
+	<div id="pause" class="withcanvas"><span class="pause">I I</span><span class="play">&#9654;</span></div>
+	<div id="metaButton">&#8984;</div>
+	<div id="meta">
+		<h3>About the fireworks</h3>
+		<p class="withcanvas">Each rocket represents a post published on this blog in 2012.  And because we like to share, we made the fireworks available as a jQuery plugin on <a href="https://github.com/Automattic/canvas-fireworks" target="_blank">GitHub</a>.</p>
+		<p class="withcanvas">Some browsers are better suited for this kind of animation. In our tests, Safari and Chrome worked best. Your overall score is <span id="quality">not known</span> (<span id="debugButton">details</span>).</p>
+		<p class="withoutcanvas">We made beautiful, animated fireworks to celebrate your blogging! Unfortunately this browser lacks the capability. We made a slide show to fill in but we hope you will come back to this page with an HTML5 browser. In our tests, Safari or Chrome worked best.</p>
+	</div>
+</div>
+
+<div id="body">
+	<div id="crunchy">
+		<div id="scroll">
+			<p "p_scroll_blurb">To kick off the new year, we’d like to share with you data on Civic Innovations’s activity in 2012. You may start scrolling!</p>
+		</div>
+
+		<div class="inner">
+			<h2 id="h_crunchy_numbers">Crunchy numbers</h2>
+                <div class="leftcol">
+					<p>600 people reached the top of Mt. Everest in 2012.  This blog got about <strong>9,300</strong> views in 2012. If every person who reached the top of Mt. Everest viewed this blog, it would have taken 16 years to get that many views.</p>
+					<p>In 2012, there were <strong>41</strong> new posts, growing the total archive of this blog to 100 posts. There were <strong>32</strong> pictures uploaded, taking up a total of 11 MB. That's about 3 pictures per month.</p>
+	<p>The busiest day of the year was January 6th with <strong>362</strong> views. The most popular post that day was <a id="busiest-post" style="color: #08c" target="_blank" href="../01/06/five-things-governments-can-do-to-encourage-civic-startups/index.html">Five Things Governments Can Do to Encourage Civic Startups</a>.</p>
+                </div>
+                <div class="rightcol">
+
+<script type='text/javascript'>
+var jetpackCarouselStrings = {"widths":[370, 700, 1000, 1200, 1400, 2000],"like":"Like","unlike":"Unlike","stats_query_args":"v=wpcom-no-pv&x_recap_2012=carousel_image_view","is_logged_in":0,"is_public":0,"display_exif":0,"download_original":"_","comment":"","reblog":"","loading_comments":""};
+</script>
+<div data-carousel-extra='[31186386,"\/2012\/annual-report","a8101cba60"]' id="gallery-1" class="gallery galleryid-1">	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://civicio.files.wordpress.com/2012/01/mark-headd.jpg?fit=1000%2C1000' title='About'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://civicio.files.wordpress.com/2012/01/mark-headd.jpg?fit=1000%2C1000" src="https://civicio.files.wordpress.com/2012/01/mark-headd.jpg?fit=1000%2C1000" class="attachment-thumbnail" alt="About" title="About" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../../about/index.html" target="_blank">About</a></dd>
+	</dl>
+	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://civicio.files.wordpress.com/2012/01/apps-for-septa.jpg?fit=1000%2C1000' title='Do Hackathons and Civic Hacking Matter?'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://civicio.files.wordpress.com/2012/01/apps-for-septa.jpg?fit=1000%2C1000" src="https://civicio.files.wordpress.com/2012/01/apps-for-septa.jpg?fit=1000%2C1000" class="attachment-thumbnail" alt="Do Hackathons and Civic Hacking Matter?" title="Do Hackathons and Civic Hacking Matter?" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../01/10/do-hackathons-and-civic-hacking-matter/index.html" target="_blank">Do Hackathons and Civic Hacking Matter?</a></dd>
+	</dl>
+	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://civicio.files.wordpress.com/2012/02/nutter.jpg?fit=1000%2C1000' title='Storming the City Walls with Code for America'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://civicio.files.wordpress.com/2012/02/nutter.jpg?fit=1000%2C1000" src="https://civicio.files.wordpress.com/2012/02/nutter.jpg?fit=1000%2C1000" class="attachment-thumbnail" alt="Storming the City Walls with Code for America" title="Storming the City Walls with Code for America" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../02/28/storming-the-city-walls-with-code-for-america/index.html" target="_blank">Storming the City Walls with Code for America</a></dd>
+	</dl>
+	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://civicio.files.wordpress.com/2012/02/transit.jpg?fit=1000%2C1000' title='Open Data Needs Champions'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://civicio.files.wordpress.com/2012/02/transit.jpg?fit=1000%2C1000" src="https://civicio.files.wordpress.com/2012/02/transit.jpg?fit=1000%2C1000" class="attachment-thumbnail" alt="Open Data Needs Champions" title="Open Data Needs Champions" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../02/01/open-data-needs-champions/index.html" target="_blank">Open Data Needs Champions</a></dd>
+	</dl>
+	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://i0.wp.com/farm9.staticflickr.com/8345/8238250771_bbac290c2d.jpg?fit=1000%2C1000' title='Getting RHoKed in Philly'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://i0.wp.com/farm9.staticflickr.com/8345/8238250771_bbac290c2d.jpg?fit=1000%2C1000" src="https://i0.wp.com/farm9.staticflickr.com/8345/8238250771_bbac290c2d.jpg?fit=1000%2C1000" class="attachment-thumbnail" alt="Getting RHoKed in Philly" title="Getting RHoKed in Philly" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../12/06/getting-rhoked-in-philly/index.html" target="_blank">Getting RHoKed in Philly</a></dd>
+	</dl>
+	<dl class="gallery-item">
+		<dt class="gallery-icon">
+			<a href='https://civicio.files.wordpress.com/2012/02/brigade-logo.png?fit=1000%2C1000' title='Civic Hackers Unite!'>
+				<img data-attachment-id='1000' data-image-meta='' data-caption='' data-orig-size='1000,1000' data-liked='0' data-orig-file="https://civicio.files.wordpress.com/2012/02/brigade-logo.png?fit=1000%2C1000" src="https://civicio.files.wordpress.com/2012/02/brigade-logo.png?fit=1000%2C1000" class="attachment-thumbnail" alt="Civic Hackers Unite!" title="Civic Hackers Unite!" />
+			</a>
+		</dt>
+		<dd class='wp-caption-text gallery-caption'><a href="../02/07/civic-hackers-unite/index.html" target="_blank">Civic Hackers Unite!</a></dd>
+	</dl>
+	<img class="big" src="https://civicio.files.wordpress.com/2012/01/mark-headd.jpg?fit=1000%2C1000" alt="Featured image" />
+	<img class="small1" src="https://civicio.files.wordpress.com/2012/01/apps-for-septa.jpg?fit=1000%2C1000" alt="Featured image" />
+	<img class="small2" src="https://civicio.files.wordpress.com/2012/02/nutter.jpg?fit=1000%2C1000" alt="Featured image" />
+	<img class="small3" src="https://civicio.files.wordpress.com/2012/02/transit.jpg?fit=1000%2C1000" alt="Featured image" />
+</div>                </div>
+            </div>
+        </div>
+
+	<div id="attractions">
+		<div class="inner">
+			<h2 id="h_attractions_2012">Attractions in 2012</h2>
+
+			<p>These are the posts that got the most views on Civic Innovations in 2012.</p>
+			<ul>
+<li><span class='number'>1</span> <span class='post'><a target="_blank" href="../01/06/five-things-governments-can-do-to-encourage-civic-startups/index.html">Five Things Governments Can Do to Encourage Civic Startups</a></span> <span class='comments'>2 comments</span> <span class='follow'>January 2012</span></li><li><span class='number'>2</span> <span class='post'><a target="_blank" href="../11/18/the-app-economy-and-gov-as-a-platform/index.html">The App Economy and Government as a Platform</a></span> <span class='comments'>1 comment</span> <span class='follow'>November 2012</span></li><li><span class='number'>3</span> <span class='post'><a target="_blank" href="../01/10/do-hackathons-and-civic-hacking-matter/index.html">Do Hackathons and Civic Hacking Matter?</a></span> <span class='comments'>1 comment</span> <span class='follow'>January 2012</span></li><li><span class='number'>4</span> <span class='post'><a target="_blank" href="../07/09/from-zero-to-civic-in-5-minutes/index.html">From "Zero to Civic" in 5 Minutes</a></span> <span class='comments'>2 comments</span> <span class='follow'>July 2012</span></li><li><span class='number'>5</span> <span class='post'><a target="_blank" href="../02/23/get-opengovernmentapis/index.html">GET /open/government/apis</a></span> <span class='comments'>3 comments</span> <span class='follow'>February 2012</span></li>			</ul>
+
+		</div>
+	</div>
+
+	<div id="how">
+		<div class="inner">
+		<h2 id="h_how_find">
+How did they find this blog?		</h2>
+		<div class="leftcol">
+			<p>The top referring sites in 2012 were:</p>
+			<ol>
+				<li><a target="_blank" href="http://twitter.com">twitter.com</a> <span class="follow"></span></li>
+				<li><a target="_blank" href="http://facebook.com">facebook.com</a> <span class="follow"></span></li>
+				<li><a target="_blank" href="http://codeforamerica.org">codeforamerica.org</a> <span class="follow"></span></li>
+				<li><a target="_blank" href="http://govfresh.com">govfresh.com</a> <span class="follow"></span></li>
+				<li><a target="_blank" href="http://hootsuite.com">hootsuite.com</a> <span class="follow"></span></li>
+			</ol>
+		</div>
+		<p id="searching">Some visitors came searching, mostly for <strong>socrata api for node.js</strong>, <strong>bizzaro</strong>, <strong>vox populi</strong>, <strong>civic hacking</strong>, and <strong>civicio</strong>.</p>
+		</div>
+	</div>
+<script type="text/javascript" src="https://s0.wp.com/wp-content/mu-plugins/annual-reports/js/jquery-jvectormap-1.1.1.min.js"></script>
+<script type="text/javascript" src="https://s0.wp.com/wp-content/mu-plugins/annual-reports/js/jquery-jvectormap-world-mill-en.js"></script>
+<script type="text/javascript">
+jQuery(document).ready( function($){
+	var _countryViews = {"US":{"views":4871,"_views":"4,871","name":"The United States"},"CA":{"views":304,"_views":"304","name":"Canada"},"FR":{"views":150,"_views":"150","name":"France"},"GB":{"views":167,"_views":"167","name":"United Kingdom"},"DE":{"views":113,"_views":"113","name":"Germany"},"IN":{"views":95,"_views":"95","name":"India"},"AR":{"views":90,"_views":"90","name":"Argentina"},"AU":{"views":82,"_views":"82","name":"Australia"},"PH":{"views":73,"_views":"73","name":"Philippines"},"ES":{"views":67,"_views":"67","name":"Spain"},"FI":{"views":53,"_views":"53","name":"Finland"},"RU":{"views":49,"_views":"49","name":"Russia"},"NL":{"views":47,"_views":"47","name":"Netherlands"},"IT":{"views":38,"_views":"38","name":"Italy"},"MY":{"views":31,"_views":"31","name":"Malaysia"},"BE":{"views":28,"_views":"28","name":"Belgium"},"IE":{"views":28,"_views":"28","name":"Ireland"},"MX":{"views":27,"_views":"27","name":"Mexico"},"SG":{"views":22,"_views":"22","name":"Singapore"},"BR":{"views":22,"_views":"22","name":"Brazil"},"GR":{"views":18,"_views":"18","name":"Greece"},"ZA":{"views":17,"_views":"17","name":"South Africa"},"TW":{"views":17,"_views":"17","name":"Taiwan"},"KR":{"views":16,"_views":"16","name":"South Korea"},"HK":{"views":16,"_views":"16","name":"Hong Kong SAR China"},"CL":{"views":15,"_views":"15","name":"Chile"},"BG":{"views":15,"_views":"15","name":"Bulgaria"},"SE":{"views":15,"_views":"15","name":"Sweden"},"UA":{"views":14,"_views":"14","name":"Ukraine"},"NZ":{"views":13,"_views":"13","name":"New Zealand"},"ID":{"views":12,"_views":"12","name":"Indonesia"},"JP":{"views":12,"_views":"12","name":"Japan"},"TR":{"views":11,"_views":"11","name":"Turkey"},"CH":{"views":11,"_views":"11","name":"Switzerland"},"RO":{"views":10,"_views":"10","name":"Romania"},"PK":{"views":10,"_views":"10","name":"Pakistan"},"CZ":{"views":9,"_views":"9","name":"Czech Republic"},"MD":{"views":9,"_views":"9","name":"Moldova"},"DK":{"views":8,"_views":"8","name":"Denmark"},"PT":{"views":8,"_views":"8","name":"Portugal"},"PL":{"views":8,"_views":"8","name":"Poland"},"CO":{"views":8,"_views":"8","name":"Colombia"},"RS":{"views":7,"_views":"7","name":"Serbia"},"HU":{"views":7,"_views":"7","name":"Hungary"},"BD":{"views":7,"_views":"7","name":"Bangladesh"},"TN":{"views":7,"_views":"7","name":"Tunisia"},"HR":{"views":6,"_views":"6","name":"Croatia"},"EG":{"views":6,"_views":"6","name":"Egypt"},"KE":{"views":6,"_views":"6","name":"Kenya"},"SI":{"views":6,"_views":"6","name":"Slovenia"},"SA":{"views":5,"_views":"5","name":"Saudi Arabia"},"AT":{"views":4,"_views":"4","name":"Austria"},"RE":{"views":4,"_views":"4","name":"R\u00e9union"},"IL":{"views":4,"_views":"4","name":"Israel"},"ME":{"views":3,"_views":"3","name":"Montenegro"},"JO":{"views":3,"_views":"3","name":"Jordan"},"SN":{"views":3,"_views":"3","name":"Senegal"},"PE":{"views":3,"_views":"3","name":"Peru"},"QA":{"views":3,"_views":"3","name":"Qatar"},"KW":{"views":3,"_views":"3","name":"Kuwait"},"NO":{"views":3,"_views":"3","name":"Norway"},"JM":{"views":2,"_views":"2","name":"Jamaica"},"LK":{"views":2,"_views":"2","name":"Sri Lanka"},"AP":{"views":2,"_views":"2","name":"AP"},"CN":{"views":2,"_views":"2","name":"China"},"IS":{"views":2,"_views":"2","name":"Iceland"},"VE":{"views":2,"_views":"2","name":"Venezuela"},"MT":{"views":2,"_views":"2","name":"Malta"},"LT":{"views":2,"_views":"2","name":"Lithuania"},"AE":{"views":2,"_views":"2","name":"United Arab Emirates"},"GT":{"views":2,"_views":"2","name":"Guatemala"},"LB":{"views":1,"_views":"1","name":"Lebanon"},"MU":{"views":1,"_views":"1","name":"Mauritius"},"BW":{"views":1,"_views":"1","name":"Botswana"},"TZ":{"views":1,"_views":"1","name":"Tanzania"},"GH":{"views":1,"_views":"1","name":"Ghana"},"MH":{"views":1,"_views":"1","name":"Marshall Islands"},"AZ":{"views":1,"_views":"1","name":"Azerbaijan"},"EE":{"views":1,"_views":"1","name":"Estonia"},"CR":{"views":1,"_views":"1","name":"Costa Rica"},"PY":{"views":1,"_views":"1","name":"Paraguay"},"NG":{"views":1,"_views":"1","name":"Nigeria"},"DZ":{"views":1,"_views":"1","name":"Algeria"},"UG":{"views":1,"_views":"1","name":"Uganda"},"GP":{"views":1,"_views":"1","name":"Guadeloupe"},"GE":{"views":1,"_views":"1","name":"Georgia"},"SY":{"views":1,"_views":"1","name":"Syria"},"VN":{"views":1,"_views":"1","name":"Vietnam"},"EC":{"views":1,"_views":"1","name":"Ecuador"},"AM":{"views":1,"_views":"1","name":"Armenia"},"MK":{"views":1,"_views":"1","name":"Macedonia"},"MN":{"views":1,"_views":"1","name":"Mongolia"},"EU":{"views":1,"_views":"1","name":"European Union"}};
+	var countryViews = {};
+	$.each( _countryViews, function( code, data ) {
+		countryViews[code] = data.views || 0;
+		if ( countryViews[code] && data.name && data.name.length > 2 ) {
+			var _views = _countryViews[code]._views || countryViews[code];
+			_countryViews[code].label = data.name + ' (' + _views + ')';
+		}
+	});
+	$(window).on( 'drawMap', function() {
+		$('.jvectormap-label').css( 'display', 'none' );
+		$('#div_where_map').html('').vectorMap({
+			map: 'world_mill_en',
+			backgroundColor: 'none',
+			zoomOnScroll: false,
+			series: {
+				regions: [{
+					values: countryViews,
+					scale: [ '#FCF5E6', '#0A6C87' ],
+					normalizeFunction: 'polynomial'
+				}]
+			},
+			onRegionOver: function( e, code ) {
+				var views = parseInt( countryViews[code] );
+				if ( isNaN( views ) || views < 1 ) {
+					e.preventDefault();
+					return;
+				}
+			},
+			onRegionLabelShow: function( e, el, code ){
+				var views = parseInt( countryViews[code] );
+				if ( isNaN( views ) || views < 1 ) {
+					e.preventDefault();
+					return;
+				}
+				if ( _countryViews[code].label ) {
+					el.html( _countryViews[code].label );
+				}
+				else {
+					var _views = _countryViews[code]._views || countryViews[code];
+					el.html( el.html() + ' (' + _views + ')' );
+				}
+  			}
+		});
+	});
+});
+</script>
+	<div id="where">
+		<div class="inner">
+			<h2 id="h_where_from">Where did they come from?</h2>
+			<div id="div_where_map" width="700" height="400"></div>
+				<span class="total_countries">That&#039;s 93 countries in all!</span><br />
+				<span class="humanize">Most visitors came from The United States. Canada & United Kingdom were not far behind.</span>
+		</div>
+	</div>
+	<div id="comments">
+		<div class="inner">
+		<h2>Who were they?</h2>
+
+		<p>The most commented on post in 2012 was <a target="_blank" href="../01/30/practical-hackathons-free-is-not-always-better/index.html">Practical Hackathons: Free is not Always Better</a></p>
+		<p>These were the 5 most active commenters on this blog:</p>
+
+		<ul>
+<li><span class='number'>1</span> <span class='gravatar'><a href='http://gravatar.com/standardclimate'><img alt='' src='https://1.gravatar.com/avatar/a9e1f9020ae7a6eeae4cdf4a38638622?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-32' height='32' width='32' /></a></span> <span class='name'><a target="_blank" href="http://standardclimate.wordpress.com">Standard Climate</a></span> <span class='comments'>1 comment</span> <span class='follow'></span></li><li><span class='number'>2</span> <span class='gravatar'><a href='http://gravatar.com/danielbevarly'><img alt='' src='https://2.gravatar.com/avatar/ecfa2769ee447353ade56f079460e848?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-32' height='32' width='32' /></a></span> <span class='name'>danielbevarly</span> <span class='comments'>1 comment</span> <span class='follow'></span></li><li><span class='number'>3</span> <span class='gravatar'><img alt='' src='https://2.gravatar.com/avatar/5b4e017b1220c12359bbd7be6e6b7809?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-32' height='32' width='32' /></span> <span class='name'><a target="_blank" href="http://twitter.com/kristyfifelski">Kristy Fifelski (@kristyfifelski)</a></span> <span class='comments'>1 comment</span> <span class='follow'></span></li><li><span class='number'>4</span> <span class='gravatar'><a href='http://gravatar.com/katebladow'><img alt='' src='https://1.gravatar.com/avatar/72d802d2a37283276a2c9b584408eb43?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-32' height='32' width='32' /></a></span> <span class='name'>Kate Bladow</span> <span class='comments'>1 comment</span> <span class='follow'></span></li><li><span class='number'>5</span> <span class='gravatar'><a href='http://gravatar.com/opencityapps'><img alt='' src='https://0.gravatar.com/avatar/36e2dbb8f3ff328b713599e73156a261?s=64&#038;d=identicon&#038;r=G' class='avatar avatar-32' height='32' width='32' /></a></span> <span class='name'><a target="_blank" href="http://gravatar.com/opencityapps">Open City</a></span> <span class='comments'>1 comment</span> <span class='follow'></span></li>		</ul>
+		</div>
+	</div>
+	<div id="separator"></div>
+	<div id="seeya">
+		<div class="inner">
+		<h2 id="h_see_you_2013">See you in 2013</h2>
+
+		<p></p>
+		<p>Thanks for flying with WordPress.com in 2012.		We look forward to serving you again in 2013! Happy New Year!</p>
+		<p id="wordpress_sig">WordPress.com</p>
+<p id="blog_sig">Civic Innovations</p></p>
+
+		<div style="clear: both;"></div>
+		</div>
+	</div>
+	<div id="butwait">
+		<div class="inner">
+
+			<h2 id="h_wait_theres_more"><span>&hellip; but wait, there&rsquo;s more!</span></h2>
+			<p class="cursive">2013 is going to be even better on WordPress.com…</p>
+			<div id="teaserbanner">
+			<ol>
+				<li>
+					<h3><span>1</span> Follow</h3>
+					<div class="teaser-img-follow"><!-- --></div>
+					<p>Discover great blogs to follow across WordPress.com. Click the Follow button to be notified each time there’s a new post in one of your favorite blogs.</>
+				</li>
+				<li>
+					<h3><span>2</span> Read</h3>
+					<div class="teaser-img-topics"><!-- --></div>
+					<p>See what’s new on all the blogs in one place — the new WordPress.com home page. Explore the recommended content to browse the very best of WordPress.com.</>
+				</li>
+				<li class="last">
+					<h3><span>3</span> Blog</h3>
+					<div class="teaser-img-post"><!-- --></div>
+					<p>Blog faster than ever before by creating a new post from the WordPress.com home page.</>
+				</li>
+			</ol>
+			</div>
+			<p class="cursive"><a id="try_this_out" href="https://wordpress.com/" target="_blank">Try out the new WordPress.com home page now!</a></p>
+		</div>
+	</div>
+</div>
+<img src="http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_recap_2012=page_views&x_recap_2012_site_views=wpcom-logged-out&r="3583" border="0" />
+<script src="../../wp-content/mu-plugins/annual-reports/2012-carousel.js%3F20131219"></script></div>
+</body>
+</html>
